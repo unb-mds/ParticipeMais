@@ -1,0 +1,50 @@
+Ata da Reunião "mds"
+Data: Implícita (anterior à próxima reunião mencionada no dia seguinte)
+Assuntos Discutidos e Decisões Tomadas:
+•
+O escopo do projeto foi alterado pela professora para clusterização de propostas.
+•
+O grupo não irá treinar um modelo de machine learning do zero devido à falta de tempo e conhecimento. Em vez disso, será utilizado um modelo pré-treinado fornecido pela professora para a clusterização de propostas. A localização e detalhes desse modelo ainda precisam ser esclarecidos. Júlia se prontificou a conversar com a professora sobre isso.
+•
+Para o desenvolvimento do aplicativo mobile, a linguagem de programação escolhida é Kotlin. O aplicativo deverá integrar o modelo de clusterização da professora.
+•
+O backend do projeto será desenvolvido utilizando Python com o framework Django.
+•
+Além do aplicativo mobile, será desenvolvida uma interface web ("webzão") que utilizará o mesmo backend em Django.
+•
+A comunicação entre o frontend (aplicativo Kotlin) e o backend (Django) será feita através de uma API, provavelmente utilizando o Django REST framework.
+•
+Houve uma discussão inicial sobre o framework a ser utilizado no frontend web. View.js foi mencionado como uma opção para projetos mais simples, enquanto React foi apontado como uma preferência por um dos participantes, embora haja receio da desaprovação da professora. A decisão final sobre o framework frontend web será tomada posteriormente.
+•
+A fonte principal de dados para o projeto será a plataforma Brasil Participativo, sendo que a professora teria envolvimento na criação do site.
+•
+Será necessário realizar web scraping para coletar os dados relevantes do Brasil Participativo. A forma de acessar os dados do site precisa ser estudada, pois inicialmente parecia exigir o uso de um aplicativo.
+•
+Houve uma breve discussão sobre o banco de dados a ser utilizado. A sugestão de explorar um banco de dados não relacional foi levantada, mas sem uma decisão final. GG ficou responsável por estudar opções de banco de dados para amanhã.
+•
+As primeiras atividades (para a primeira "sprint") serão focadas em web scraping e na estruturação do banco de dados. O desenvolvimento do backend está previsto para a segunda sprint.
+•
+Amanhã haverá uma reunião para definir os requisitos e as features do projeto de forma mais detalhada.
+•
+Foram designadas algumas responsabilidades para estudo: Mateus estudará Kotlin, Pedro estudará React, GG estudará banco de dados, e Schneider e Júlia irão se dedicar à parte de machine learning (entender o modelo da professora). João foi mencionado como responsável pelo GitHub, mas estava ausente da discussão sobre outras tarefas.
+•
+Júlia irá contactar a professora para obter mais informações sobre o modelo de machine learning, como utilizá-lo, e para esclarecer o objetivo do projeto com o Brasil Participativo.
+•
+Será criado um quadro Kanban para organizar e acompanhar as tarefas do projeto.
+•
+Foi solicitado que todos entreguem seus materiais de estudo até amanhã.
+•
+O objetivo do projeto foi esclarecido como extrair propostas da plataforma Brasil Participativo e realizar a clusterização dessas propostas. A ideia de criar um espaço para que usuários postassem propostas não faz parte do escopo.
+Próximos Passos:
+•
+Estudar as tecnologias e a plataforma Brasil Participativo conforme as designações.
+•
+Júlia entrará em contato com a professora para esclarecer dúvidas sobre o modelo de machine learning e o escopo do projeto.
+•
+Entregar os materiais de estudo até amanhã.
+•
+Participar da reunião de amanhã para definir requisitos, features e responsabilidades.
+•
+O responsável pelo Git (João) precisará organizar o GitHub com as informações do projeto.
+•
+O líder da reunião irá criar a estrutura do quadro Kanban.
