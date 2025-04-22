@@ -11,13 +11,14 @@ Automatizar a extração de propostas públicas, estruturando os dados e facilit
 - Percorre automaticamente as seções: **Conferências**, **Consultas Públicas** e **Planos**.
 - Entra em cada processo e acessa as páginas de propostas.
 - Filtra e abre propostas reais (ignora documentos e notícias).
-- Coleta títulos das propostas (em construção futura: coletar autor, descrição, localização, etc.).
+- Coleta títulos e descrição das conferências, além de título e descrição das propostas
 - Evita duplicidade de acessos e repetições desnecessárias.
 - Lida com múltiplas abas e navega entre páginas numeradas de forma confiável.
 
 ## Dependências
 
-As bibliotecas Python utilizadas estão listadas em requirements.txt (exemplo para uso com `pip install -r requirements.txt`):
+- selenium (pip install selenium)
+- beautifulsoup4 (pip install beautifulsoup4)
 
 ## Requisitos
 - Python 3.8+
@@ -25,6 +26,6 @@ As bibliotecas Python utilizadas estão listadas em requirements.txt (exemplo pa
 
 ## Execução
 
-python scraper.py
+python scraper_conf.py
 
 
