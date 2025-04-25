@@ -1,7 +1,7 @@
 
 # 📲 Participa+
 
-**Participa+** é um aplicativo que busca transformar a forma como a população interage com as informações de políticas públicas, tornando propostas, planos e conferências do site [Brasil Participativo](https://www.brasilparticipativo.gov.br/) mais **acessíveis, compreensíveis e interativas** para todos os cidadãos.
+**Participa+** é um aplicativo que busca transformar a forma como a população interage com as informações de políticas públicas, tornando propostas, planos e conferências do site [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/) mais **acessíveis, compreensíveis e interativas** para todos os cidadãos.
 
 ---
 
@@ -12,6 +12,7 @@ A plataforma coleta e organiza os conteúdos públicos do site Brasil Participat
 - 📄 **Resumir** textos complexos de políticas públicas;
 - 💬 **Gerar perguntas e insights** personalizados com base nos interesses do usuário;
 - 🧭 **Organizar conteúdos por temas** como meio ambiente, economia, educação, entre outros.
+- ☁️ **Criar nuvens de palavras chaves** de cada proposta.
 
 Além disso, o Participa+ será estruturado como uma **rede social cidadã**, permitindo:
 
