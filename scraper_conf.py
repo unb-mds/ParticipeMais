@@ -1,24 +1,58 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup, NavigableString, Tag
 import time, re
 import requests
+import csv
+import os
 
 options = Options()
 # options.headless = True  # ativar se quiser rodar em segundo plano
 
-driver = webdriver.Firefox(options=options)
+driver = webdriver.Chrome(options=options)
 wait = WebDriverWait(driver, 20)
 driver.get("https://brasilparticipativo.presidencia.gov.br/")
 
 secoes_desejadas = ["Conferências"]
 
+
+
+if not os.path.exists("propostas.csv"):
+    with open("propostas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "Conferência", 
+            "Descrição Conferência", 
+            "Sobre Conferência", 
+            "Etapas", 
+            "Título Proposta", 
+            "Descrição Proposta", 
+            "Link", 
+            "Imagem Conferência"
+            ])
+        writer.writeheader()
+        
+    with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+                "Conferência",
+                "Perguntas", 
+                "Respostas", 
+            ])
+        writer.writeheader()  
+
+
 contador = 0
 propostas_acessadas = set()
 paginas_visitadas = set()
+
+if os.path.exists("propostas_visitadas.txt"):
+    with open("propostas_visitadas.txt", "r", encoding="utf-8") as f:
+        propostas_salvadas = set(line.strip() for line in f)
+else:
+    propostas_salvadas = set()
 
 wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "section-card")))
 cards = driver.find_elements(By.CLASS_NAME, "section-card")
@@ -194,19 +228,30 @@ for i in range(len(cards_filtrados)):
                                 strong_tag = strong_em_code.find("strong")
                                 if strong_tag:
                                     pergunta = strong_tag.get_text(strip=True)
+                                   
                                     
                                     # resposta deve estar no <p> seguinte
                                     if i + 1 < len(paragrafos):
                                         resposta = paragrafos[i + 1].get_text(strip=True)
+                                        
                                         i += 1  # pula o p da resposta
                                     else:
                                         resposta = ""
+        
 
                                     # print(f"[NOVO PADRÃO]")
                                     print(f"PERGUNTA: {pergunta}")
                                     print(f"RESPOSTA: {resposta}")
                                     print("--------")
-
+                                    
+                                    with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                        writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                        writer.writerow({
+                                            "Conferência": titulo_conferencia,
+                                            "Perguntas": pergunta,
+                                            "Respostas": resposta
+                                        })
+                                    
                             # formatacao conferencia 5
                             elif p.find("strong"):
                                 strong_tag = p.find("strong")
@@ -236,6 +281,16 @@ for i in range(len(cards_filtrados)):
                                 print(f"PERGUNTA: {pergunta}")
                                 print(f"RESPOSTA: {resposta}")
                                 print("--------")
+                                
+                                with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                    writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                    writer.writerow({
+                                        "Conferência": titulo_conferencia,
+                                        "Perguntas": pergunta,
+                                        "Respostas": resposta
+                                    })
+                                
+                                
 
                             i += 1
 
@@ -383,8 +438,14 @@ for i in range(len(cards_filtrados)):
                                         if proposta_url in propostas_acessadas:
                                             print(f"Proposta já acessada: {proposta_url}")
                                             continue
+                                        
+                                        propostas_salvadas.add(proposta_url)
+                                    
+                                        with open("propostas_visitadas.txt", "a", encoding="utf-8") as f:
+                                            f.write(proposta_url + "\n")
 
                                         print(f"Acessando PROPOSTA NOVA: {proposta_url}")
+                                        
                                         propostas_acessadas.add(proposta_url)
 
                                         # scroll para o elemento e clique
@@ -403,6 +464,32 @@ for i in range(len(cards_filtrados)):
                                             print(" ")
                                             print(descricao)
                                             print(" ")
+                                            
+                                            with open("propostas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                                writer = csv.DictWriter(f, fieldnames= [
+                                                    "Conferência", 
+                                                    "Descrição Conferência", 
+                                                    "Sobre Conferência", 
+                                                    "Etapas", 
+                                                    "Título Proposta", 
+                                                    "Descrição Proposta", 
+                                                    "Link", 
+                                                    "Imagem Conferência"
+                                                ])
+                                                writer.writerow({
+                                                    "Conferência": titulo_conferencia,
+                                                    "Descrição Conferência": descricao_conferencia,
+                                                    "Sobre Conferência":conteudos_limpos,
+                                                    "Etapas": texto_final,
+                                                    "Título Proposta": titulo_cada_proposta,
+                                                    "Descrição Proposta": descricao,
+                                                    "Link": proposta_url,
+                                                    "Imagem Conferência": img_url
+                                                })
+                                                
+                                            
+                                            print("Dados salvos com sucesso!")
+                                            
                                         except Exception as e:
                                             print("Erro ao pegar título", e)
 
