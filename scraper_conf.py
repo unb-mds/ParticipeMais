@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup, NavigableString, Tag
-import time, re
+import time
 import requests
 import csv
 import os
@@ -13,7 +13,7 @@ import os
 options = Options()
 # options.headless = True  # ativar se quiser rodar em segundo plano
 
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Firefox(options=options)
 wait = WebDriverWait(driver, 20)
 driver.get("https://brasilparticipativo.presidencia.gov.br/")
 
