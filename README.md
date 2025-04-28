@@ -62,6 +62,8 @@ E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse 
 
 - [Design do Projeto (Figma)](https://www.figma.com/design/9tADdCRHiirJpkxmJIeosx/MDS-Project?node-id=120-2&p=f&t=jlL1ZvQcH0Fbtgin-0)
 - [Story Mapping (Figma)](https://www.figma.com/board/97EXmHhxVZuxiGm0tAGViw/Story-Mapping-MDS?node-id=0-1&p=f&t=SxMlMUCHvr0Bwpjb-0)
+- [📄 Documento de Arquitetura de Software](./Arquiteturas.md)
+
 
 ## 🤝 Contribuindo
 
