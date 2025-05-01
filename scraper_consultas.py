@@ -13,7 +13,7 @@ import os
 options = Options()
 # options.headless = True  # ativar se quiser rodar em segundo plano
 
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Firefox(options=options)
 wait = WebDriverWait(driver, 20)
 driver.get("https://brasilparticipativo.presidencia.gov.br/")
 
@@ -198,7 +198,7 @@ for i in range(len(cards_filtrados)):
                 if link.text.strip() in ["Participar", "Visualizar"]
             ]
 
-            link = botoes_participar[9].get_attribute("href")
+            link = botoes_participar[j].get_attribute("href")
             datas_inicio_fim = driver.find_elements(By.CLASS_NAME, "component-card-data-value")
             
             print(f"Inicio {datas_inicio_fim[Inicio].text} e fim {datas_inicio_fim[final].text}")
