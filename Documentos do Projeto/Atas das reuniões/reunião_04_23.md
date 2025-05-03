@@ -37,7 +37,7 @@
 |-------|-------------|--------|
 | Reestruturar GitHub e arrumar repositório | Yuri + apoio | 🔄 |
 | Criar quadro Projects (Kanban) | João | 🔄 |
-| Produzir o Storymap | Mateus | 🔄 |
+| Produzir o Storymap | Matheus | 🔄 |
 | Escrever documento de arquitetura | Yuri | 🔄 |
 | Elaborar documento de requisitos | Participante sem tarefa | 🔄 |
 | Centralizar links úteis | Yuri | 🔄 |
