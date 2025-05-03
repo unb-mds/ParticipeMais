@@ -2,11 +2,11 @@
 
 📅 **Data:** 17/04/2025  
 ⏰ **Horário:** 20h00 às 21h00  
-📍 **Plataforma:** (não especificada)  
+📍 **Plataforma:** Discord
 
 ## 👥 Participantes  
 - Yuri (moderador)  
-- Mateus  
+- Matheus  
 - João (saiu antes do fim)  
 - GG  
 - Júlia  
