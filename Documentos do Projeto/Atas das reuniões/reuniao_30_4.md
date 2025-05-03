@@ -7,7 +7,7 @@
 ## 👥 Participantes  
 - Yuri (moderador)  
 - Pedrão (com problemas de microfone, participou via chat)  
-- Mateus  
+- Matheus  
 - Júlia  
 - GG  
 - Schneider  
