@@ -56,7 +56,6 @@ Imagine receber um resumo claro sobre as últimas propostas de educação no Bra
 > "Como essa proposta pode impactar o acesso à educação nas regiões mais remotas?"
 
 E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse conteúdo para consultar depois.
-https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=0-1&p=f&t=ClxpcwCEi2E2Fa9L-0
 
 ## 🔗 Links Úteis
 - [Overview do projeto (Figma)](https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=0-1&p=f&t=ClxpcwCEi2E2Fa9L-0)
