@@ -14,7 +14,7 @@ A plataforma coleta e organiza os conteúdos públicos do site Brasil Participat
 - 🧭 **Organizar conteúdos por temas** como meio ambiente, economia, educação, entre outros.
 - ☁️ **Criar nuvens de palavras chaves** de cada proposta.
 
-Além disso, o Participa+ será estruturado como uma **rede social cidadã**, permitindo:
+Além disso, o Participe+ será estruturado como uma **rede social cidadã**, permitindo:
 
 - 👍 Curtidas e salvamento de matérias;
 - 🗨️ Comentários e discussões sobre os temas;
@@ -27,27 +27,14 @@ Além disso, o Participa+ será estruturado como uma **rede social cidadã**, pe
 | Categoria | Ferramenta |
 |----------|------------|
 | Backend  | **Python**, **Django REST Framework** |
-| Frontend | **Kotlin** (para app Android), **Jetpack Compose** |
+| Frontend | **React native** |
 | Inteligência Artificial | **LangChain**, **FAISS**, **modelos de linguagem LLM** |
 | Coleta de dados | **Web Scraping** com Python |
-| Organização dos temas | **Clusterização** com técnicas de NLP (TF-IDF, K-Means, etc) |
-| Outros | Espaço reservado para futuras tecnologias ✨ |
+| Organização dos temas | **Clusterização** com técnicas de NLP |
+|  PostgreSQL | Para banco de dados ✨ |
 
 ---
 
-## 🚀 Funcionalidades Planejadas
-
-- [x] Coleta de dados do site Brasil Participativo
-- [ ] Resumo automático de propostas com LLMs
-- [ ] Perguntas inteligentes por tema
-- [ ] Clusterização de temas por similaridade
-- [ ] Interface interativa estilo rede social
-- [ ] Sistema de login e perfil de usuário
-- [ ] Feed personalizado
-- [ ] Comentários e curtidas
-- [ ] Notificações por interesse
-
----
 
 ## 🔍 Exemplos de Uso
 
@@ -60,20 +47,4 @@ E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse 
 ## 🔗 Links Úteis
 - [Overview do projeto (Figma)](https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=0-1&p=f&t=ClxpcwCEi2E2Fa9L-0)
 
-## 🤝 Contribuindo
 
-Quer ajudar no desenvolvimento? Sinta-se bem-vindo(a)! Abriremos em breve as issues e um guia de contribuição.
-
----
-
-## 📄 Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
----
-
-## ✨ Contato
-
-Para dúvidas ou sugestões, entre em contato pelo e-mail: [ainda não tem contato kk]
-
----
