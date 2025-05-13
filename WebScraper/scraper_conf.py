@@ -9,6 +9,7 @@ import requests
 import csv
 import os
 
+
 options = Options()
 # options.headless = True  # ativar se quiser rodar em segundo plano
 
@@ -18,13 +19,65 @@ driver.get("https://brasilparticipativo.presidencia.gov.br/")
 
 secoes_desejadas = ["Conferências"]
 
+if not os.path.exists("etapas.csv"):
+    with open("etapas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "Conferência", "Quantidade Etapas", 
+            "Título Etapa", "Url Etapa", "Descricao Etapa", "Inscritos Etapa", 
+            "Regiao Etapa", "Status Etapa", "Data Etapa", 
+            "Propostas Etapa", "Quantidade Propostas Etapa"
+        ])
+        writer.writeheader()
 
+# 2. Arquivo de PROPOSTAS
+if not os.path.exists("propostas.csv"):
+    with open("propostas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "Conferência", "Quantidade Propostas",
+            "Título Proposta", "Descrição Proposta", "Link", "Votos", "Autor"
+        ])
+        writer.writeheader()
+
+if not os.path.exists("encerradas.csv"):
+    with open("encerradas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "Conferência", "Descrição Conferência", "Imagem Conferência", "Etapas"
+        ])
+        writer.writeheader()
+        
+if not os.path.exists("conferencias.csv"):
+    with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+                "Conferência", 
+                "Descrição Conferência", 
+                "Imagem Conferência", 
+                "Sobre Conferência",
+                "Etapas",
+            ])
+        writer.writeheader()  
+
+if not os.path.exists("perguntas.csv"):
+    with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+                "Conferência",
+                "Perguntas", 
+                "Respostas", 
+            ])
+        writer.writeheader()  
 
 descricao_conferenci = None
 contador = 0
 contador1 = 0
 propostas_acessadas = set()
 paginas_visitadas = set()
+
+
+if os.path.exists("propostas_visitadas.txt"):
+    with open("propostas_visitadas.txt", "r", encoding="utf-8") as f:
+        propostas_salvadas = set(line.strip() for line in f)
+else:
+    propostas_salvadas = set()
+
 
 wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "section-card")))
 cards = driver.find_elements(By.CLASS_NAME, "section-card")
@@ -222,6 +275,14 @@ for i in range(len(cards_filtrados)):
                                     print(f"RESPOSTA: {resposta}")
                                     print("--------")
 
+                                    with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                        writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                        writer.writerow({
+                                            "Conferência": titulo_conferencia,
+                                            "Perguntas": pergunta,
+                                            "Respostas": resposta
+                                        })
+
                             # formatacao conferencia 5
                             elif p.find("strong"):
                                 strong_tag = p.find("strong")
@@ -252,6 +313,13 @@ for i in range(len(cards_filtrados)):
                                 print(f"RESPOSTA: {resposta}")
                                 print("--------")
 
+                                with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                    writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                    writer.writerow({
+                                        "Conferência": titulo_conferencia,
+                                        "Perguntas": pergunta,
+                                        "Respostas": resposta
+                                    })
                             i += 1
 
                     except Exception as e:
@@ -316,6 +384,22 @@ for i in range(len(cards_filtrados)):
                                         print(bloco)
                                         print(" ")
 
+                                with open("conferencias.csv", mode="a", newline="", encoding="utf-8") as f:
+                                            writer = csv.DictWriter(f, fieldnames= [
+                                                    "Conferência", 
+                                                    "Descrição Conferência", 
+                                                    "Imagem Conferência",
+                                                    "Sobre Conferência", 
+                                                    "Etapas",
+                                                ])
+                                            writer.writerow({
+                                                    "Conferência": titulo_conferencia,
+                                                    "Descrição Conferência": descricao_conferencia,
+                                                    "Imagem Conferência":img_url, 
+                                                    "Sobre Conferência":conteudos_limpos,
+                                                    "Etapas": etapas,
+                                                })       
+
                             except Exception as e:
                                 print(f"Erro ao extrair conteúdo da aba 'Sobre': {e}")
 
@@ -323,6 +407,19 @@ for i in range(len(cards_filtrados)):
                             driver.switch_to.window(driver.window_handles[1])
 
                     else:
+                        with open("encerradas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                                writer = csv.DictWriter(f, fieldnames= [
+                                                    "Conferência", 
+                                                    "Descrição Conferência", 
+                                                    "Imagem Conferência"
+                                                    "Etapas",
+                                                ])
+                                                writer.writerow({
+                                                    "Conferência": titulo_conferencia,
+                                                    "Descrição Conferência": descricao_conferencia,
+                                                    "Imagem Conferência":img_url, 
+                                                    "Etapas": etapas,
+                                                })
                         print("Aba 'Sobre' não encontrada.")
                 else:
                     print("conferencia encerrada")
@@ -486,6 +583,37 @@ for i in range(len(cards_filtrados)):
                                                     else:
                                                         print("Nenhum <a> com href encontrado nesta div.")
 
+                                                with open("etapas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                                    writer = csv.DictWriter(f, fieldnames= [
+                                                        "Conferência", 
+                                                        "Quantidade Etapas",
+                                                        "Título Etapa",
+                                                        "Url Etapa",
+                                                        "Descricao Etapa",
+                                                        "Inscritos Etapa",
+                                                        "Regiao Etapa",
+                                                        "Status Etapa",
+                                                        "Data Etapa",
+                                                        "Propostas Etapa",
+                                                        "Quantidade Propostas Etapa",
+
+                                                    ])
+                                                    writer.writerow({
+                                                        "Conferência": titulo_conferencia,
+                                                        "Quantidade Etapas": qtd_etapas,
+                                                        "Título Etapa": titulo_cada_etapa,
+                                                        "Url Etapa": etapa_url,
+                                                        "Descricao Etapa": descricao_cada_etapa,
+                                                        "Inscritos Etapa": inscritos_etapa,
+                                                        "Regiao Etapa": endereco_texto,
+                                                        "Status Etapa": status_texto,
+                                                        "Data Etapa": data_texto,
+                                                        "Propostas Etapa": hrefs_encontrados,
+                                                        "Quantidade Propostas Etapa": quantidade_de_propostas,
+
+
+                                                    })
+
                                                 
                                                 print("\nTodos os hrefs coletados:")
                                                 for link in hrefs_encontrados:
@@ -625,6 +753,27 @@ for i in range(len(cards_filtrados)):
                                                 print(" ")
                                                 print(autor_proposta)
                                                 print(" ")
+
+                                                with open("propostas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                                    writer = csv.DictWriter(f, fieldnames= [
+                                                        "Conferência", 
+                                                        "Quantidade Propostas",
+                                                        "Título Proposta", 
+                                                        "Descrição Proposta", 
+                                                        "Link", 
+                                                        "Votos",
+                                                        "Autor",
+                                                    ])
+                                                    writer.writerow({
+                                                        "Conferência": titulo_conferencia,
+                                                        "Quantidade Propostas": qtd_propostas,
+                                                        "Título Proposta": titulo_cada_proposta,
+                                                        "Descrição Proposta": descricao,
+                                                        "Link": proposta_url,
+                                                        "Votos": qtd_votos,
+                                                        "Autor": autor_proposta,
+                                                    })
+
                                             except Exception as e:
                                                 print("Erro ao pegar título", e)
 
