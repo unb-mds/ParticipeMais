@@ -18,10 +18,10 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         password = validated_data.pop('password', None)
         usuario = Usuario(**validated_data)
-
-        usuario.set_password(password)
-        usuario.save()
+        if password is not None:
+            # Criptografa a senha antes de salvar
+            usuario.set_password(password)
+            usuario.save()
+            
         return usuario
-        
-        
-        
+    
