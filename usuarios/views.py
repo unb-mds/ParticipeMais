@@ -21,10 +21,14 @@ class CadastroView(APIView):
         if serializer_class.is_valid(): 
             usuario = serializer_class.save()
             refresh = RefreshToken.for_user(usuario)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
             
             return Response({
                 'message': 'Usuário cadastrado com sucesso!',
                 'data': serializer_class.data,
+                'access': access_token,
+                'refresh': refresh_token
             }, status=status.HTTP_200_OK)
         
         return Response({
