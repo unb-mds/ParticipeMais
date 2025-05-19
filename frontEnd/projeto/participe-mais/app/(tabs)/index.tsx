@@ -1,13 +1,27 @@
-import { Platform, StyleSheet, View, Text } from 'react-native';
+import { useState } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import Cabecalho from '@/components/cabecalho'; // ajuste o caminho se necessário
+import { ThemedText } from '@/components/ThemedText';
 
 export default function HomeScreen() {
+  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
+
   return (
     <View>
-      <Cabecalho titulo={"Bem vindo"} user = {"Giovanni"}/> 
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Bem-vindo!</Text>
-      </View>
+      <Cabecalho
+        user={"Giovanni"}
+        xp={50}
+        nivel={4}
+        abaAtiva={abaAtiva}
+        setAbaAtiva={setAbaAtiva}
+      />
+
+      
+
+      {/* aqui você renderiza o conteúdo baseado na aba selecionada */}
+      {abaAtiva === 'descubra' && <ThemedText>Conteúdo da Comunidade</ThemedText>}
+      {abaAtiva === 'comunidade' && <ThemedText>Conteúdo do Descubra</ThemedText>}
+      {abaAtiva === 'pesquisar' && <ThemedText>Conteúdo de Pesquisa</ThemedText>}
     </View>
   );
 }
