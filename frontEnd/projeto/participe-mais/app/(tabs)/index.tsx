@@ -4,6 +4,7 @@ import Cabecalho from '@/components/cabecalho'; // ajuste o caminho se necessár
 import { ThemedText } from '@/components/ThemedText';
 
 export default function HomeScreen() {
+  
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
   return (
