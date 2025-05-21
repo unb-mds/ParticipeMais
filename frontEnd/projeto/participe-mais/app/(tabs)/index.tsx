@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Cabecalho from '@/components/cabecalho'; // ajuste o caminho se necessário
 import { ThemedText } from '@/components/ThemedText';
+import React from 'react';
 
 export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
