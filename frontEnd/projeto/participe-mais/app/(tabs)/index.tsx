@@ -1,40 +1,176 @@
-import { useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import Cabecalho from '@/components/cabecalho'; // ajuste o caminho se necessário
+import React, { useState, useMemo } from 'react';
+import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text } from 'react-native';
+import Cabecalho from '@/components/cabecalho';
 import { ThemedText } from '@/components/ThemedText';
 
+const { width } = Dimensions.get('window');
+const GRID_SIZE = 2;
+const QUADRADO_GRANDE_SIZE = width - 40;
+const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
+
+// Componentes de exemplo para cada tipo de quadrado
+const QuadradoProposta = () => (
+  <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
+    <Text style={styles.textoQuadrado}>Proposta</Text>
+  </View>
+);
+const QuadradoBotao = () => (
+  <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
+    <Text style={styles.textoQuadrado}>Botão</Text>
+  </View>
+);
+const QuadradoPergunta = () => (
+  <View style={[styles.quadrado, { backgroundColor: '#afa' }]}>
+    <Text style={styles.textoQuadrado}>Pergunta</Text>
+  </View>
+);
+
+// Função para embaralhar array (Fisher-Yates) Ia veio clutch :P
+function shuffle(array: any[]) {
+  let currentIndex = array.length, randomIndex;
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]
+    ];
+  }
+  return array;
+}
+
 export default function HomeScreen() {
+  // Estado para controlar qual aba está ativa
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
+  // Quantidades desejadas de cada tipo de quadrado
+  const propostas = 7;
+  const botoes = 3;
+  const perguntas = 4;
+
+  // useMemo para gerar e randomizar os dados apenas uma vez por montagem do componente
+  const data = useMemo(() => {
+    // Cria arrays de objetos para cada tipo, cada um com id único e tipo correspondente
+    const arr = [
+      ...Array.from({ length: propostas }, (_, i) => ({ id: `proposta-${i}`, tipo: 'proposta' })),
+      ...Array.from({ length: botoes }, (_, i) => ({ id: `botao-${i}`, tipo: 'botao' })),
+      ...Array.from({ length: perguntas }, (_, i) => ({ id: `pergunta-${i}`, tipo: 'pergunta' })),
+    ];
+    // Separa as propostas dos outros tipos
+    const propostasArr = arr.filter(item => item.tipo === 'proposta');
+    const outrosArr = shuffle(arr.filter(item => item.tipo !== 'proposta'));
+    // Junta as propostas (prioridade) seguidas dos outros tipos embaralhados
+    return [...propostasArr, ...outrosArr];
+  }, []);
+
+  // Função que renderiza o componente correto de acordo com o tipo do item
+  const renderItem = ({ item }: { item: { tipo: string } }) => {
+    if (item.tipo === 'proposta') return <QuadradoProposta />;
+    if (item.tipo === 'botao') return <QuadradoBotao />;
+    if (item.tipo === 'pergunta') return <QuadradoPergunta />;
+    return null;
+  };
+
   return (
-    <View>
+    <SafeAreaView style={styles.container}>
+      {/* Cabeçalho fixo no topo da tela */}
       <Cabecalho
-        user={"Giovanni"}
+        user="Giovanni"
         xp={50}
         nivel={4}
         abaAtiva={abaAtiva}
         setAbaAtiva={setAbaAtiva}
       />
 
-      
+      <View style={styles.contentArea}>
+        {abaAtiva === 'descubra' && (
+          <View style={styles.conteiner_quadrado}>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              numColumns={GRID_SIZE}
+              keyExtractor={item => item.id}
+              contentContainerStyle={styles.gridContent}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={
+                <ThemedText style={styles.titulo}>Descubra!</ThemedText>
+              }
+              ListHeaderComponentStyle={styles.headerStyle}
+            />
+          </View>
+        )}
 
-      {/* aqui você renderiza o conteúdo baseado na aba selecionada */}
-      {abaAtiva === 'descubra' && <ThemedText>Conteúdo da Comunidade</ThemedText>}
-      {abaAtiva === 'comunidade' && <ThemedText>Conteúdo do Descubra</ThemedText>}
-      {abaAtiva === 'pesquisar' && <ThemedText>Conteúdo de Pesquisa</ThemedText>}
-    </View>
+        {abaAtiva === 'comunidade' && (
+          <View style={styles.conteudoCentralizado}>
+            <ThemedText>Conteúdo da Comunidade</ThemedText>
+          </View>
+        )}
+
+        {abaAtiva === 'pesquisar' && (
+          <View style={styles.conteudoCentralizado}>
+            <ThemedText>Conteúdo de Pesquisa</ThemedText>
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 16,
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
   },
-  title: {
-    fontSize: 24,
+  contentArea: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingTop: 8,
+  },
+  conteiner_quadrado: {
+    backgroundColor: 'white',
+    borderRadius: 14,
+    margin: 7,
+    padding: 0,
+    minHeight: QUADRADO_GRANDE_SIZE,
+    width: QUADRADO_GRANDE_SIZE,
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+  headerStyle: {
+    alignSelf: 'flex-start',
+    marginTop: 14,
+    marginLeft: 14,
+    marginBottom: 12,
+  },
+  titulo: {
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#333',
+  },
+  gridContent: {
+    alignItems: 'center',
+    paddingBottom: 8,
+  },
+  quadrado: {
+    width: taman_quadrado,
+    height: taman_quadrado,
+    borderRadius: 12,
+    margin: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  textoQuadrado: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333',
+  },
+  conteudoCentralizado: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
