@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 const router = useRouter();
 
+
 type Props = {
   user: string;
   xp: number;
