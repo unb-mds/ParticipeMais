@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User  # ?
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -88,7 +89,7 @@ class Proposta(models.Model):
 
 class Comentario(models.Model):
     texto = models.TextField()
-    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     proposta = models.ForeignKey(Proposta, on_delete=models.CASCADE, related_name='comentarios')
     criado_em = models.DateTimeField(auto_now_add=True)
 
@@ -98,7 +99,7 @@ class Comentario(models.Model):
 
 class Curtida(models.Model):
     comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, related_name='curtidas')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('comentario', 'usuario')
