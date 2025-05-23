@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, StyleSheet,FlatList } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
+import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+
+
 
 export default function BlocoDinamico({ blocos }: { blocos: any[] }) {
   return (
@@ -66,15 +70,47 @@ function BlocoEnqueteCategoria({ dados }: { dados: { categoria: string, totalCom
       contentContainerStyle={styles.carrossel}
       keyExtractor={(item, index) => `${item.categoria}-${index}`}
       renderItem={({ item }) => (
-        <View style={styles.bloco}>
-          <ThemedText style={styles.titulo_carrossel}>{item.categoria}</ThemedText>
-          <ThemedText style={styles.contador}>{item.totalComentarios} comentários</ThemedText>
+        <View style={[styles.bloco_enquente, { backgroundColor: corDaCategoria(item.categoria) }]}>
+            <View style={styles.logo_estilo}>{getIconByCategoria(item.categoria)}</View>
+            <View style={styles.dados_enquete}>
+            <ThemedText style={styles.titulo_carrossel}>{item.categoria}</ThemedText>
+                <View style={styles.dados_enquete_comentarios}>
+                    <View style={styles.logo_pequeno}><MaterialIcons name="chat-bubble-outline" size={12} color="#fff"/> </View>
+                    <ThemedText style={styles.contador}>{item.totalComentarios} chats abertos</ThemedText>
+                </View>
+            </View>
         </View>
-      )}
+        )}
+
     />
   );
 }
 
+
+function corDaCategoria(categoria: string): string {
+  const mapaCores: Record<string, string> = {
+    'meio ambiente': '#4CAF50',     // verde claro
+    'infraestrutura': '#fff59d',   // amarelo claro
+    'saúde': '#90caf9',            // azul claro
+    'educação': '#ce93d8',         // roxo claro (exemplo extra)
+  };
+
+  return mapaCores[categoria.toLowerCase()] || '#e0e0e0'; // cor padrão se não encontrar
+}
+function getIconByCategoria(categoria: string) {
+  switch (categoria) {
+    case 'Meio Ambiente':
+      return<Ionicons name="leaf-outline" size={24} color="#FFFFFF" />
+    case 'Educação':
+      return <MaterialIcons name="school" size={24} color="#fff" />;
+    case 'Saúde':
+      return <Ionicons name="medkit" size={24} color="#fff" />;
+    case "Infraestrutura":
+        return <MaterialCommunityIcons name="wheel-barrow" size={24} color="#fff" />;
+    default:
+      return <Ionicons name="alert-circle-outline" size={24} color="#fff" />;
+  }
+}
 const styles = StyleSheet.create({
   container: {
     gap: 20,
@@ -139,37 +175,52 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ccc',
     marginTop: 10, // adicione esta linha
-    marginRight: 30
   },
     numero_universal_usuarios: {
     fontSize:18,
     fontWeight: 'bold',
     color: '#000000',
     marginTop: 10, // adicione esta linha
-    marginRight: 100,
+    marginRight: 80,
   },
   carrossel: {
     paddingHorizontal: 16,
-    gap: 12,
+    gap: 6,
   },
-  bloco: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
-    marginRight: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    minWidth: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+bloco_enquente: {
+  borderRadius: 20,
+  padding: 8,
+  elevation: 2,
+  minWidth: 250,
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'row', // ícone + dados lado a lado // espaçamento entre ícone e texto
+},
+
+dados_enquete: {
+  flexDirection: 'column', // força quebra em coluna
+  justifyContent: 'center',
+  marginRight: 50
+},
+dados_enquete_comentarios: {
+  flexDirection: 'row', // força quebra em coluna
+  justifyContent: 'center',
+  gap:5,
+},
   titulo_carrossel: {
+    color: "#ffffff",
     fontWeight: 'bold',
+    fontSize: 15
   },
   contador: {
-    color: '#555',
+    color: '#fff',
     fontSize: 12,
   },
+  logo_estilo:{
+    marginRight: 50,
+  },
+  logo_pequeno:{
+    marginTop:  2
+  }
+
 });

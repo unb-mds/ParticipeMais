@@ -15,6 +15,9 @@ export default function HomeScreen() {
     dados: [
       { categoria: 'Meio Ambiente', totalComentarios: 10 },
       { categoria: 'Educação', totalComentarios: 7 },
+      { categoria: 'infraestutura', totalComentarios: 7 },
+      { categoria: 'Educação', totalComentarios: 7 },
+      { categoria: 'Educação', totalComentarios: 7 },
     ],
   },
 ];
