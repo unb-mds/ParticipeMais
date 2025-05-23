@@ -7,10 +7,18 @@ import BlocoDinamico from '@/components/blocosdinamicos';
 export default function HomeScreen() {
   const blocos = [
   { tipo: 'banner', titulo: 'Bem-vindo!' },
-  { tipo: 'listaUsuarios', usuarios: ['Giovanni', 'Maria'], comentarios: ["Isso é muito top","top"] },
+  { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
   { tipo: 'noticia', titulo: 'Nova função!', corpo: 'Foi lançada uma nova versão do app' },
   { tipo: 'evento', nome: 'Live XP', data: '2025-06-01' },
+  {
+    tipo: 'carrosselCategorias',
+    dados: [
+      { categoria: 'Meio Ambiente', totalComentarios: 10 },
+      { categoria: 'Educação', totalComentarios: 7 },
+    ],
+  },
 ];
+
 
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 

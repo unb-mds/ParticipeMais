@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet,FlatList } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 
 export default function BlocoDinamico({ blocos }: { blocos: any[] }) {
@@ -13,8 +13,8 @@ export default function BlocoDinamico({ blocos }: { blocos: any[] }) {
             return <BlocoListaDadosComunidade key={index} usuarios={bloco.usuarios} comentarios={bloco.comentarios} />;
           case 'noticia':
             return <BlocoComentariosEnquetes key={index} titulo={bloco.titulo} corpo={bloco.corpo} />;
-          case 'evento':
-            return <BlocoEnquete key={index} nome={bloco.nome} data={bloco.data} />;
+          case 'carrosselCategorias':
+            return <BlocoEnqueteCategoria key={index} dados={bloco.dados} />;
           default:
             return null;
         }
@@ -32,10 +32,11 @@ function BlocoListaDadosComunidade({ usuarios, comentarios }: { usuarios: string
     <View style={styles.lista_comunidade_container}>
         <View style={styles.containerComentarios}>
         <ThemedText style = {styles.title_comentarios}> Total de comentários</ThemedText>
+        <ThemedText style = {styles.numero_universal}>{comentarios}</ThemedText>
       </View>
       <View style={styles.containerUSuarios}>
-        {usuarios.map((u, i) => <ThemedText key={`u-${i}`}>👤 {u}</ThemedText>)}
-
+        <ThemedText style = {styles.title_comentarios_usuario}> Usuários ativos</ThemedText>
+        <ThemedText style = {styles.numero_universal_usuarios}>{usuarios}</ThemedText>
       </View>
     </View>
   );
@@ -46,16 +47,31 @@ function BlocoComentariosEnquetes({ titulo, corpo }: { titulo: string, corpo: st
   return (
     <View style={styles.noticia}>
       <ThemedText style={styles.titulo}>{titulo}</ThemedText>
+      
       <ThemedText>{corpo}</ThemedText>
     </View>
   );
 }
 
-function BlocoEnquete({ nome, data }: { nome: string, data: string }) {
+function BlocoEnqueteCategoria({ dados }: { dados: { categoria: string, totalComentarios: number }[] }) {
+  const dadosFiltrados = dados.filter(item => item.totalComentarios > 0);
+
+  if (dadosFiltrados.length === 0) return null;
+
   return (
-    <View style={styles.evento}>
-      <ThemedText>📅 {nome} - {data}</ThemedText>
-    </View>
+    <FlatList
+      data={dadosFiltrados}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.carrossel}
+      keyExtractor={(item, index) => `${item.categoria}-${index}`}
+      renderItem={({ item }) => (
+        <View style={styles.bloco}>
+          <ThemedText style={styles.titulo_carrossel}>{item.categoria}</ThemedText>
+          <ThemedText style={styles.contador}>{item.totalComentarios} comentários</ThemedText>
+        </View>
+      )}
+    />
   );
 }
 
@@ -97,14 +113,63 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
    containerUSuarios: {
-    width: '35%',
+    width: '40%',
     backgroundColor: '#ffffff',
     borderRadius: 8,
     alignItems: 'center',
+    borderWidth: 1, // espessura da borda
+    borderColor: '#cccccc', // cor da borda
   },
     title_comentarios: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#fff'
+    color: '#fff',
+    marginTop: 15, // adicione esta linha
+    marginRight: 30
+  },
+  numero_universal: {
+    fontSize:18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginRight: 150,
+    marginTop: 10, // adicione esta linha
+  },
+      title_comentarios_usuario: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#ccc',
+    marginTop: 10, // adicione esta linha
+    marginRight: 30
+  },
+    numero_universal_usuarios: {
+    fontSize:18,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginTop: 10, // adicione esta linha
+    marginRight: 100,
+  },
+  carrossel: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  bloco: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    minWidth: 140,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titulo_carrossel: {
+    fontWeight: 'bold',
+  },
+  contador: {
+    color: '#555',
+    fontSize: 12,
   },
 });
