@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
+import React from 'react';
 
 <Stack.Screen
   options={{

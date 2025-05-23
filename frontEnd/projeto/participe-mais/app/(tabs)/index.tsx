@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { Platform, StyleSheet,ScrollView, View } from 'react-native';
 import Cabecalho from '@/components/cabecalho'; // ajuste o caminho se necessário
 import { ThemedText } from '@/components/ThemedText';
+import React from 'react';
+
 import BlocoDinamico from '@/components/blocosdinamicos';
+
 
 export default function HomeScreen() {
   const blocos = [

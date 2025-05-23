@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
 
 const router = useRouter();
