@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image,TouchableOpacity} from 'react-native';
+import { View, StyleSheet, Image,TouchableOpacity} from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import React from 'react';
 
 
 const router = useRouter();
+
 
 type Props = {
   user: string;
