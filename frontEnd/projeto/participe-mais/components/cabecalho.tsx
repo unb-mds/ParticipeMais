@@ -49,7 +49,7 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
             styles.title,
             abaAtiva !== 'descubra' ? styles.title_diferente : undefined
           ] as StyleProp<TextStyle>
-        }
+            }
       >
         {abaAtiva === 'comunidade'
           ? 'Comunidade'

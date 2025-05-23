@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text } from 'react-native';
+import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import Cabecalho from '@/components/cabecalho';
 import { ThemedText } from '@/components/ThemedText';
 
@@ -11,12 +11,16 @@ const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE
 // Componentes de exemplo para cada tipo de quadrado
 const QuadradoProposta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
+
     <Text style={styles.textoQuadrado}>Proposta</Text>
   </View>
 );
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
-    <Text style={styles.textoQuadrado}>Botão</Text>
+    <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
+    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
+    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
+    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
   </View>
 );
 const QuadradoPergunta = () => (
@@ -43,23 +47,26 @@ export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
   // Quantidades desejadas de cada tipo de quadrado
-  const propostas = 7;
-  const botoes = 3;
-  const perguntas = 4;
+  const propostas = 9;
+  const botoes = 1;
+  const perguntas =3;
 
   // useMemo para gerar e randomizar os dados apenas uma vez por montagem do componente
   const data = useMemo(() => {
     // Cria arrays de objetos para cada tipo, cada um com id único e tipo correspondente
     const arr = [
       ...Array.from({ length: propostas }, (_, i) => ({ id: `proposta-${i}`, tipo: 'proposta' })),
-      ...Array.from({ length: botoes }, (_, i) => ({ id: `botao-${i}`, tipo: 'botao' })),
       ...Array.from({ length: perguntas }, (_, i) => ({ id: `pergunta-${i}`, tipo: 'pergunta' })),
     ];
-    // Separa as propostas dos outros tipos
-    const propostasArr = arr.filter(item => item.tipo === 'proposta');
-    const outrosArr = shuffle(arr.filter(item => item.tipo !== 'proposta'));
+    
+    // Randomiza o array
+    const arrShuffle = shuffle(arr);
+
+    // Seta a primeira posicao do array como botao
+    arrShuffle[0] = ({ id: `botao-${botoes}`, tipo: 'botao' })
+    
     // Junta as propostas (prioridade) seguidas dos outros tipos embaralhados
-    return [...propostasArr, ...outrosArr];
+    return [...arrShuffle];
   }, []);
 
   // Função que renderiza o componente correto de acordo com o tipo do item
@@ -110,6 +117,7 @@ export default function HomeScreen() {
             <ThemedText>Conteúdo de Pesquisa</ThemedText>
           </View>
         )}
+
       </View>
     </SafeAreaView>
   );
@@ -127,9 +135,7 @@ const styles = StyleSheet.create({
   },
   conteiner_quadrado: {
     backgroundColor: 'white',
-    borderRadius: 14,
     margin: 7,
-    padding: 0,
     minHeight: QUADRADO_GRANDE_SIZE,
     width: QUADRADO_GRANDE_SIZE,
     alignSelf: 'center',
@@ -172,5 +178,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  botao_retangular: {
+    width: 125,
+    height: 15,
+    borderRadius: 12,
+    margin: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+    backgroundColor: '#ccc',
+    shadowColor: '#fff',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
 });
