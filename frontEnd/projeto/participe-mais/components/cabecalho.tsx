@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Dispatch, SetStateAction } from 'react';
+import { StyleProp, TextStyle } from 'react-native';
 import React from 'react';
 
 
@@ -18,6 +19,7 @@ type Props = {
   abaAtiva: 'descubra' | 'comunidade' | 'pesquisar';
   setAbaAtiva: Dispatch<SetStateAction<'comunidade' | 'descubra' | 'pesquisar'>>;
 };
+
 
 
 export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: Props) {
@@ -44,10 +46,12 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
       {/* bloco central com o título e o nome do usuário */}
       <View style={styles.container}>
         <ThemedText
-        style={[
-          styles.title,
-          abaAtiva !== 'descubra' && styles.title_diferente, // aplica estilo extra se NÃO for 'descubra'
-        ]}
+            style={
+          [
+            styles.title,
+            abaAtiva !== 'descubra' ? styles.title_diferente : undefined
+          ] as StyleProp<TextStyle>
+            }
       >
         {abaAtiva === 'comunidade'
           ? 'Comunidade'
@@ -57,7 +61,7 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
       </ThemedText>
 
       {abaAtiva === 'descubra' && (
-       <ThemedText
+      <ThemedText
         style={styles.user}
         numberOfLines={1}
         adjustsFontSizeToFit
