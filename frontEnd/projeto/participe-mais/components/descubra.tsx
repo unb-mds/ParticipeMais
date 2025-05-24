@@ -12,6 +12,11 @@ const QuadradoProposta = () => (
     <ThemedText style={styles.textoQuadrado}>Proposta</ThemedText>
   </View>
 );
+type Item = {
+  id: string;
+  tipo: 'proposta' | 'botao' | 'pergunta';
+};
+
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
     <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
@@ -53,12 +58,13 @@ export default function DescubraSection() {
     return [...arrShuffle];
   }, []);
 
-  const renderItem = ({ item }: { item: { tipo: string } }) => {
-    if (item.tipo === 'proposta') return <QuadradoProposta />;
-    if (item.tipo === 'botao') return <QuadradoBotao />;
-    if (item.tipo === 'pergunta') return <QuadradoPergunta />;
-    return null;
-  };
+const renderItem = ({ item }: { item: Item }) => {
+  if (item.tipo === 'proposta') return <QuadradoProposta />;
+  if (item.tipo === 'botao') return <QuadradoBotao />;
+  if (item.tipo === 'pergunta') return <QuadradoPergunta />;
+  return null;
+};
+
 
   return (
     <View style={styles.conteiner_quadrado}>

@@ -9,7 +9,6 @@ import DescubraSection from '@/components/descubra';
 
 export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
-
   const blocos = [
     { tipo: 'banner', titulo: 'Bem-vindo!' },
     { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
@@ -55,6 +54,7 @@ export default function HomeScreen() {
             <ThemedText>Conteúdo de Pesquisa</ThemedText>
           </View>
         )}
+
       </View>
     </SafeAreaView>
   );
