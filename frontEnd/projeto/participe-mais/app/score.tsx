@@ -5,7 +5,8 @@ import { Stack } from "expo-router";
 
 export default function ScoreScreen() {
   return (
-    
+    <>
+    <View style={styles.container_maior}>
     <ScrollView contentContainerStyle={styles.container}>
       <Stack.Screen
         options={{
@@ -81,12 +82,18 @@ export default function ScoreScreen() {
         </View>
       </View>
     </ScrollView>
+    </View>
+    </>
   );
 }
 
 
 const styles = StyleSheet.create({
-  container: {
+  container_maior:{
+ flex: 1,
+  backgroundColor: '#267DFF',
+  }
+,  container: {
     padding: 16,
     backgroundColor: '#267DFF',
   },
