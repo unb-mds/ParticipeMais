@@ -1,17 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Cabecalho from '@/components/cabecalho';
 import { ThemedText } from '@/components/ThemedText';
+import BlocoDinamico from '@/components/blocosdinamicos';
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 2;
 const QUADRADO_GRANDE_SIZE = width - 40;
 const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
 
-// Componentes de exemplo para cada tipo de quadrado
 const QuadradoProposta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
-
     <Text style={styles.textoQuadrado}>Proposta</Text>
   </View>
 );
@@ -29,7 +28,6 @@ const QuadradoPergunta = () => (
   </View>
 );
 
-// Função para embaralhar array (Fisher-Yates) Ia veio clutch :P
 function shuffle(array: any[]) {
   let currentIndex = array.length, randomIndex;
   while (currentIndex !== 0) {
@@ -42,34 +40,43 @@ function shuffle(array: any[]) {
   return array;
 }
 
+
+
+
 export default function HomeScreen() {
-  // Estado para controlar qual aba está ativa
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
-  // Quantidades desejadas de cada tipo de quadrado
+  const blocos = [
+    { tipo: 'banner', titulo: 'Bem-vindo!' },
+    { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
+    { tipo: 'noticia', titulo: 'Nova função!', corpo: 'Foi lançada uma nova versão do app' },
+    { tipo: 'evento', nome: 'Live XP', data: '2025-06-01' },
+    {
+      tipo: 'carrosselCategorias',
+      dados: [
+        { categoria: 'Meio Ambiente', totalComentarios: 10 },
+        { categoria: 'Educação', totalComentarios: 7 },
+        { categoria: 'infraestutura', totalComentarios: 7 },
+        { categoria: 'Educação', totalComentarios: 7 },
+        { categoria: 'Educação', totalComentarios: 7 },
+      ],
+    },
+  ];
+
   const propostas = 9;
   const botoes = 1;
-  const perguntas =3;
+  const perguntas = 3;
 
-  // useMemo para gerar e randomizar os dados apenas uma vez por montagem do componente
   const data = useMemo(() => {
-    // Cria arrays de objetos para cada tipo, cada um com id único e tipo correspondente
     const arr = [
       ...Array.from({ length: propostas }, (_, i) => ({ id: `proposta-${i}`, tipo: 'proposta' })),
       ...Array.from({ length: perguntas }, (_, i) => ({ id: `pergunta-${i}`, tipo: 'pergunta' })),
     ];
-    
-    // Randomiza o array
     const arrShuffle = shuffle(arr);
-
-    // Seta a primeira posicao do array como botao
-    arrShuffle[0] = ({ id: `botao-${botoes}`, tipo: 'botao' })
-    
-    // Junta as propostas (prioridade) seguidas dos outros tipos embaralhados
+    arrShuffle[0] = { id: `botao-${botoes}`, tipo: 'botao' };
     return [...arrShuffle];
   }, []);
 
-  // Função que renderiza o componente correto de acordo com o tipo do item
   const renderItem = ({ item }: { item: { tipo: string } }) => {
     if (item.tipo === 'proposta') return <QuadradoProposta />;
     if (item.tipo === 'botao') return <QuadradoBotao />;
@@ -79,7 +86,6 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Cabeçalho fixo no topo da tela */}
       <Cabecalho
         user="Giovanni"
         xp={50}
@@ -98,18 +104,19 @@ export default function HomeScreen() {
               keyExtractor={item => item.id}
               contentContainerStyle={styles.gridContent}
               showsVerticalScrollIndicator={false}
-              ListHeaderComponent={
-                <ThemedText style={styles.titulo}>Descubra!</ThemedText>
-              }
+              ListHeaderComponent={<ThemedText style={styles.titulo}>Descubra!</ThemedText>}
               ListHeaderComponentStyle={styles.headerStyle}
             />
           </View>
         )}
 
         {abaAtiva === 'comunidade' && (
-          <View style={styles.conteudoCentralizado}>
-            <ThemedText>Conteúdo da Comunidade</ThemedText>
-          </View>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.fundoBranco}>
+              <ThemedText style={styles.title}>Conheça a comunidade</ThemedText>
+              <BlocoDinamico blocos={blocos} />
+            </View>
+          </ScrollView>
         )}
 
         {abaAtiva === 'pesquisar' && (
@@ -117,7 +124,6 @@ export default function HomeScreen() {
             <ThemedText>Conteúdo de Pesquisa</ThemedText>
           </View>
         )}
-
       </View>
     </SafeAreaView>
   );
@@ -173,11 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     color: '#333',
-  },
-  conteudoCentralizado: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 5,
   },
   botao_retangular: {
     width: 125,
@@ -192,5 +194,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  conteudoCentralizado: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 5,
+  },
+  fundoBranco: {
+    backgroundColor: '#ffffff',
+    padding: 10,
+    margin: 5,
+    minHeight: 550,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });

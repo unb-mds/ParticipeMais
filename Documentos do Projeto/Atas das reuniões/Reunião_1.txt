@@ -1,0 +1,89 @@
+📝 ATA DE REUNIÃO – SPRINT 0 (MDS)
+📅 Data: 07/04/2025
+⏰ Horário: 20h00 às 21h00
+📍 Plataforma: (Discord)
+
+👥 Participantes
+Júlia (responsável por contato com a professora)
+
+Mateus (estudo de Kotlin)
+
+Pedro (estudo de React)
+
+GG (estudo de banco de dados)
+
+Schneider (estudo de modelo de machine learning)
+
+João (responsável pelo GitHub)
+
+(Outros participantes não listados diretamente)
+
+🎯 Objetivos Alcançados
+✅ Definição do novo escopo do projeto: clusterização de propostas
+
+✅ Escolha das tecnologias principais: Kotlin para mobile e Django para backend
+
+✅ Distribuição das primeiras tarefas de estudo
+
+✅ Planejamento inicial de tarefas para a Sprint 1
+
+:computer: Tópicos Discutidos
+Alteração de Escopo
+O projeto agora foca na clusterização de propostas da plataforma Brasil Participativo, usando um modelo pré-treinado fornecido pela professora.
+
+Tecnologias Definidas
+
+Mobile: Kotlin
+
+Backend: Python com Django
+
+API: Comunicação entre frontend e backend via Django REST Framework
+
+Frontend Web: Discussão entre Vue.js (mais simples) e React (preferência de alguns membros, decisão pendente).
+
+Dados e Integrações
+
+Fonte principal: Plataforma Brasil Participativo
+
+Necessidade de web scraping para coleta de dados. Forma de acesso ainda em estudo.
+
+Banco de Dados
+
+Discussão inicial sobre utilizar banco de dados não relacional. Estudo em andamento.
+
+Organização do Projeto
+
+Distribuição de tarefas de estudo técnico.
+
+Estruturação de quadro Kanban para organização das atividades.
+
+João responsável pela organização do GitHub.
+
+Machine Learning
+
+Utilizar modelo pré-treinado.
+
+Júlia irá buscar informações com a professora sobre utilização e escopo exato.
+
+📅 Tarefas e Responsáveis
+
+Tarefa	Responsável(is)	Status
+Contatar professora para esclarecimentos sobre o modelo	Júlia	🔄
+Estudar Kotlin para desenvolvimento mobile	Mateus	🔄
+Estudar React para possível frontend web	Pedro	🔄
+Estudar banco de dados (relacional vs não relacional)	GG	🔄
+Estudar modelo de machine learning fornecido	Schneider e Júlia	🔄
+Organizar repositório no GitHub	João	🔄
+Estruturar quadro Kanban para organização de tarefas	Líder da reunião	🔄
+✅ Encaminhamentos
+📌 Júlia irá obter mais informações com a professora sobre o modelo de clusterização e o escopo.
+
+📌 Todos devem entregar materiais de estudo até amanhã.
+
+📌 Participação obrigatória na reunião de amanhã para definir requisitos e features.
+
+📌 Estruturar GitHub e o quadro Kanban.
+
+🔚 Encerramento
+⏰ Horário: 21h00
+

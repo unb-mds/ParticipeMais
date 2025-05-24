@@ -1,14 +1,12 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform,StyleSheet  } from 'react-native';
-import { BlurView } from 'expo-blur';
 
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Octicons from '@expo/vector-icons/Octicons';
 
