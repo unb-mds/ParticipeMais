@@ -1,4 +1,3 @@
-````markdown
 # Instalação e Inicialização do React Native (Front-end)
 
 ## 1️⃣ Instalação do Node.js
@@ -16,7 +15,7 @@ Para verificar se o **Node.js** e o **npm** estão funcionando, execute no termi
 ```bash
 node -v
 npm -v
-````
+```
 
 ---
 
@@ -81,5 +80,3 @@ npx expo start --tunnel
 ---
 
 ✅ Pronto! Agora você poderá ver o aplicativo rodando no seu dispositivo.
-
-```
