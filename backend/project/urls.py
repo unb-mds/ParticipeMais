@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from usuarios.views import CadastroView, HomeView
+from api.views import CadastroView, HomeView
 
 urlpatterns = [
-    path('', include('usuarios.urls')),
+    path('', include('api.urls')),
     
     
     
