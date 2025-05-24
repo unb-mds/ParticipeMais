@@ -1,72 +1,89 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
+import { Stack } from "expo-router";
 
 export default function ScoreScreen() {
   return (
+    
     <ScrollView contentContainerStyle={styles.container}>
-      
+      <Stack.Screen
+        options={{
+          title: "Score",
+          headerBackTitle: "Voltar",
+        }}
+      />
 
       <View style={styles.welcomeBox}>
-        <Text style={styles.welcomeText}>
+        <ThemedText style={styles.welcomeText}>
           Bem-vindo à aba de Score! Aqui você se desafia a se tornar um cidadão mais atento, engajado e consciente das propostas públicas.
-        </Text>
+        </ThemedText>
       </View>
 
-      <Text style={styles.sectionTitle}>Seus dados</Text>
-      <Text style={styles.scoreNumber}>240<Text style={styles.scoreOutOf}>/500</Text></Text>
-      <Text style={styles.level}>Nível atual: 4 – Cidadão Participativo</Text>
+      <ThemedText style={styles.sectionTitle}>Seus dados</ThemedText>
+      <ThemedText style={styles.scoreNumber}>
+        240<ThemedText style={styles.scoreOutOf}>/500</ThemedText>
+      </ThemedText>
+      <ThemedText style={styles.level}>Nível atual: 4 – Cidadão Participativo</ThemedText>
+
       <View style={styles.progressBarBackground}>
         <View style={styles.progressBarFill} />
       </View>
 
-      <Text style={styles.sectionTitle}>Próxima recompensa:</Text>
+      <ThemedText style={styles.sectionTitle}>Próxima recompensa:</ThemedText>
       <View style={styles.rewardBox}>
-        <Text style={styles.rewardText}>Nível 5{"\n"}"Explorador de Temas"</Text>
+        <ThemedText style={styles.rewardText}>Nível 5{"\n"}"Explorador de Temas"</ThemedText>
       </View>
 
       <View style={styles.unifiedBox}>
-        <Text style={styles.missionsTitle}>Suas Missões</Text>
-        <Text style={styles.missionsSubtitle}>Conclua as missões para avançar de nível e se tornar um cidadão nato!</Text>
+        <ThemedText style={styles.missionsTitle}>Suas Missões</ThemedText>
+        <ThemedText style={styles.missionsSubtitle}>
+          Conclua as missões para avançar de nível e se tornar um cidadão nato!
+        </ThemedText>
 
         <TouchableOpacity style={styles.missionButtonFilled}>
-          <Text style={styles.missionText}>Comente em 2 propostas</Text>
-          <Text style={styles.missionXP}>+20 xp</Text>
+          <ThemedText style={styles.missionText}>Comente em 2 propostas</ThemedText>
+          <ThemedText style={styles.missionXP}>+20 xp</ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.missionButtonGray}>
-          <Text style={styles.missionText}>Vote em 3 temas diferentes</Text>
-          <Text style={styles.missionXP}>+30 xp</Text>
+          <ThemedText style={styles.missionText}>Vote em 3 temas diferentes</ThemedText>
+          <ThemedText style={styles.missionXP}>+30 xp</ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.missionButtonGray}>
-          <Text style={styles.missionText}>Compartilhe uma proposta</Text>
-          <Text style={styles.missionXP}>+50 xp</Text>
+          <ThemedText style={styles.missionText}>Compartilhe uma proposta</ThemedText>
+          <ThemedText style={styles.missionXP}>+50 xp</ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.missionButtonFilled}>
-          <Text style={styles.missionText}>Compartilhe o aplicativo</Text>
-          <Text style={styles.missionXP}>+100 xp</Text>
+          <ThemedText style={styles.missionText}>Compartilhe o aplicativo</ThemedText>
+          <ThemedText style={styles.missionXP}>+100 xp</ThemedText>
         </TouchableOpacity>
 
-        <Text style={styles.linkText}>Ver todas</Text>
+        <ThemedText style={styles.linkText}>Ver todas</ThemedText>
 
-        <Text style={styles.sectionTitleBlack}>Níveis</Text>
-        <Text style={styles.levelsDescBlack}>Veja os níveis que você partiu e onde você pode chegar!</Text>
+        <ThemedText style={styles.sectionTitleBlack}>Níveis</ThemedText>
+        <ThemedText style={styles.levelsDescBlack}>
+          Veja os níveis que você partiu e onde você pode chegar!
+        </ThemedText>
+
         <View style={styles.levelsListBlack}>
-          <Text style={styles.levelItemBlack}>Nível 1: Iniciante Cívico</Text>
-          <Text style={styles.levelItemBlack}>Nível 2: Votante Iniciante</Text>
-          <Text style={styles.levelItemBlack}>Nível 3: Ativador de Temas</Text>
-          <Text style={styles.levelCurrentBlack}>Nível 4: Cidadão Participativo</Text>
-          <Text style={styles.levelLockedBlack}>🔒 Nível 6: Construtor de Vozes</Text>
-          <Text style={styles.levelLockedBlack}>🔒 Nível 7: Guardião do Debate</Text>
-          <Text style={styles.levelLockedBlack}>🔒 Nível 8: Conselheiro Político</Text>
-          <Text style={styles.levelLockedBlack}>🔒 Nível 9: Líder Comunitário</Text>
-          <Text style={styles.levelLockedBlack}>🔒 Nível 10: Mestre Cívico</Text>
+          <ThemedText style={styles.levelItemBlack}>Nível 1: Iniciante Cívico</ThemedText>
+          <ThemedText style={styles.levelItemBlack}>Nível 2: Votante Iniciante</ThemedText>
+          <ThemedText style={styles.levelItemBlack}>Nível 3: Ativador de Temas</ThemedText>
+          <ThemedText style={styles.levelCurrentBlack}>Nível 4: Cidadão Participativo</ThemedText>
+          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 6: Construtor de Vozes</ThemedText>
+          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 7: Guardião do Debate</ThemedText>
+          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 8: Conselheiro Político</ThemedText>
+          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 9: Líder Comunitário</ThemedText>
+          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 10: Mestre Cívico</ThemedText>
         </View>
       </View>
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
