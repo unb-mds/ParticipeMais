@@ -1,20 +1,25 @@
-from django.urls import path
+from django.urls import path, include 
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import *
 
-#URLs para o app usuarios
+
+router = DefaultRouter()
+router.register(r'pesquisar', PesquisarView, basename='pesquisar')
+
 urlpatterns = [
     
-    path('', HomeView.as_view(), name='home_page'),
-    path('api/listar', ListarUsuario.as_view(), name='listar_usuarios'), #listas usuários
-    path('api/cadastro/', CadastroView.as_view()),
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
+    path('home', DescubraView.as_view(), name='descubra_page'),
+    path('cadastro/', CadastroView.as_view()),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('api/forgotpassword/', RequestEmail.as_view(), name="request_email"),
-    path('api/forgotpassword/confirmtoken/<uidb64>/<token>', CheckToken.as_view(), name="check_token"),
-    path('api/forgotpassword/setnewpassword/<uidb64>/<token>', SetNewPassword.as_view(), name='set_new_password'),
+    path('forgotpassword/', RequestEmail.as_view(), name="request_email"),
+    path('forgotpassword/confirmtoken/<uidb64>/<token>', CheckToken.as_view(), name="check_token"),
+    path('forgotpassword/setnewpassword/<uidb64>/<token>', SetNewPassword.as_view(), name='set_new_password'),
+    
+    
+    
 ]
 
 # Documentação

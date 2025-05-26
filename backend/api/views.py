@@ -3,11 +3,12 @@ from django.utils.http import urlsafe_base64_decode
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import permissions, generics
+from rest_framework import  viewsets, status, permissions, generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Usuario
+from .models import *
 from .serializers import *
+import random
 # Create your views here.
 
 
@@ -92,22 +93,44 @@ class SetNewPassword(APIView):
             return Response({'message':'Sua senha foi alterada com sucesso!'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class HomeView(APIView):
+class DescubraView(APIView):
     
     permission_classes = [permissions.IsAuthenticated] 
     #essa view só pode ser acessada por usuários autenticados
 
     def get(self, request):
-        serializer = UsuarioSerializer(request.user)
+        conferencia = list(Conferencia.objects.all())
+        proposta = list(Proposta.objects.all())
+        random.shuffle(conferencia) 
+        random.shuffle(proposta)
+        
+        data = {
+            'conferencias': ConferenciaSerializer(conferencia, many=True, fields=['imagem_url']).data,  
+            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo', 'descricao', 'autor_nome', 'url']).data
+        }
+       
+        
         return Response({
                 'message': 'Rota protegida com sucesso!',
-                'data': serializer.data
+                'data': data
             })
+        
+
+        
+class PesquisarView(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para pesquisar conferências.
+    """
+    queryset = Conferencia.objects.all()
+    serializer_class = PesquisaSerializer
+    permission_classes = [permissions.IsAuthenticated]  
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    #filterset_fields = ['nome'] #Filtra registros que correspondem exatamente ao valor passado.
+    search_fields = ['nome', 'descricao']  # Procura pelo termo em qualquer lugar dos campos configurados.
 
 
 
-    
-    
     
     
     

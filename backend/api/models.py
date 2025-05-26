@@ -46,6 +46,9 @@ class Usuario(AbstractBaseUser):
     REQUIRED_FIELDS = ['data_nascimento']
 
     objects = UsuarioManager()
+    
+    
+
 
 class Conferencia(models.Model):
     nome = models.CharField(max_length=255)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario
+from .models import *
 from django.contrib.auth.tokens import PasswordResetTokenGenerator # gera tokens seguross
 from django.utils.encoding import force_bytes 
 from django.utils.http import urlsafe_base64_encode # converter o user.pk em uma string segura para URL.
@@ -47,7 +47,7 @@ class RequestEmailforResetPassword(serializers.Serializer):
             return attrs
         
 
-class SetNewPasswordSerializer(serializers.Serializer):
+class SetNewPasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
     confirmpassword = serializers.CharField(write_only=True, min_length=6)
 
@@ -61,4 +61,50 @@ class SetNewPasswordSerializer(serializers.Serializer):
         
         validate_password(password)
 
-        return super().validate(attrs)
+        return super().validate(attrs) 
+    
+    
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """
+    Um ModelSerializer que aceita um argumento 'fields' para limitar os campos.
+    """
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)  # Pega os campos desejados
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Remove os campos que não estão na lista
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+class PropostaSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Proposta
+        fields = '__all__'
+        
+
+class EtapaSerializer(serializers.ModelSerializer):
+    
+    propostas = PropostaSerializer(many=True, read_only=True)
+    class Meta:
+        model = Etapa
+        fields = ['id', 'titulo', 'descricao', 'regiao', 'propostas', 'status', 'data_inicio', 'data_fim', 'qtd_propostas', 'qtd_inscritos', 'url_proposta_relacionada', 'conferencia']
+
+class ConferenciaSerializer(DynamicFieldsModelSerializer):
+    propostas = PropostaSerializer(many=True, read_only=True)
+    etapas = EtapaSerializer(many=True, read_only=True)
+    class Meta:
+        model = Conferencia
+        fields = '__all__'
+        
+
+class PesquisaSerializer(serializers.ModelSerializer):
+    """
+    Serializador para a view PesquisaView.
+    """
+    class Meta:
+        model = Conferencia
+        fields = ['id', 'nome', 'descricao', 'imagem_url', 'sobre', 'qtd_propostas']
+
