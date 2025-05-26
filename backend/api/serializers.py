@@ -30,6 +30,24 @@ class UsuarioSerializer(serializers.ModelSerializer):
             
         return usuario
     
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True)
+        
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+            
+        try:
+            user = Usuario.objects.get(email=email) #pega o usuario que tem o mesmo email q foi dado
+            if not user.check_password(password): #retorna um bool se bater a senha com a senha (se der erro manda o erro de serializer para ser lido na views)
+                raise serializers.ValidationError("Senha Incorreta, tente novamente")
+        except Usuario.DoesNotExist: #se nn existir usuario com esse email ou senha manda esse erro serializer
+            raise serializers.ValidationError("Falha ao realizar o login, usuário não existe")
+            
+        attrs['user'] = user #retorna o user
+        return attrs
+    
 class RequestEmailforResetPassword(serializers.Serializer):
     email=serializers.EmailField(min_length=2) #campo obrigatório
 
@@ -47,7 +65,7 @@ class RequestEmailforResetPassword(serializers.Serializer):
             return attrs
         
 
-class SetNewPasswordSerializer(serializers.ModelSerializer):
+class SetNewPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, min_length=6)
     confirmpassword = serializers.CharField(write_only=True, min_length=6)
 
@@ -58,11 +76,10 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
 
         if confirmpassword != password:
             raise serializers.ValidationError("As senhas não batem")
-        
+            
         validate_password(password)
 
-        return super().validate(attrs) 
-    
+        return attrs 
     
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """

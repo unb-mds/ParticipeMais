@@ -3,15 +3,16 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import *
 
-
 router = DefaultRouter()
 router.register(r'pesquisar', PesquisarView, basename='pesquisar')
 
 urlpatterns = [
     
+    path('' , Home.as_view(), name='home',),
     path('home', DescubraView.as_view(), name='descubra_page'),
     path('cadastro/', CadastroView.as_view()),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', Login.as_view(), name='login'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('forgotpassword/', RequestEmail.as_view(), name="request_email"),

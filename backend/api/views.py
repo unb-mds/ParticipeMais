@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_decode
+from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
+from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +13,12 @@ from .models import *
 from .serializers import *
 import random
 # Create your views here.
+
+class Home(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        return Response({"message": "Você está logado!", "user": request.user.email})
 
 
 class ListarUsuario(generics.ListAPIView):
@@ -39,7 +48,42 @@ class CadastroView(APIView):
             'errors': serializer_class.errors,
             'message': 'Erro ao cadastrar usuário.'
         }, status=status.HTTP_400_BAD_REQUEST)
+        
+class Login(APIView):
+    permission_classes = []  # sem autenticação aqui
+    authentication_classes = []
+    
+    
+    def post(self,request):        
+        
+        serializer = LoginSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            
+            # resposta padrão
+            response = Response({
+                "message": "Login realizado com sucesso",
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }, status=status.HTTP_200_OK)
+            
+            # gerar o cookie
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=False,          # True para produção com HTTPS
+                samesite='Lax',        # ou 'Strict' ou 'None'
+                max_age=3600)          # duração do cookie 1h
+            
+            return response
 
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)         
+            
 class RequestEmail(APIView):
 
     def post(self,request):
