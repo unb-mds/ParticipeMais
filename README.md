@@ -1,31 +1,49 @@
-# Extração Automatizada de Propostas - Brasil Participativo
 
-Este script automatiza a navegação e coleta de dados da plataforma [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/), permitindo acessar todas as propostas públicas dos processos disponíveis.
+# 📲 Participe+
 
-## Objetivo
+**Participe+** é um aplicativo que busca transformar a forma como a população interage com as informações de políticas públicas, tornando propostas, planos e conferências do site [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/) mais **acessíveis, compreensíveis e interativas** para todos os cidadãos.
 
-Automatizar a extração de propostas públicas, estruturando os dados e facilitando análises posteriores para suporte a decisões públicas.
+---
 
-## Funcionalidades
+## 🧠 Visão Geral
 
-- Percorre automaticamente as seções: **Conferências**, **Consultas Públicas** e **Planos**.
-- Entra em cada processo e acessa as páginas de propostas.
-- Filtra e abre propostas reais (ignora documentos e notícias).
-- Coleta títulos e descrição das conferências, além de título e descrição das propostas
-- Evita duplicidade de acessos e repetições desnecessárias.
-- Lida com múltiplas abas e navega entre páginas numeradas de forma confiável.
+A plataforma coleta e organiza os conteúdos públicos do site Brasil Participativo, aplicando **técnicas de Inteligência Artificial** para:
 
-## Dependências
+- 📄 **Resumir** textos complexos de políticas públicas;
+- 💬 **Gerar perguntas e insights** personalizados com base nos interesses do usuário;
+- 🧭 **Organizar conteúdos por temas** como meio ambiente, economia, educação, entre outros.
+- ☁️ **Criar nuvens de palavras chaves** de cada proposta.
 
-- selenium (pip install selenium)
-- beautifulsoup4 (pip install beautifulsoup4)
+Além disso, o Participe+ será estruturado como uma **rede social cidadã**, permitindo:
 
-## Requisitos
-- Python 3.8+
-- Firefox + GeckoDriver configurado no PATH
+- 👍 Curtidas e salvamento de matérias;
+- 🗨️ Comentários e discussões sobre os temas;
+- 🔔 Personalização do feed com base nas preferências dos usuários.
 
-## Execução
+---
 
-python scraper_conf.py
+## 🛠️ Tecnologias Utilizadas
 
+| Categoria | Ferramenta |
+|----------|------------|
+| Backend  | **Python**, **Django REST Framework** |
+| Frontend | **React native** |
+| Inteligência Artificial | **LangChain**, **FAISS**, **modelos de linguagem LLM** |
+| Coleta de dados | **Web Scraping** com Python |
+| Organização dos temas | **Clusterização** com técnicas de NLP |
+|  PostgreSQL | Para banco de dados ✨ |
+
+---
+
+
+## 🔍 Exemplos de Uso
+
+Imagine receber um resumo claro sobre as últimas propostas de educação no Brasil com uma pergunta que estimule a sua reflexão, como:
+
+> "Como essa proposta pode impactar o acesso à educação nas regiões mais remotas?"
+
+E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse conteúdo para consultar depois.
+
+## 🔗 Links Úteis
+- [Overview do projeto (Figma)](https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=0-1&p=f&t=ClxpcwCEi2E2Fa9L-0)
 
