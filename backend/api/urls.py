@@ -13,6 +13,7 @@ urlpatterns = [
     path('cadastro/', CadastroView.as_view()),
     # path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/', Login.as_view(), name='login'),
+    path('logout/', Logout.as_view(), name="logout"),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('forgotpassword/', RequestEmail.as_view(), name="request_email"),

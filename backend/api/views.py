@@ -84,6 +84,17 @@ class Login(APIView):
 
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)         
             
+            
+class Logout(APIView):
+    def post(self, request):
+        
+            response = Response({"message":"Logout realizado com sucesso"}, status=status.HTTP_200_OK)
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            return response
+            
+            
+            
 class RequestEmail(APIView):
 
     def post(self,request):
