@@ -124,4 +124,9 @@ class PesquisaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conferencia
         fields = ['id', 'nome', 'descricao', 'imagem_url', 'sobre', 'qtd_propostas']
+        
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'message', 'is_read', 'created_at']
 

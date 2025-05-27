@@ -9,39 +9,49 @@ const GRID_SIZE = 2;
 const QUADRADO_GRANDE_SIZE = width - 40;
 const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
 
+// Componentes quadrados
 const QuadradoProposta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
     <Text style={styles.textoQuadrado}>Proposta</Text>
   </View>
 );
+
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
-    <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
+    <ThemedText style={styles.textoQuadrado}>Qual tema você se interessa mais?</ThemedText>
+    <TouchableOpacity style={styles.botao_retangular} />
+    <TouchableOpacity style={styles.botao_retangular} />
+    <TouchableOpacity style={styles.botao_retangular} />
   </View>
 );
+
 const QuadradoPergunta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#afa' }]}>
     <Text style={styles.textoQuadrado}>Pergunta</Text>
   </View>
 );
 
-function shuffle(array: any[]) {
-  let currentIndex = array.length, randomIndex;
+// Função para embaralhar array
+function shuffle<T>(array: T[]): T[] {
+  let currentIndex = array.length;
+  let randomIndex;
+
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]
+      array[randomIndex], array[currentIndex],
     ];
   }
+
   return array;
 }
 
-
-
+// Definição de tipo para itens do FlatList
+type ItemTipo = {
+  id: string;
+  tipo: 'proposta' | 'botao' | 'pergunta';
+};
 
 export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
@@ -67,21 +77,36 @@ export default function HomeScreen() {
   const botoes = 1;
   const perguntas = 3;
 
-  const data = useMemo(() => {
-    const arr = [
-      ...Array.from({ length: propostas }, (_, i) => ({ id: `proposta-${i}`, tipo: 'proposta' })),
-      ...Array.from({ length: perguntas }, (_, i) => ({ id: `pergunta-${i}`, tipo: 'pergunta' })),
-    ];
-    const arrShuffle = shuffle(arr);
-    arrShuffle[0] = { id: `botao-${botoes}`, tipo: 'botao' };
-    return [...arrShuffle];
-  }, []);
+  // Criar dados com ids únicos e embaralhar
+    const data = useMemo(() => {
+  const arr: ItemTipo[] = [
+    ...Array.from({ length: propostas }, (_, i) => ({ id: `proposta-${i}`, tipo: 'proposta' } as ItemTipo)),
+    ...Array.from({ length: perguntas }, (_, i) => ({ id: `pergunta-${i}`, tipo: 'pergunta' } as ItemTipo)),
+  ];
 
-  const renderItem = ({ item }: { item: { tipo: string } }) => {
-    if (item.tipo === 'proposta') return <QuadradoProposta />;
-    if (item.tipo === 'botao') return <QuadradoBotao />;
-    if (item.tipo === 'pergunta') return <QuadradoPergunta />;
-    return null;
+  const arrShuffle = shuffle(arr);
+
+  // Substitui o primeiro item por um botão — botao também está no tipo ItemTipo
+  arrShuffle[0] = { id: `botao-${botoes}`, tipo: 'botao' };
+
+  return arrShuffle;
+}, []);
+
+
+  const renderItem = ({ item }: { item: ItemTipo }) => {
+    // Só para debug, remova em produção
+    // console.log('renderItem:', item);
+
+    switch (item.tipo) {
+      case 'proposta':
+        return <QuadradoProposta />;
+      case 'botao':
+        return <QuadradoBotao />;
+      case 'pergunta':
+        return <QuadradoPergunta />;
+      default:
+        return null;
+    }
   };
 
   return (

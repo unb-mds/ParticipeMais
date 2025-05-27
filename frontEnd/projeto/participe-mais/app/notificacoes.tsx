@@ -80,7 +80,7 @@ export default function Notificacao() {
         data={notificacoes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => {
-          const dataFormatada = new Date(item.data).toLocaleDateString('pt-BR');
+          // const dataFormatada = new Date(item.data).toLocaleDateString('pt-BR');
 
           return (
             <View style={[styles.card]}>

@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
+import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import  viewsets, status, permissions, generics, filters
@@ -12,7 +13,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import *
 from .serializers import *
 import random
-# Create your views here.
+import os
+
+
+# Sistema de autentificação
+# Sistema de autentificação
+# Sistema de autentificação
 
 class Home(APIView):
     permission_classes = [IsAuthenticated]
@@ -148,6 +154,12 @@ class SetNewPassword(APIView):
             return Response({'message':'Sua senha foi alterada com sucesso!'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# features do aplicativo
+# features do aplicativo
+# features do aplicativo
+
+
 class DescubraView(APIView):
     
     permission_classes = [permissions.IsAuthenticated] 
@@ -184,11 +196,18 @@ class PesquisarView(viewsets.ReadOnlyModelViewSet):
     #filterset_fields = ['nome'] #Filtra registros que correspondem exatamente ao valor passado.
     search_fields = ['nome', 'descricao']  # Procura pelo termo em qualquer lugar dos campos configurados.
 
-
-
+class NotificationsView(generics.ListAPIView):
     
+    serializer_class = NotificationSerializer #pega do serializador os trem de notificacoes
+    permission_classes = [permissions.IsAuthenticated] #so acessa se estiver logado
     
-    
+    def get_queryset(self):
+        return Notification.objects.filter(usuario=self.request.user).order_by('-created_at')
 
 
+
+
+# Importar CSV para banco de dados
+# Importar CSV para banco de dados
+# Importar CSV para banco de dados
 
