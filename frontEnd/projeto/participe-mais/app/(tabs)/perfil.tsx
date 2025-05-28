@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { reload } from 'expo-router/build/global-state/routing';
+import { useRouter } from 'expo-router';
+
+const router = useRouter();
 
 export default function Perfil() {
   return (
@@ -17,9 +21,15 @@ export default function Perfil() {
       {/* Seção: Perfil */}
       <Text style={styles.secao}>Perfil</Text>
       <Item texto="Acessar perfil" icon="person-outline" />
-      <Item texto="Notificações" icon="notifications-outline" />
+      <TouchableOpacity onPress={() => router.push('/notificacoes')}> 
+      <Item texto="Notificações" icon="notifications-outline"/>      
+      </TouchableOpacity>
+      
       <Item texto="Favoritos" icon="star-outline" />
+
+      <TouchableOpacity onPress={() => router.push('/agenda')}> 
       <Item texto="Agenda" icon="calendar-outline" />
+      </TouchableOpacity>
 
       {/* Seção: Preferências */}
       <Text style={styles.secao}>Preferências</Text>
@@ -76,7 +86,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    top: 50,
+    marginBottom: 50,
+    // backgroundColor: 'red',
   },
   nome: {
     fontSize: 20,
@@ -87,15 +99,15 @@ const styles = StyleSheet.create({
     color: '#777',
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 45,
+    height: 45,
+    borderRadius: 100,
     backgroundColor: '#ff4500',
   },
   secao: {
     fontSize: 14,
     color: '#666',
-    marginTop: 20,
+    marginTop: 24,
     marginBottom: 8,
   },
   item: {
@@ -128,5 +140,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 24,
-  },
+  }, //todos os direitos
 });
