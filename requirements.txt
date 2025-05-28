@@ -1,0 +1,5 @@
+pandas==2.2.2
+nltk==3.8.1
+langchain==0.1.14
+sentence-transformers==2.2.2
+faiss-cpu==1.7.4
