@@ -3,6 +3,9 @@ import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, Text, TouchableOp
 import Cabecalho from '@/components/cabecalho';
 import { ThemedText } from '@/components/ThemedText';
 import BlocoDinamico from '@/components/blocosdinamicos';
+import { useRouter } from 'expo-router';
+
+const router = useRouter();
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 2;
@@ -17,7 +20,10 @@ const QuadradoProposta = () => (
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
     <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
+    <TouchableOpacity 
+    style={styles.botao_retangular}> 
+    o{() => router.push('/cadastro')}
+    </TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
   </View>
