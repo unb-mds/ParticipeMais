@@ -129,3 +129,9 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'Notification for {self.user.username}: {self.message[:20]}'
+
+
+class UsuarioScore(models.Model):
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    pontos = models.IntegerField(default=0)
+

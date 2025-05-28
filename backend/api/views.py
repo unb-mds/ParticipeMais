@@ -3,7 +3,7 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from rest_framework.response import Response
-# from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -204,7 +204,15 @@ class NotificationsView(generics.ListAPIView):
     def get_queryset(self):
         return Notification.objects.filter(usuario=self.request.user).order_by('-created_at')
 
-
+class ScoreView(APIView):
+    """
+    View para consultar a pontuação do usuário.
+    """
+    permission_classes = [permissions.IsAuthenticated]  
+    
+    def get(self, request):
+        score = UsuarioScore.objects.get_or_create(usuario=request.user)
+        return Response({'usuario': request.user.username, 'pontos': score.pontos})
 
 
 # Importar CSV para banco de dados
