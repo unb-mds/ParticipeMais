@@ -5,20 +5,31 @@ import { ThemedText } from '@/components/ThemedText';
 import BlocoDinamico from '@/components/blocosdinamicos';
 
 const { width } = Dimensions.get('window');
-const GRID_SIZE = 2;
-const QUADRADO_GRANDE_SIZE = width - 40;
-const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
+const GRID_SIZE = 2; // colunas do descubra
+const QUADRADO_GRANDE_SIZE = width - 30; // quadrado branco dos box de opções
+const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE; // tamanho das caixinhas descubra
 
-// Componentes quadrados
+// Definição de tipo para itens do FlatList
+type ItemTipo = {
+  id: string;
+  tipo: 'proposta' | 'botao' | 'pergunta';
+};
+
+// trocar de componente e botar a cor azul nos ativados
+export default function HomeScreen() {
+  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
+
+
+// Componentes quadrados do descubra
 const QuadradoProposta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
     <Text style={styles.textoQuadrado}>Proposta</Text>
   </View>
 );
 
-const QuadradoBotao = () => (
+const QuadradoVotacao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
-    <ThemedText style={styles.textoQuadrado}>Qual tema você se interessa mais?</ThemedText>
+    <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
     <TouchableOpacity style={styles.botao_retangular} />
     <TouchableOpacity style={styles.botao_retangular} />
     <TouchableOpacity style={styles.botao_retangular} />
@@ -47,14 +58,8 @@ function shuffle<T>(array: T[]): T[] {
   return array;
 }
 
-// Definição de tipo para itens do FlatList
-type ItemTipo = {
-  id: string;
-  tipo: 'proposta' | 'botao' | 'pergunta';
-};
 
-export default function HomeScreen() {
-  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
+// Comunidade
 
   const blocos = [
     { tipo: 'banner', titulo: 'Bem-vindo!' },
@@ -72,6 +77,8 @@ export default function HomeScreen() {
       ],
     },
   ];
+
+// Fim da comunidade
 
   const propostas = 9;
   const botoes = 1;
@@ -101,7 +108,7 @@ export default function HomeScreen() {
       case 'proposta':
         return <QuadradoProposta />;
       case 'botao':
-        return <QuadradoBotao />;
+        return <QuadradoVotacao />;
       case 'pergunta':
         return <QuadradoPergunta />;
       default:
@@ -119,9 +126,8 @@ export default function HomeScreen() {
         setAbaAtiva={setAbaAtiva}
       />
 
-      <View style={styles.contentArea}>
+      <View style={styles.conteiner_quadrado}>
         {abaAtiva === 'descubra' && (
-          <View style={styles.conteiner_quadrado}>
             <FlatList
               data={data}
               renderItem={renderItem}
@@ -132,13 +138,12 @@ export default function HomeScreen() {
               ListHeaderComponent={<ThemedText style={styles.titulo}>Descubra!</ThemedText>}
               ListHeaderComponentStyle={styles.headerStyle}
             />
-          </View>
         )}
 
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
-              <ThemedText style={styles.title}>Conheça a comunidade</ThemedText>
+              <ThemedText style={styles.titulo}>Conheça a comunidade</ThemedText>
               <BlocoDinamico blocos={blocos} />
             </View>
           </ScrollView>
@@ -158,19 +163,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f2f2f2',
-  },
-  contentArea: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 8,
-  },
+    
+  }, // fundo das caixas 
   conteiner_quadrado: {
     backgroundColor: 'white',
-    margin: 7,
-    minHeight: QUADRADO_GRANDE_SIZE,
+    margin: 0,
+    padding: 2,
+    minHeight: QUADRADO_GRANDE_SIZE + 30,
+    height: 'auto',
     width: QUADRADO_GRANDE_SIZE,
     alignSelf: 'center',
     overflow: 'hidden',
+    top: -30,
   },
   headerStyle: {
     alignSelf: 'flex-start',
@@ -208,7 +212,7 @@ const styles = StyleSheet.create({
   },
   botao_retangular: {
     width: 125,
-    height: 15,
+    height: 20,
     borderRadius: 12,
     margin: 4,
     justifyContent: 'center',
@@ -234,10 +238,5 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     minHeight: 550,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
 });

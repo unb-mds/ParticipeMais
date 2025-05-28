@@ -70,6 +70,17 @@ class Login(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             
+            #apaga a notificação de boas vindas antiga
+            Notification.objects.filter(usuario=user, titulo="Bem vindo(a)!").delete()
+            
+            #gera nova notificação de boas vindas
+            Notification.objects.create(
+                usuario = user,
+                titulo = "Bem vindo(a)!",
+                message = f"Olá {user.nome}, seja bem vindo(a) de volta!",
+                is_read = False
+            )
+            
             # resposta padrão
             response = Response({
                 "message": "Login realizado com sucesso",
