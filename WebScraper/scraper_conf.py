@@ -30,40 +30,40 @@ if not os.path.exists("etapas.csv"):
         writer.writeheader()
 
 # 2. Arquivo de PROPOSTAS
-if not os.path.exists("propostas.csv"):
-    with open("propostas.csv", mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "Conferência", "Quantidade Propostas",
-            "Título Proposta", "Descrição Proposta", "Link", "Votos", "Autor"
-        ])
-        writer.writeheader()
+# if not os.path.exists("propostas.csv"):
+#     with open("propostas.csv", mode="w", newline="", encoding="utf-8") as f:
+#         writer = csv.DictWriter(f, fieldnames=[
+#             "Conferência", "Quantidade Propostas",
+#             "Título Proposta", "Descrição Proposta", "Link", "Votos", "Autor"
+#         ])
+#         writer.writeheader()
 
-if not os.path.exists("encerradas.csv"):
-    with open("encerradas.csv", mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "Conferência", "Descrição Conferência", "Imagem Conferência", "Etapas"
-        ])
-        writer.writeheader()
+# if not os.path.exists("encerradas.csv"):
+#     with open("encerradas.csv", mode="w", newline="", encoding="utf-8") as f:
+#         writer = csv.DictWriter(f, fieldnames=[
+#             "Conferência", "Descrição Conferência", "Imagem Conferência", "Etapas"
+#         ])
+#         writer.writeheader()
         
-if not os.path.exists("conferencias.csv"):
-    with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-                "Conferência", 
-                "Descrição Conferência", 
-                "Imagem Conferência", 
-                "Sobre Conferência",
-                "Etapas",
-            ])
-        writer.writeheader()  
+# if not os.path.exists("conferencias.csv"):
+#     with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
+#         writer = csv.DictWriter(f, fieldnames=[
+#                 "Conferência", 
+#                 "Descrição Conferência", 
+#                 "Imagem Conferência", 
+#                 "Sobre Conferência",
+#                 "Etapas",
+#             ])
+#         writer.writeheader()  
 
-if not os.path.exists("perguntas.csv"):
-    with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-                "Conferência",
-                "Perguntas", 
-                "Respostas", 
-            ])
-        writer.writeheader()  
+# if not os.path.exists("perguntas.csv"):
+#     with open("perguntas.csv", mode="w", newline="", encoding="utf-8") as f:
+#         writer = csv.DictWriter(f, fieldnames=[
+#                 "Conferência",
+#                 "Perguntas", 
+#                 "Respostas", 
+#             ])
+#         writer.writeheader()  
 
 descricao_conferenci = None
 contador = 0
@@ -275,13 +275,13 @@ for i in range(len(cards_filtrados)):
                                     print(f"RESPOSTA: {resposta}")
                                     print("--------")
 
-                                    with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
-                                        writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
-                                        writer.writerow({
-                                            "Conferência": titulo_conferencia,
-                                            "Perguntas": pergunta,
-                                            "Respostas": resposta
-                                        })
+                                    # with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                    #     writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                    #     writer.writerow({
+                                    #         "Conferência": titulo_conferencia,
+                                    #         "Perguntas": pergunta,
+                                    #         "Respostas": resposta
+                                    #     })
 
                             # formatacao conferencia 5
                             elif p.find("strong"):
@@ -313,13 +313,13 @@ for i in range(len(cards_filtrados)):
                                 print(f"RESPOSTA: {resposta}")
                                 print("--------")
 
-                                with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
-                                    writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
-                                    writer.writerow({
-                                        "Conferência": titulo_conferencia,
-                                        "Perguntas": pergunta,
-                                        "Respostas": resposta
-                                    })
+                                # with open("perguntas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                #     writer = csv.DictWriter(f, fieldnames=["Conferência", "Perguntas", "Respostas"])
+                                #     writer.writerow({
+                                #         "Conferência": titulo_conferencia,
+                                #         "Perguntas": pergunta,
+                                #         "Respostas": resposta
+                                #     })
                             i += 1
 
                     except Exception as e:
@@ -384,21 +384,21 @@ for i in range(len(cards_filtrados)):
                                         print(bloco)
                                         print(" ")
 
-                                with open("conferencias.csv", mode="a", newline="", encoding="utf-8") as f:
-                                            writer = csv.DictWriter(f, fieldnames= [
-                                                    "Conferência", 
-                                                    "Descrição Conferência", 
-                                                    "Imagem Conferência",
-                                                    "Sobre Conferência", 
-                                                    "Etapas",
-                                                ])
-                                            writer.writerow({
-                                                    "Conferência": titulo_conferencia,
-                                                    "Descrição Conferência": descricao_conferencia,
-                                                    "Imagem Conferência":img_url, 
-                                                    "Sobre Conferência":conteudos_limpos,
-                                                    "Etapas": etapas,
-                                                })       
+                                # with open("conferencias.csv", mode="a", newline="", encoding="utf-8") as f:
+                                #             writer = csv.DictWriter(f, fieldnames= [
+                                #                     "Conferência", 
+                                #                     "Descrição Conferência", 
+                                #                     "Imagem Conferência",
+                                #                     "Sobre Conferência", 
+                                #                     "Etapas",
+                                #                 ])
+                                #             writer.writerow({
+                                #                     "Conferência": titulo_conferencia,
+                                #                     "Descrição Conferência": descricao_conferencia,
+                                #                     "Imagem Conferência":img_url, 
+                                #                     "Sobre Conferência":conteudos_limpos,
+                                #                     "Etapas": etapas,
+                                #                 })       
 
                             except Exception as e:
                                 print(f"Erro ao extrair conteúdo da aba 'Sobre': {e}")
@@ -406,376 +406,239 @@ for i in range(len(cards_filtrados)):
                             driver.close()
                             driver.switch_to.window(driver.window_handles[1])
 
-                    else:
-                        with open("encerradas.csv", mode="a", newline="", encoding="utf-8") as f:
-                                                writer = csv.DictWriter(f, fieldnames= [
-                                                    "Conferência", 
-                                                    "Descrição Conferência", 
-                                                    "Imagem Conferência"
-                                                    "Etapas",
-                                                ])
-                                                writer.writerow({
-                                                    "Conferência": titulo_conferencia,
-                                                    "Descrição Conferência": descricao_conferencia,
-                                                    "Imagem Conferência":img_url, 
-                                                    "Etapas": etapas,
-                                                })
+                    # else:
+                    #     with open("encerradas.csv", mode="a", newline="", encoding="utf-8") as f:
+                    #                             writer = csv.DictWriter(f, fieldnames= [
+                    #                                 "Conferência", 
+                    #                                 "Descrição Conferência", 
+                    #                                 "Imagem Conferência"
+                    #                                 "Etapas",
+                    #                             ])
+                    #                             writer.writerow({
+                    #                                 "Conferência": titulo_conferencia,
+                    #                                 "Descrição Conferência": descricao_conferencia,
+                    #                                 "Imagem Conferência":img_url, 
+                    #                                 "Etapas": etapas,
+                    #                             })
                         print("Aba 'Sobre' não encontrada.")
                 else:
                     print("conferencia encerrada")
                 
-                # etapas_links = [
-                #     l for l in links_pag if "etapas" in l.text.lower()
-                # ]
+                etapas_links = [
+                    l for l in links_pag if "etapas" in l.text.lower()
+                ]
                 
-                # if etapas_links: 
-                #     for etapa in etapas_links:
-                #         etapa_url = etapa.get_attribute("href").rstrip("/")
-
+                if etapas_links: 
+                    for etapa in etapas_links:
+                        etapa_url = etapa.get_attribute("href").rstrip("/")
                     
 
-                #     if etapa_url not in propostas_acessadas:
-                #             print(f"Acessando pagina de etapa NOVA: {etapa_url}")
-                #             propostas_acessadas.add(etapa_url)
+                    if etapa_url not in propostas_acessadas:
+                            print(f"Acessando pagina de etapa NOVA: {etapa_url}")
+                            propostas_acessadas.add(etapa_url)
 
-                #             driver.execute_script("window.open(arguments[0]);", etapa_url)
-                #             driver.switch_to.window(driver.window_handles[2])
-                #             time.sleep(5)
-
-                #             # aqui ja ta dentro da pagina de propostas, agora entra uma por uma e é so fazer um script pra pegar os dados
-                #             try:
-                #                 wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'component_card__title')))
-
-                #                 soupi = BeautifulSoup(driver.page_source, "html.parser")
-                #                 qtd_etapas = soupi.find("p", class_='-counter').get_text(strip=True)
-                #                 print(qtd_etapas)
-
-                #                 for pagina1 in range(1, 200): 
-                #                     try:
-                #                         if pagina1 > 1:
-                #                             # atualiza o conteúdo da página atual
-                #                             soup_pag = BeautifulSoup(driver.page_source, "html.parser")
-
-                #                             # busca o link com title correspondente à próxima página
-                #                             proximo_link = soup_pag.find("a", title=f"Número da página: {pagina1}")
-                                            
-                #                             if not proximo_link:
-                #                                 print(f"Página {pagina1} não encontrada. Fim da paginação.")
-                #                                 break
-
-                #                             href = proximo_link.get("href")
-                #                             url_proxima_pagina = "https://brasilparticipativo.presidencia.gov.br" + href
-
-                #                             if url_proxima_pagina in paginas_visitadas:
-                #                                 print(f"Página {pagina1} já visitada.")
-                #                                 continue
-
-                #                             paginas_visitadas.add(url_proxima_pagina)
-                #                             driver.get(url_proxima_pagina)
-                #                             time.sleep(3)
-
-                #                             print(f"Indo para página {pagina1}.")
-
-                #                         # espera as propostas carregarem
-                #                         wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'component_card__title')))
-                #                         titulos_etapas = driver.find_elements(By.CLASS_NAME, 'component_card__title')
-
-                #                         print(f"Encontradas {len(titulos_etapas)} etapas nesta página.")
-                #                         contador1 += 1
-                #                         print(" ")
-                #                         print(f"página {contador1} --------------------")
-
-                #                         # aqui entra em cada etapa
-                #                         for k in range(len(titulos_etapas)):
-                #                             # reatualiza a lista a cada iteração por segurança (evita stale element)
-                #                             titulos_etapas = driver.find_elements(By.CLASS_NAME, 'component_card__title')
-                #                             enderecos_etapas = driver.find_elements(By.CLASS_NAME, 'component_card_address')
-                #                             status_etapas = driver.find_elements(By.CLASS_NAME, 'component-card_badges')
-                #                             data_etapas = driver.find_elements(By.CLASS_NAME, 'component-card-data')
-
-                #                             titulo = titulos_etapas[k]
-                #                             etapa_url = titulo.find_element(By.XPATH, "..").get_attribute("href").rstrip("/")
-
-                #                             # Tenta pegar o endereço correspondente pelo índice
-                #                             try:
-                #                                 endereco_texto = enderecos_etapas[k].text.strip()
-                #                             except IndexError:
-                #                                 endereco_texto = "(sem endereço)"
-
-
-
-                #                             try:
-                #                                 status_texto = status_etapas[k].text.strip()
-                #                             except IndexError:
-                #                                 status_texto = "(sem status)"
-
-                #                             try:
-                #                                 data_texto = data_etapas[k].text.strip()
-                #                             except IndexError:
-                #                                 data_texto = "(sem data)"
-
-                #                             print(f"Acessando ETAPA NOVA: {etapa_url}")
-                #                             print(f"Endereço: {endereco_texto}")
-                #                             print(f"Status: {status_texto}")
-                #                             print(f"Data: {data_texto}")
-                                            
-
-                #                             propostas_acessadas.add(etapa_url)
-
-                #                             # Scroll e clique
-                #                             driver.execute_script("arguments[0].scrollIntoView(true);", titulo)
-                #                             driver.execute_script("window.scrollBy(0, -100);")
-                #                             time.sleep(1)
-                #                             driver.execute_script("arguments[0].click();", titulo)
-
-                #                             try:
-                #                                 wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h2.title")))
-                #                                 time.sleep(1)
-
-                #                                 # Tenta pegar especificamente o <h2 class="title">
-                #                                 titulo_cada_etapa = driver.find_element(By.CSS_SELECTOR, "h2.title").text.strip()
-                #                                 print(titulo_cada_etapa)
-                #                                 print(" ")
-
-                #                                 soup = BeautifulSoup(driver.page_source, 'html.parser')
-                #                                 h2_tag = soup.find("h2", class_="title")
-
-
-                #                                 if h2_tag is None:
-                #                                     raise Exception("Elemento <h2 class='title'> não encontrado no BeautifulSoup.")
-
-                #                                 descricao_partes = []
-                #                                 current = h2_tag.find_next_sibling()
-                #                                 while current and not (current.name == "div" and "meetings-author-info-br" in current.get("class", [])):
-                #                                     descricao_partes.append(current.get_text(strip=True))
-                #                                     current = current.find_next_sibling()
-
-                #                                 descricao_cada_etapa = "\n".join(descricao_partes)
-                #                                 print(descricao_cada_etapa)
-                #                                 print(" ")
-
-
-                #                                 try:
-                #                                     inscritos_etapa = driver.find_element(
-                #                                         By.CLASS_NAME,
-                #                                         "subs-count"
-                #                                     ).text.strip()
-                #                                 except:
-                #                                     inscritos_etapa = "Não informado"
-
-                #                                 print(inscritos_etapa)
-                #                                 print(" ")
-
-
-                #                                 divs_linked = soup.find_all("div", class_="linked-proposals-info")
-
-                #                                 # Lista para armazenar os hrefs encontrados
-                #                                 hrefs_encontrados = []
-                #                                 quantidade_de_propostas = 0
-
-                #                                 for div in divs_linked:
-                #                                     primeiro_link = div.find("a")
-                #                                     if primeiro_link and primeiro_link.has_attr("href"):
-                #                                         href = primeiro_link["href"]
-                #                                         href_completo = "https://brasilparticipativo.presidencia.gov.br" + href
-                #                                         hrefs_encontrados.append(href_completo)
-                #                                         quantidade_de_propostas += 1
-                #                                     else:
-                #                                         print("Nenhum <a> com href encontrado nesta div.")
-
-                #                                 with open("etapas.csv", mode="a", newline="", encoding="utf-8") as f:
-                #                                     writer = csv.DictWriter(f, fieldnames= [
-                #                                         "Conferência", 
-                #                                         "Quantidade Etapas",
-                #                                         "Título Etapa",
-                #                                         "Url Etapa",
-                #                                         "Descricao Etapa",
-                #                                         "Inscritos Etapa",
-                #                                         "Regiao Etapa",
-                #                                         "Status Etapa",
-                #                                         "Data Etapa",
-                #                                         "Propostas Etapa",
-                #                                         "Quantidade Propostas Etapa",
-
-                #                                     ])
-                #                                     writer.writerow({
-                #                                         "Conferência": titulo_conferencia,
-                #                                         "Quantidade Etapas": qtd_etapas,
-                #                                         "Título Etapa": titulo_cada_etapa,
-                #                                         "Url Etapa": etapa_url,
-                #                                         "Descricao Etapa": descricao_cada_etapa,
-                #                                         "Inscritos Etapa": inscritos_etapa,
-                #                                         "Regiao Etapa": endereco_texto,
-                #                                         "Status Etapa": status_texto,
-                #                                         "Data Etapa": data_texto,
-                #                                         "Propostas Etapa": hrefs_encontrados,
-                #                                         "Quantidade Propostas Etapa": quantidade_de_propostas,
-
-
-                #                                     })
-
-                                                
-                #                                 print("\nTodos os hrefs coletados:")
-                #                                 for link in hrefs_encontrados:
-                #                                     print(link)
-                #                                 print(" ")
-                #                                 print(quantidade_de_propostas)
-
-                #                             except Exception as e:
-                #                                 print("Erro ao pegar título ou descrição:", e)
-
-                #                             time.sleep(4)
-
-                #                             # volta para a página anterior
-                #                             driver.back()
-                #                             time.sleep(3)
-
-                #                     except Exception as e:
-                #                         print(f"Erro ao processar página {pagina}: {e}")
-                #                         continue
-
-                #             except Exception as e:
-                #                 print(f"Erro ao acessar etapas individuais: {e}")
-
-                #             driver.close()
-                #             driver.switch_to.window(driver.window_handles[1])
-                #     else:
-                #         print(f"Pagina de etapas já acessada: {etapa_url}")
-                # else:
-                #     print("Não tem etapas")
-
-                proposta_links = [
-                    l for l in links_pag if "proposta" in l.text.lower()
-                ]
-
-                if proposta_links:
-                    for proposta in proposta_links:
-                        proposta_url = proposta.get_attribute("href").rstrip("/")
-
-                        # algumas "propostas" levava para uma noticia ou abria um docs
-                        if "/posts/" in proposta_url or "docs.google.com" in proposta_url or "sharepoint.com" in proposta_url:
-                            print(f"ignorando URL de notícia ou docs")
-                            continue
-
-                        # evita abrir pagina de propostas que ja foram abertas
-                        if proposta_url not in propostas_acessadas:
-                            print(f"Acessando pagina de proposta NOVA: {proposta_url}")
-                            propostas_acessadas.add(proposta_url)
-
-                            driver.execute_script("window.open(arguments[0]);", proposta_url)
+                            driver.execute_script("window.open(arguments[0]);", etapa_url)
                             driver.switch_to.window(driver.window_handles[2])
                             time.sleep(5)
 
                             # aqui ja ta dentro da pagina de propostas, agora entra uma por uma e é so fazer um script pra pegar os dados
                             try:
-                                wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'proposal_card__title')))
+                                wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'component_card__title')))
 
                                 soupi = BeautifulSoup(driver.page_source, "html.parser")
-                                qtd_propostas = soupi.find("p", class_='-counter').get_text(strip=True)
-                                print(qtd_propostas)
+                                qtd_etapas = soupi.find("p", class_='-counter').get_text(strip=True)
+                                print(qtd_etapas)
 
-                                for pagina in range(1, 1000): 
+                                for pagina1 in range(1, 200): 
                                     try:
-                                        if pagina > 1:
+                                        if pagina1 > 1:
                                             # atualiza o conteúdo da página atual
                                             soup_pag = BeautifulSoup(driver.page_source, "html.parser")
 
                                             # busca o link com title correspondente à próxima página
-                                            proximo_link = soup_pag.find("a", title=f"Número da página: {pagina}")
+                                            proximo_link = soup_pag.find("a", title=f"Número da página: {pagina1}")
                                             
                                             if not proximo_link:
-                                                print(f"Página {pagina} não encontrada. Fim da paginação.")
+                                                print(f"Página {pagina1} não encontrada. Fim da paginação.")
                                                 break
 
                                             href = proximo_link.get("href")
                                             url_proxima_pagina = "https://brasilparticipativo.presidencia.gov.br" + href
 
                                             if url_proxima_pagina in paginas_visitadas:
-                                                print(f"Página {pagina} já visitada.")
+                                                print(f"Página {pagina1} já visitada.")
                                                 continue
 
                                             paginas_visitadas.add(url_proxima_pagina)
                                             driver.get(url_proxima_pagina)
                                             time.sleep(3)
 
-                                            print(f"Indo para página {pagina}.")
+                                            print(f"Indo para página {pagina1}.")
 
                                         # espera as propostas carregarem
-                                        wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'proposal_card__title')))
-                                        titulos_propostas = driver.find_elements(By.CLASS_NAME, 'proposal_card__title')
+                                        wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'component_card__title')))
+                                        titulos_etapas = driver.find_elements(By.CLASS_NAME, 'component_card__title')
 
-                                        print(f"Encontradas {len(titulos_propostas)} propostas nesta página.")
-                                        contador += 1
+                                        print(f"Encontradas {len(titulos_etapas)} etapas nesta página.")
+                                        contador1 += 1
                                         print(" ")
-                                        print(f"página {contador} --------------------")
+                                        print(f"página {contador1} --------------------")
 
-                                        # aqui entra em cada proposta
-                                        for k in range(len(titulos_propostas)):
+                                        # aqui entra em cada etapa
+                                        for k in range(len(titulos_etapas)):
                                             # reatualiza a lista a cada iteração por segurança (evita stale element)
-                                            titulos_propostas = driver.find_elements(By.CLASS_NAME, 'proposal_card__title')
-                                            titulo = titulos_propostas[k]
-                                            proposta_url = titulo.find_element(By.XPATH, "..").get_attribute("href").rstrip("/")
+                                            titulos_etapas = driver.find_elements(By.CLASS_NAME, 'component_card__title')
 
-                                            if proposta_url in propostas_acessadas:
-                                                print(f"Proposta já acessada: {proposta_url}")
-                                                continue
+                                            titulo = titulos_etapas[k]
+                                            etapa_url = titulo.find_element(By.XPATH, "..").get_attribute("href").rstrip("/")
 
-                                            print(f"Acessando PROPOSTA NOVA: {proposta_url}")
+                                            print(f"Acessando ETAPA NOVA: {etapa_url}")
 
-                                            propostas_acessadas.add(proposta_url)
+                                            propostas_acessadas.add(etapa_url)
 
-                                            # scroll para o elemento e clique
+                                            # Scroll e clique
                                             driver.execute_script("arguments[0].scrollIntoView(true);", titulo)
                                             driver.execute_script("window.scrollBy(0, -100);")
                                             time.sleep(1)
                                             driver.execute_script("arguments[0].click();", titulo)
 
                                             try:
-                                                # pega título e descrição
-                                                wait.until(EC.presence_of_element_located((By.CLASS_NAME, "proposal-title")))
-                                                titulo_cada_proposta = driver.find_element(By.CLASS_NAME, "proposal-title").text.strip()
-                                                descricao = driver.find_element(By.CLASS_NAME, "br-proposal_body").text.strip()
-                                                qtd_votos = driver.find_element(By.CLASS_NAME, "progress__bar__title").text.strip()
-                                                qtd_votos = qtd_votos.replace("votos", "").strip()
+                                                wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h2.title")))
+                                                time.sleep(1)
+
+                                                # Tenta pegar especificamente o <h2 class="title">
+                                                titulo_cada_etapa = driver.find_element(By.CSS_SELECTOR, "h2.title").text.strip()
+                                                print(titulo_cada_etapa)
+                                                print(" ")
+
+                                                soup = BeautifulSoup(driver.page_source, 'html.parser')
+                                                h2_tag = soup.find("h2", class_="title")
+
+
+                                                if h2_tag is None:
+                                                    raise Exception("Elemento <h2 class='title'> não encontrado no BeautifulSoup.")
+
+                                                descricao_partes = []
+                                                current = h2_tag.find_next_sibling()
+                                                while current and not (current.name == "div" and "meetings-author-info-br" in current.get("class", [])):
+                                                    descricao_partes.append(current.get_text(strip=True))
+                                                    current = current.find_next_sibling()
+
+                                                descricao_cada_etapa = "\n".join(descricao_partes)
+                                                print(descricao_cada_etapa)
+                                                print(" ")
+
+
                                                 try:
-                                                    autor_proposta = driver.find_element(
+                                                    inscritos_etapa = driver.find_element(
                                                         By.CLASS_NAME,
-                                                        "author__name"
+                                                        "subs-count"
                                                     ).text.strip()
                                                 except:
-                                                    autor_proposta = "Autor desconhecido"
+                                                    inscritos_etapa = "Não informado"
 
-                                                print(titulo_cada_proposta)
+                                                try:
+                                                    endereco_texto = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        "map_location_address"
+                                                    ).text.strip()
+                                                except:
+                                                    endereco_texto = "Não informado"
+
+                                                try:
+                                                    dia_etapa = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        "day"
+                                                    ).text.strip()
+                                                    mes_etapa = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        "extra__month"
+                                                    ).text.strip()
+                                                    horario_etapa = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        "extra__time"
+                                                    ).text.strip()
+
+                                                    data_texto = dia_etapa + " de " + mes_etapa + " " + horario_etapa
+
+                                                except:
+                                                    data_texto = "Não informado" 
+
+                                                try:
+                                                    status_texto = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        "gray card__text--status" 
+                                                    ).text.strip()
+                                                except:
+                                                    status_texto = "Não informado"    
+
+
+                                                print(inscritos_etapa)
                                                 print(" ")
-                                                print(descricao)
+                                                print(endereco_texto)
                                                 print(" ")
-                                                print(qtd_votos)
+                                                print(data_texto)
                                                 print(" ")
-                                                print(autor_proposta)
+                                                print(status_texto)
                                                 print(" ")
 
-                                                with open("propostas.csv", mode="a", newline="", encoding="utf-8") as f:
+
+                                                divs_linked = soup.find_all("div", class_="linked-proposals-info")
+
+                                                # Lista para armazenar os hrefs encontrados
+                                                hrefs_encontrados = []
+                                                quantidade_de_propostas = 0
+
+                                                for div in divs_linked:
+                                                    primeiro_link = div.find("a")
+                                                    if primeiro_link and primeiro_link.has_attr("href"):
+                                                        href = primeiro_link["href"]
+                                                        href_completo = "https://brasilparticipativo.presidencia.gov.br" + href
+                                                        hrefs_encontrados.append(href_completo)
+                                                        quantidade_de_propostas += 1
+                                                    else:
+                                                        print("Nenhum <a> com href encontrado nesta div.")
+
+                                                with open("etapas.csv", mode="a", newline="", encoding="utf-8") as f:
                                                     writer = csv.DictWriter(f, fieldnames= [
                                                         "Conferência", 
-                                                        "Quantidade Propostas",
-                                                        "Título Proposta", 
-                                                        "Descrição Proposta", 
-                                                        "Link", 
-                                                        "Votos",
-                                                        "Autor",
+                                                        "Quantidade Etapas",
+                                                        "Título Etapa",
+                                                        "Url Etapa",
+                                                        "Descricao Etapa",
+                                                        "Inscritos Etapa",
+                                                        "Regiao Etapa",
+                                                        "Status Etapa",
+                                                        "Data Etapa",
+                                                        "Propostas Etapa",
+                                                        "Quantidade Propostas Etapa",
+
                                                     ])
                                                     writer.writerow({
                                                         "Conferência": titulo_conferencia,
-                                                        "Quantidade Propostas": qtd_propostas,
-                                                        "Título Proposta": titulo_cada_proposta,
-                                                        "Descrição Proposta": descricao,
-                                                        "Link": proposta_url,
-                                                        "Votos": qtd_votos,
-                                                        "Autor": autor_proposta,
+                                                        "Quantidade Etapas": qtd_etapas,
+                                                        "Título Etapa": titulo_cada_etapa,
+                                                        "Url Etapa": etapa_url,
+                                                        "Descricao Etapa": descricao_cada_etapa,
+                                                        "Inscritos Etapa": inscritos_etapa,
+                                                        "Regiao Etapa": endereco_texto,
+                                                        "Status Etapa": status_texto,
+                                                        "Data Etapa": data_texto,
+                                                        "Propostas Etapa": hrefs_encontrados,
+                                                        "Quantidade Propostas Etapa": quantidade_de_propostas,
+
+
                                                     })
 
+                                                
+                                                print("\nTodos os hrefs coletados:")
+                                                for link in hrefs_encontrados:
+                                                    print(link)
+                                                print(" ")
+                                                print(quantidade_de_propostas)
+
                                             except Exception as e:
-                                                print("Erro ao pegar título", e)
+                                                print("Erro ao pegar título ou descrição:", e)
 
                                             time.sleep(4)
 
@@ -788,15 +651,168 @@ for i in range(len(cards_filtrados)):
                                         continue
 
                             except Exception as e:
-                                print(f"Erro ao acessar propostas individuais: {e}")
+                                print(f"Erro ao acessar etapas individuais: {e}")
 
                             driver.close()
                             driver.switch_to.window(driver.window_handles[1])
-                        else:
-                            print(f"Pagina de proposta já acessada: {proposta_url}")
-
+                    else:
+                        print(f"Pagina de etapas já acessada: {etapa_url}")
                 else:
-                    print("Não tem propostas")
+                    print("Não tem etapas")
+
+                # proposta_links = [
+                #     l for l in links_pag if "proposta" in l.text.lower()
+                # ]
+
+                # if proposta_links:
+                #     for proposta in proposta_links:
+                #         proposta_url = proposta.get_attribute("href").rstrip("/")
+
+                #         # algumas "propostas" levava para uma noticia ou abria um docs
+                #         if "/posts/" in proposta_url or "docs.google.com" in proposta_url or "sharepoint.com" in proposta_url:
+                #             print(f"ignorando URL de notícia ou docs")
+                #             continue
+
+                #         # evita abrir pagina de propostas que ja foram abertas
+                #         if proposta_url not in propostas_acessadas:
+                #             print(f"Acessando pagina de proposta NOVA: {proposta_url}")
+                #             propostas_acessadas.add(proposta_url)
+
+                #             driver.execute_script("window.open(arguments[0]);", proposta_url)
+                #             driver.switch_to.window(driver.window_handles[2])
+                #             time.sleep(5)
+
+                #             # aqui ja ta dentro da pagina de propostas, agora entra uma por uma e é so fazer um script pra pegar os dados
+                #             try:
+                #                 wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'proposal_card__title')))
+
+                #                 soupi = BeautifulSoup(driver.page_source, "html.parser")
+                #                 qtd_propostas = soupi.find("p", class_='-counter').get_text(strip=True)
+                #                 print(qtd_propostas)
+
+                #                 for pagina in range(1, 1000): 
+                #                     try:
+                #                         if pagina > 1:
+                #                             # atualiza o conteúdo da página atual
+                #                             soup_pag = BeautifulSoup(driver.page_source, "html.parser")
+
+                #                             # busca o link com title correspondente à próxima página
+                #                             proximo_link = soup_pag.find("a", title=f"Número da página: {pagina}")
+                                            
+                #                             if not proximo_link:
+                #                                 print(f"Página {pagina} não encontrada. Fim da paginação.")
+                #                                 break
+
+                #                             href = proximo_link.get("href")
+                #                             url_proxima_pagina = "https://brasilparticipativo.presidencia.gov.br" + href
+
+                #                             if url_proxima_pagina in paginas_visitadas:
+                #                                 print(f"Página {pagina} já visitada.")
+                #                                 continue
+
+                #                             paginas_visitadas.add(url_proxima_pagina)
+                #                             driver.get(url_proxima_pagina)
+                #                             time.sleep(3)
+
+                #                             print(f"Indo para página {pagina}.")
+
+                #                         # espera as propostas carregarem
+                #                         wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'proposal_card__title')))
+                #                         titulos_propostas = driver.find_elements(By.CLASS_NAME, 'proposal_card__title')
+
+                #                         print(f"Encontradas {len(titulos_propostas)} propostas nesta página.")
+                #                         contador += 1
+                #                         print(" ")
+                #                         print(f"página {contador} --------------------")
+
+                #                         # aqui entra em cada proposta
+                #                         for k in range(len(titulos_propostas)):
+                #                             # reatualiza a lista a cada iteração por segurança (evita stale element)
+                #                             titulos_propostas = driver.find_elements(By.CLASS_NAME, 'proposal_card__title')
+                #                             titulo = titulos_propostas[k]
+                #                             proposta_url = titulo.find_element(By.XPATH, "..").get_attribute("href").rstrip("/")
+
+                #                             if proposta_url in propostas_acessadas:
+                #                                 print(f"Proposta já acessada: {proposta_url}")
+                #                                 continue
+
+                #                             print(f"Acessando PROPOSTA NOVA: {proposta_url}")
+
+                #                             propostas_acessadas.add(proposta_url)
+
+                #                             # scroll para o elemento e clique
+                #                             driver.execute_script("arguments[0].scrollIntoView(true);", titulo)
+                #                             driver.execute_script("window.scrollBy(0, -100);")
+                #                             time.sleep(1)
+                #                             driver.execute_script("arguments[0].click();", titulo)
+
+                #                             try:
+                #                                 # pega título e descrição
+                #                                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, "proposal-title")))
+                #                                 titulo_cada_proposta = driver.find_element(By.CLASS_NAME, "proposal-title").text.strip()
+                #                                 descricao = driver.find_element(By.CLASS_NAME, "br-proposal_body").text.strip()
+                #                                 qtd_votos = driver.find_element(By.CLASS_NAME, "progress__bar__title").text.strip()
+                #                                 qtd_votos = qtd_votos.replace("votos", "").strip()
+                #                                 try:
+                #                                     autor_proposta = driver.find_element(
+                #                                         By.CLASS_NAME,
+                #                                         "author__name"
+                #                                     ).text.strip()
+                #                                 except:
+                #                                     autor_proposta = "Autor desconhecido"
+
+                #                                 print(titulo_cada_proposta)
+                #                                 print(" ")
+                #                                 print(descricao)
+                #                                 print(" ")
+                #                                 print(qtd_votos)
+                #                                 print(" ")
+                #                                 print(autor_proposta)
+                #                                 print(" ")
+
+                #                                 with open("propostas.csv", mode="a", newline="", encoding="utf-8") as f:
+                #                                     writer = csv.DictWriter(f, fieldnames= [
+                #                                         "Conferência", 
+                #                                         "Quantidade Propostas",
+                #                                         "Título Proposta", 
+                #                                         "Descrição Proposta", 
+                #                                         "Link", 
+                #                                         "Votos",
+                #                                         "Autor",
+                #                                     ])
+                #                                     writer.writerow({
+                #                                         "Conferência": titulo_conferencia,
+                #                                         "Quantidade Propostas": qtd_propostas,
+                #                                         "Título Proposta": titulo_cada_proposta,
+                #                                         "Descrição Proposta": descricao,
+                #                                         "Link": proposta_url,
+                #                                         "Votos": qtd_votos,
+                #                                         "Autor": autor_proposta,
+                #                                     })
+
+                #                             except Exception as e:
+                #                                 print("Erro ao pegar título", e)
+
+                #                             time.sleep(4)
+
+                #                             # volta para a página anterior
+                #                             driver.back()
+                #                             time.sleep(3)
+
+                #                     except Exception as e:
+                #                         print(f"Erro ao processar página {pagina}: {e}")
+                #                         continue
+
+                #             except Exception as e:
+                #                 print(f"Erro ao acessar propostas individuais: {e}")
+
+                #             driver.close()
+                #             driver.switch_to.window(driver.window_handles[1])
+                #         else:
+                #             print(f"Pagina de proposta já acessada: {proposta_url}")
+
+                # else:
+                #     print("Não tem propostas")
 
             except Exception as e:
                 print(f"erro ao buscar proposta: {e}")

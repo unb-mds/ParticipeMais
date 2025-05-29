@@ -37,13 +37,17 @@ export default function HomeScreen() {
         setAbaAtiva={setAbaAtiva}
       />
 
+
       <View style={styles.contentArea}>
         {abaAtiva === 'descubra' && <DescubraSection />}
+
 
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
+
               <ThemedText style={styles.title}>Conheça a comunidade!</ThemedText>
+
               <BlocoDinamico blocos={blocos} />
             </View>
           </ScrollView>
@@ -63,6 +67,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     backgroundColor: '#fff',
   },
   contentArea: {
@@ -87,10 +92,12 @@ const styles = StyleSheet.create({
     margin: 5,
     minHeight: 550,
   },
+
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     padding: 5,
   },
+
 });

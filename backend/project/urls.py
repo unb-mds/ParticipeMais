@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from api.views import CadastroView, HomeView
+from api.urls import router, urlpatterns as api_urlpatterns
+
+
 
 urlpatterns = [
-    path('', include('api.urls')),
+    path('admin/', admin.site.urls),
+    path('api/', include(api_urlpatterns)),
+    path('api/', include(router.urls)),
     
     
     

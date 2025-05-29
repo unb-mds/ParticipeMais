@@ -109,7 +109,7 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
             </View>
           <ThemedText style={styles.texto_barra}>{xp} / 500 xp</ThemedText>
         </View>
-      </View>
+      </View> 
        </TouchableOpacity>
     </View>
     <View style={styles.menuAbas}>
@@ -145,11 +145,11 @@ const styles = StyleSheet.create({
   logo: {
     width: 40,                 // largura da imagem
     height: 40,                // altura da imagem
-    marginRight: 12,           // espaço entre a logo e o conteúdo central
   },
   centerContent: {
     flex: 1,                   // ocupa o espaço restante entre logo e sino
-    justifyContent: 'center', // centraliza verticalmente (caso precise)
+    justifyContent: 'center',
+    alignItems: 'center' // centraliza verticalmente (caso precise)
   },
   title: {
     fontSize: 20,              // tamanho do texto do título
@@ -171,20 +171,22 @@ const styles = StyleSheet.create({
   bell: {
     padding: 12,               // espaço interno para o botão
     backgroundColor: '#D9D9D9',// fundo cinza claro
+     width: 50,                 // largura da imagem
+    height: 50, 
     borderRadius: 100,         // deixa o botão redondo
     alignItems: 'center',      // centraliza horizontalmente o ícone
     justifyContent: 'center',  // centraliza verticalmente o ícone
-    marginLeft: 50,           // espaço entre a logo e o conteúdo central
+    //marginLeft: 50,           // espaço entre a logo e o conteúdo central
 
   },
   container:{
-    flexDirection: 'row', alignItems: 'center' ,flex: 1, marginLeft: 40  // ocupa o espaço entre logo e sino
+    flexDirection: 'row', alignItems: 'center', justifyContent:'center', flex: 1// ocupa o espaço entre logo e sino
   },
    Novocontainer: {
     padding: 5,  
-    backgroundColor: '#ffffff',         // cor de fundo branca
+    backgroundColor: '#fffff',         // cor de fundo branca
     marginBottom: 0, // empurra o próximo item para baixo
-  alignItems: 'center',},
+  alignItems: 'center',}, //container que tem o score
 
    quadrado: {
     width: 375,               // largura do quadrado
@@ -252,20 +254,22 @@ textoAbaixo: {
 menuAbas: {
   flexDirection: 'row',
   justifyContent: 'space-around',
-  paddingVertical: 8,
+  paddingVertical: 15,
   borderBottomColor: '#fff',
 },
 abaAtiva: {
   fontWeight: 'bold',
+  fontSize: 16,
   color: '#2670E8',
   borderBottomWidth: 2,
   borderBottomColor: '#2670E8',
   paddingBottom: 4,
-},
+}, //barrinha das opcoes
 
 abaInativa: {
+  fontSize: 16,
   color: '#555',
   paddingBottom: 4,
 },
-});
+}); //barrinha das opções desativado
 
