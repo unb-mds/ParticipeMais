@@ -1,14 +1,30 @@
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_decode
+from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
+from rest_framework.response import Response
 # from rest_framework.decorators import api_view
+import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import permissions, generics
+from rest_framework import  viewsets, status, permissions, generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Usuario
+from .models import *
 from .serializers import *
-# Create your views here.
+import random
+import os
+
+
+# Sistema de autentificação
+# Sistema de autentificação
+# Sistema de autentificação
+
+class Home(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        return Response({"message": "Você está logado!", "user": request.user.email})
 
 
 class ListarUsuario(generics.ListAPIView):
@@ -38,7 +54,64 @@ class CadastroView(APIView):
             'errors': serializer_class.errors,
             'message': 'Erro ao cadastrar usuário.'
         }, status=status.HTTP_400_BAD_REQUEST)
+        
+class Login(APIView):
+    permission_classes = []  # sem autenticação aqui
+    authentication_classes = []
+    
+    
+    def post(self,request):        
+        
+        serializer = LoginSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            
+            #apaga a notificação de boas vindas antiga
+            Notification.objects.filter(usuario=user, titulo="Bem vindo(a)!").delete()
+            
+            #gera nova notificação de boas vindas
+            Notification.objects.create(
+                usuario = user,
+                titulo = "Bem vindo(a)!",
+                message = f"Olá {user.nome}, seja bem vindo(a) de volta!",
+                is_read = False
+            )
+            
+            # resposta padrão
+            response = Response({
+                "message": "Login realizado com sucesso",
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }, status=status.HTTP_200_OK)
+            
+            # gerar o cookie
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=False,          # True para produção com HTTPS
+                samesite='Lax',        # ou 'Strict' ou 'None'
+                max_age=3600)          # duração do cookie 1h
+            
+            return response
 
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)         
+            
+            
+class Logout(APIView):
+    def post(self, request):
+        
+            response = Response({"message":"Logout realizado com sucesso"}, status=status.HTTP_200_OK)
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            return response
+            
+            
+            
 class RequestEmail(APIView):
 
     def post(self,request):
@@ -92,25 +165,60 @@ class SetNewPassword(APIView):
             return Response({'message':'Sua senha foi alterada com sucesso!'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class HomeView(APIView):
+
+# features do aplicativo
+# features do aplicativo
+# features do aplicativo
+
+
+class DescubraView(APIView):
     
     permission_classes = [permissions.IsAuthenticated] 
     #essa view só pode ser acessada por usuários autenticados
 
     def get(self, request):
-        serializer = UsuarioSerializer(request.user)
+        conferencia = list(Conferencia.objects.all())
+        proposta = list(Proposta.objects.all())
+        random.shuffle(conferencia) 
+        random.shuffle(proposta)
+        
+        data = {
+            'conferencias': ConferenciaSerializer(conferencia, many=True, fields=['imagem_url']).data,  
+            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo', 'descricao', 'autor_nome', 'url']).data
+        }
+       
+        
         return Response({
                 'message': 'Rota protegida com sucesso!',
-                'data': serializer.data
+                'data': data
             })
+        
+
+        
+class PesquisarView(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para pesquisar conferências.
+    """
+    queryset = Conferencia.objects.all()
+    serializer_class = PesquisaSerializer
+    permission_classes = [permissions.IsAuthenticated]  
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    #filterset_fields = ['nome'] #Filtra registros que correspondem exatamente ao valor passado.
+    search_fields = ['nome', 'descricao']  # Procura pelo termo em qualquer lugar dos campos configurados.
+
+class NotificationsView(generics.ListAPIView):
+    
+    serializer_class = NotificationSerializer #pega do serializador os trem de notificacoes
+    permission_classes = [permissions.IsAuthenticated] #so acessa se estiver logado
+    
+    def get_queryset(self):
+        return Notification.objects.filter(usuario=self.request.user).order_by('-created_at')
 
 
 
-    
-    
-    
-    
-    
 
-
+# Importar CSV para banco de dados
+# Importar CSV para banco de dados
+# Importar CSV para banco de dados
 
