@@ -98,7 +98,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 
 class PropostaSerializer(DynamicFieldsModelSerializer):
     class Meta:
-        model = Proposta
+        model = Propostas
         fields = '__all__'
         
 
@@ -106,8 +106,8 @@ class EtapaSerializer(serializers.ModelSerializer):
     
     propostas = PropostaSerializer(many=True, read_only=True)
     class Meta:
-        model = Etapa
-        fields = ['id', 'titulo', 'descricao', 'regiao', 'propostas', 'status', 'data_inicio', 'data_fim', 'qtd_propostas', 'qtd_inscritos', 'url_proposta_relacionada', 'conferencia']
+        model = Etapas
+        fields = '__all__'
 
 class ConferenciaSerializer(DynamicFieldsModelSerializer):
     propostas = PropostaSerializer(many=True, read_only=True)
@@ -123,10 +123,10 @@ class PesquisaSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Conferencia
-        fields = ['id', 'nome', 'descricao', 'imagem_url', 'sobre', 'qtd_propostas']
+        fields = '__all__'
         
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ['id', 'message', 'is_read', 'created_at']
+        fields = '__all__'
 
