@@ -2,7 +2,7 @@ import { View, StyleSheet, Image,TouchableOpacity} from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'react-native';
+import { StatusBar,Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Dispatch, SetStateAction } from 'react';
 import { StyleProp, TextStyle } from 'react-native';
@@ -23,6 +23,8 @@ type Props = {
 
 
 export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: Props) {
+
+  
   let titulo = 'Bem-vindo(a)';
   
   if (abaAtiva === 'comunidade') {
@@ -31,9 +33,11 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
     titulo = 'Pesquisar';
   }
   return (
-    <SafeAreaView style={{ backgroundColor: '#ffffff', position:'fixed', top:-50 }} edges={['top']}>    
-    <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
     <>
+
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+   
     <View style={styles.headerContainer}> {/* container principal com layout em linha */}
 
       {/* imagem da logo à esquerda */}
@@ -119,20 +123,25 @@ export default function Cabecalho({  user, xp, nivel, abaAtiva, setAbaAtiva }: P
           <ThemedText style={abaAtiva === 'pesquisar' ? styles.abaAtiva : styles.abaInativa}>Pesquisar</ThemedText>
         </TouchableOpacity>
       </View>
-        
+        </SafeAreaView>
     </>
-    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+  backgroundColor: '#ffffff',
+  paddingTop: -30,
+},
+
   headerContainer: {
-    flexDirection: 'row',       // coloca os elementos em linha
-    alignItems: 'center',       // alinha verticalmente ao centro
-    padding: 10,                // espaçamento interno
-    backgroundColor: '#ffffff',// fundo branco
-    borderBottomWidth: 0,       // sem linha inferior
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10, // mantêm laterais
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0,
   },
+
   logo: {
     width: 40,                 // largura da imagem
     height: 40,                // altura da imagem
