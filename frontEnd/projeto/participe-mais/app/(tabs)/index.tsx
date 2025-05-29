@@ -20,10 +20,7 @@ const QuadradoProposta = () => (
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
     <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
-    <TouchableOpacity 
-    style={styles.botao_retangular}> 
-    o{() => router.push('/cadastro')}
-    </TouchableOpacity>
+    <TouchableOpacity style={styles.botao_retangular}> </TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
   </View>
