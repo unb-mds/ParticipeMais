@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
     gap: 20,
     marginTop: 10,
     alignItems: 'center',
-    height: 100,
     overflow: 'scroll',
   },
   banner: {

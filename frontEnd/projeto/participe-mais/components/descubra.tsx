@@ -85,7 +85,7 @@ const renderItem = ({ item }: { item: Item }) => {
 const styles = StyleSheet.create({
   conteiner_quadrado: {
     backgroundColor: 'white',
-    margin: 7,
+    margin: 10,
     minHeight: QUADRADO_GRANDE_SIZE,
     width: QUADRADO_GRANDE_SIZE,
     alignSelf: 'center',

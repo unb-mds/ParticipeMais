@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // mantêm laterais
     backgroundColor: '#ffffff',
     borderBottomWidth: 0,
+    marginBottom: 15,
   },
 
   logo: {
@@ -158,7 +159,6 @@ const styles = StyleSheet.create({
   title_diferente: {
     fontSize: 20,              // tamanho do texto do título
     fontWeight: 'bold',
-    marginLeft: 45,           // espaço entre a logo e o conteúdo central
         // texto em negrito
   },
   user: {

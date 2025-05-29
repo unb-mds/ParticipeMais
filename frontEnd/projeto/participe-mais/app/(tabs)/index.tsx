@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   fundoBranco: {
     backgroundColor: '#ffffff',
     padding: 10,
-    margin: 5,
+    margin: 10,
     minHeight: 550,
   },
 

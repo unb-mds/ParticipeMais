@@ -24,7 +24,7 @@ export default function ScoreScreen() {
 
       <ThemedText style={styles.sectionTitle}>Seus dados</ThemedText>
       <ThemedText style={styles.scoreNumber}>
-        240<ThemedText style={styles.scoreOutOf}>/500</ThemedText>
+        240<ThemedText style={styles.scoreOutOf}>240/500</ThemedText>
       </ThemedText>
       <ThemedText style={styles.level}>Nível atual: 4 – Cidadão Participativo</ThemedText>
 
