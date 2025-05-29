@@ -1,0 +1,163 @@
+import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Image,
+  Alert,
+} from 'react-native';
+
+const router = useRouter();
+
+export default function TelaCadastro() {
+  // Estados para armazenar os valores dos campos do formulário
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [senhaNovamente, setSenhaNovamente] = useState('');
+
+  // Estado para controlar quais campos estão com erro para aplicar o estilo correto
+  const [erros, setErros] = useState({
+    nome: false,
+    email: false,
+    senha: false,
+    senhaNovamente: false,
+  });
+
+  /**
+   * Função que valida os campos e realiza o cadastro
+   */
+  const handleCadastrar = () => {
+    // Objeto para armazenar erros encontrados na validação
+    const novosErros = {
+      nome: nome.trim() === '',
+      email: email.trim() === '',
+      senha: senha === '',
+      senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
+    };
+
+    // Atualiza o estado de erros para refletir no estilo dos inputs
+    setErros(novosErros);
+
+    // Se algum campo estiver com erro, exibe alerta e interrompe o cadastro
+    if (Object.values(novosErros).some(Boolean)) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
+      return;
+    }
+
+    // Cadastro bem-sucedido: exibe mensagem e navega para a tela inicial
+    Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
+    router.push('/');
+
+    // Limpa os campos após cadastro
+    setNome('');
+    setEmail('');
+    setSenha('');
+    setSenhaNovamente('');
+  };
+
+  /**
+   * Retorna o estilo do input baseado no estado de erro do campo
+   * @param {string} campo - Nome do campo para verificar erro
+   * @returns {object} - Estilo a ser aplicado
+   */
+  const estiloInput = (campo) => (erros[campo] ? styles.inputErro : styles.input);
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'android' ? 'padding' : undefined}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        {/* Logo do app */}
+        <Image
+          source={require('@/assets/images/icon.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+        {/* Campo Nome */}
+        <Text>Insira seu nome de usuário:</Text>
+        <TextInput
+          style={estiloInput('nome')}
+          placeholder="Nome completo"
+          value={nome}
+          onChangeText={setNome}
+          autoCapitalize="words"
+          returnKeyType="next"
+        />
+
+        {/* Campo Email */}
+        <Text>Insira seu e-mail por favor:</Text>
+        <TextInput
+          style={estiloInput('email')}
+          placeholder="email@exemplo.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          returnKeyType="next"
+        />
+
+        {/* Campo Senha */}
+        <Text>Insira sua senha:</Text>
+        <TextInput
+          style={estiloInput('senha')}
+          placeholder="Senha"
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry
+          returnKeyType="next"
+        />
+
+        {/* Campo Repetir Senha */}
+        <Text>Insira sua senha novamente:</Text>
+        <TextInput
+          style={estiloInput('senhaNovamente')}
+          placeholder="Repita a senha"
+          value={senhaNovamente}
+          onChangeText={setSenhaNovamente}
+          secureTextEntry
+          returnKeyType="done"
+        />
+
+        {/* Botão para enviar o formulário */}
+        <View style={styles.botaoContainer}>
+          <Button title="Criar conta" onPress={handleCadastrar} />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+// Estilos do componente
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  scrollContainer: { padding: 20, justifyContent: 'center', flexGrow: 1 },
+  logo: { width: 120, height: 120, alignSelf: 'center', marginBottom: 20 },
+  input: {
+    height: 40,
+    backgroundColor: '#E6E6E6', // fundo cinza claro
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  inputErro: {
+    height: 40,
+    backgroundColor: '#E6E6E6',
+    borderWidth: 2,
+    borderColor: 'red', // borda vermelha para erro
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  botaoContainer: { marginTop: 12 },
+});

@@ -6,7 +6,6 @@ import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
 
 
-
 export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
   const blocos = [
