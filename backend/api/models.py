@@ -124,7 +124,7 @@ class Propostas(models.Model):
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)
     plano = models.ForeignKey(Planos, on_delete=models.CASCADE, null=True, blank=True)
-    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)  # 🔥 Aqui está o relacionamento novo
+    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)  
 
     def __str__(self):
         return self.titulo_proposta
@@ -143,7 +143,7 @@ class Chat(models.Model):
 class Comentarios(models.Model):
     conteudo = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)  # 🔥 Corrigido: relacionamento com User
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)  
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
 
     def __str__(self):

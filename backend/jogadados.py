@@ -64,62 +64,51 @@ print('Etapas importadas')
 
 
 # # ==================== Planos ====================
-# df_planos = pd.read_csv('planos.csv')
+df_planos = pd.read_csv('WebScraper/resultados/planos/planos_dados.csv')
 
-# for _, row in df_planos.iterrows():
-#     Planos.objects.get_or_create(
-#         nome=row['nome'],
-#         descricao=row['descricao'],
-#         image_url=row.get('image_url', ''),
-#         sobre=row.get('sobre', ''),
-#         qtd_propostas=int(row.get('qtd_propostas', 0))
-#     )
-# print('Planos importados')
+for _, row in df_planos.iterrows():
+    Planos.objects.get_or_create(
+        nome=row.iloc[0],          
+        descricao=row.iloc[1],     
+        image_url=row.iloc[2] if len(row) > 2 else '',
+        sobre=row.iloc[3] if len(row) > 3 else '',
+    )
+
+print('Planos importados')
 
 
 
 # # ==================== Consultas ====================
 
-df_consultas = pd.read_csv('WebScraper/resultados/consultas/dados_consultas.csv')
+df_consultas1 = pd.read_csv('WebScraper/resultados/consultas/dados_consultas.csv')
+df_consultas2 = pd.read_csv(
+    'WebScraper/resultados/consultas/sobre_consultas.csv',
+    header=None,
+    names=['Título Consulta', 'Sobre Consulta']
+)
+
+# Inserção dos dados básicos (nome, descricao, image_url, link)
+for _, row in df_consultas1.iterrows():
+    Consultas.objects.get_or_create(
+        nome = row["Título Consulta"],
+        descricao = row["Descrição Consulta"],
+        image_url = row["URL da Imagem"],
+        link = row["Link da Consulta"],
+    )    
 
 
-
-
-for _, row in df_consultas.iterrows():
-    titulo_original = row['Título Consulta']
-    nome_final = TITULO_REPLACEMENTS.get(titulo_original, titulo_original)
-    link = TITULO_LINK_MAP.get(titulo_original, '')
-
-    if pd.isna(nome_final) or nome_final == '':
-        print('Nome vazio encontrado. Pulando...')
-        continue  # pula para a próxima linha
-
-    consulta, created = Consultas.objects.get_or_create(
-        nome=nome_final,
-        defaults={
-            'descricao': row['Descrição Consulta'],
-            'link': link
-        }
-    )
-
-for _, row2 in df_consultas_2.iterrows():
-    titulo_original = row2['Título Consulta']
-    nome_final = TITULO_REPLACEMENTS.get(titulo_original, titulo_original)
-
-    if pd.isna(nome_final) or nome_final == '':
-        print('Nome vazio encontrado no segundo dataframe. Pulando...')
-        continue
+for _, row in df_consultas2.iterrows():
+    nome = row.iloc[0]
+    sobre = row.iloc[1] if len(row) > 1 else ''
 
     try:
-        consulta = Consultas.objects.get(nome=nome_final)
-        consulta.image_url = row2.get('URL da Imagem', '')
-        consulta.sobre = row2.get('Sobre Consulta', '')
+        consulta = Consultas.objects.get(nome=nome.strip())
+        consulta.sobre = sobre
         consulta.save()
     except Consultas.DoesNotExist:
-        print(f'Consulta com nome "{nome_final}" não encontrada para atualizar.')
+        print(f'Plano com nome "{nome}" não encontrado. Não foi possível adicionar o sobre.')
 
 print('Consultas importadas com sucesso!')
-
 
 
 # # ==================== Propostas ====================
