@@ -61,9 +61,9 @@ class Perfil(models.Model):
 
 
 class Conferencia(models.Model):
-    titulo = models.TextField()
+    titulo = models.TextField(default="Sem titulo")
     descricao = models.TextField()
-    image_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(max_length=500,blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     data_subconferencia = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
@@ -76,15 +76,14 @@ class Conferencia(models.Model):
 
 
 class Etapas(models.Model):
-    titulo_etapa = models.CharField(max_length=200)
+    titulo_etapa = models.CharField(max_length=500)
     descricao_etapa = models.TextField()
-    regras = models.TextField()
     status = models.CharField(max_length=50)
-    regiao_etapa = models.CharField(default="não informado", max_length=100)
+    regiao_etapa = models.CharField(default="não informado", max_length=250)
     duracao_etapa = models.CharField(max_length=100)
     qtd_propostas_etapa = models.IntegerField(default=0, null=True)
     qtd_inscritos_etapa = models.IntegerField(default=0, null=True)
-    url_etapa = models.TextField(blank=True, null=True)
+    url_etapa = models.URLField(max_length=500, blank=True, null=True)
     propostas_relacionadas = models.TextField(blank=True, null=True)
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
 
@@ -95,7 +94,7 @@ class Etapas(models.Model):
 class Planos(models.Model):
     nome = models.CharField(max_length=200)
     descricao = models.TextField()
-    image_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
 
@@ -106,9 +105,10 @@ class Planos(models.Model):
 class Consultas(models.Model):
     nome = models.CharField(max_length=200)
     descricao = models.TextField()
-    image_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
+    link = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.nome
