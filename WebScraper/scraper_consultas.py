@@ -13,7 +13,7 @@ import os
 options = Options()
 # options.headless = True  # ativar se quiser rodar em segundo plano
 
-driver = webdriver.Firefox(options=options)
+driver = webdriver.Chrome(options=options)
 wait = WebDriverWait(driver, 20)
 driver.get("https://brasilparticipativo.presidencia.gov.br/")
 
@@ -32,25 +32,6 @@ blacklist_textos = [
     "figura"
 ]
 
-fieldnames = [
-    'Título Consulta',
-    'Descrição da Consulta',
-    'Datas',
-    'Órgão Responsável',
-    'Status',
-    'URL da Imagem',
-    'Enquetes',
-    'Sobre Consulta',
-    'Título de Cada Proposta',
-    'Descrição da Proposta',
-    'Autor da Proposta',
-    'Comentários (Parágrafos)',
-    'Comentários da Consulta (Decreto)',
-    'Comentários da Consulta (Portaria)',
-    'Comentários do Decreto',
-    'Título de Cada Recomendação',
-    'Comentários das Recomendações'
-]
 
 if not os.path.exists("dados_consultas.csv"):
     with open("dados_consultas.csv", mode="w", newline="", encoding="utf-8") as f:
@@ -58,20 +39,31 @@ if not os.path.exists("dados_consultas.csv"):
             'Título Consulta',
             'Descrição Consulta',
             'URL da Imagem',
-            'Enquetes',
             'Sobre Consulta',
-            'Título de Cada Proposta',
-            'Descrição da Proposta',
-            'Autor da Proposta',
-            'Comentários (Parágrafos)',
-            'Comentários da Consulta (Decreto)',
-            'Comentários da Consulta (Portaria)',
-            'Comentários do Decreto',
-            'Título de Cada Recomendação',
-            'Comentários das Recomendações'
+            'Link da Consulta',
+            
             ])
         writer.writeheader()
         
+        
+if not os.path.exists("proposta_consultas.csv"):
+    with open("proposta_consultas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            'Título Consulta',
+            'Título de Cada Proposta',
+            'Descrição da Proposta',
+            'Autor da Proposta',
+            ])
+        writer.writeheader()
+
+if not os.path.exists("sobre_consultas.csv"):
+    with open("sobre_consultas.csv", mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            'Título Consulta',
+            'Sobre Consulta'
+                            
+        ])
+    
 
 def normalizar(texto):
     return texto.lower().replace(" ", "")
@@ -96,10 +88,12 @@ def titulo_descricao_img(soup):
         if texto_elemento:
             titulo_consulta = texto_elemento.get_text(strip=True)
         else:
-            texto_elemento = soup.find("h2", class_="action_title")
-            if texto_elemento:
-                titulo_consulta = texto_elemento.get_text(strip=True)
-            else: 
+            elementos = soup.find_all("h2", class_="action_title")
+            if len(elementos) >= 2:
+                titulo_consulta = elementos[1].get_text(strip=True)
+            elif len(elementos) == 1:
+                titulo_consulta = elementos[0].get_text(strip=True)
+            else:
                 titulo_consulta = "Título não encontrado"
 
     descricao_elemento = soup.find("div", class_="rich-text-display")
@@ -266,89 +260,19 @@ for i in range(len(cards_filtrados)):
                         'Título Consulta',
                         'Descrição Consulta',
                         'URL da Imagem',
-                        'Enquetes',
                         'Sobre Consulta',
-                        'Título de Cada Proposta',
-                        'Descrição da Proposta',
-                        'Autor da Proposta',
-                        'Comentários (Parágrafos)',
-                        'Comentários da Consulta (Decreto)',
-                        'Comentários da Consulta (Portaria)',
-                        'Comentários do Decreto',
-                        'Título de Cada Recomendação',
-                        'Comentários das Recomendações'
+                        'Link da Consulta',
                     ])
                     writer.writerow({
                         "Título Consulta": titulo_consulta,
                         "Descrição Consulta": descricao_consulta,
-                        "URL da Imagem": img_url
+                        "URL da Imagem": img_url,
+                        "Link da Consulta": link
                     })
 
                 
                 containers = soup.find_all("div", class_="step_info-container")
                 
-                # buscar links com a palavra 'pergunta' ou 'dúvida' no texto
-                enquetes_links = [
-                    l for l in links_pag
-                    if "enquetes" in l.text.lower()
-                ]
-
-                for enquete in enquetes_links:
-                    enquete_url = enquete.get_attribute("href").rstrip("/")
-
-                    print(f"Acessando página de enquete{enquete_url}")
-
-                    driver.execute_script("window.open(arguments[0]);", enquete_url)
-                    driver.switch_to.window(driver.window_handles[2])
-                    time.sleep(5)
-
-                    try:
-                        wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'p')))
-                        soup_perguntas = BeautifulSoup(driver.page_source, "html.parser")
-
-                        paragrafos = soup_perguntas.find_all("p") 
-                        
-                        perguntas_limpas = limpar_conteudo(paragrafos, blacklist_textos)           
-                        
-                        with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
-                            writer = csv.DictWriter(f, fieldnames=[
-                                'Título Consulta',
-                                'Descrição Consulta',
-                                'URL da Imagem',
-                                'Enquetes',
-                                'Sobre Consulta',
-                                'Título de Cada Proposta',
-                                'Descrição da Proposta',
-                                'Autor da Proposta',
-                                'Comentários (Parágrafos)',
-                                'Comentários da Consulta (Decreto)',
-                                'Comentários da Consulta (Portaria)',
-                                'Comentários do Decreto',
-                                'Título de Cada Recomendação',
-                                'Comentários das Recomendações'
-                            ])
-                            writer.writerow({
-                                "Título Consulta": titulo_consulta,
-                                "Descrição Consulta": descricao_consulta,
-                                "Enquetes": perguntas_limpas
-                            })
-
-                            # verificação pra ver se a descrição da conferência já está no conteúdo, se tiver nao tem a aba sobre
-                        if any(normalizar(descricao_consulta) in normalizar(texto) for texto in perguntas_limpas):
-                                print("Não existe a aba sobre")
-                        else:
-                                # print("Conteúdo da aba Sobre:\n")
-                                for bloco in perguntas_limpas:
-                                    # esse bloco sao os paragrados da pagina sobre
-                                    print(bloco)
-                                    print(" ")
-
-
-                    except Exception as e:
-                        print(f"Erro ao acessar enquete: {e}")
-
-                    driver.close()
-                    driver.switch_to.window(driver.window_handles[1])
                     
                 # localiza a aba "Sobre"
                 sobre_links = [l for l in links_pag if "sobre" in l.text.lower()]
@@ -372,27 +296,16 @@ for i in range(len(cards_filtrados)):
                             paragrafos = soup_sobre.find_all(["p", "h2", "ol"])
 
                             conteudos_limpos = limpar_conteudo(paragrafos, blacklist_textos)
-                            with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                            with open("sobre_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                                 writer = csv.DictWriter(f, fieldnames=[
                                     'Título Consulta',
-                                    'Descrição Consulta',
-                                    'URL da Imagem',
-                                    'Enquetes',
-                                    'Sobre Consulta',
-                                    'Título de Cada Proposta',
-                                    'Descrição da Proposta',
-                                    'Autor da Proposta',
-                                    'Comentários (Parágrafos)',
-                                    'Comentários da Consulta (Decreto)',
-                                    'Comentários da Consulta (Portaria)',
-                                    'Comentários do Decreto',
-                                    'Título de Cada Recomendação',
-                                    'Comentários das Recomendações'
+                                    'Sobre Consulta'
+                        
                                 ])
                                 writer.writerow({
                                     "Título Consulta": titulo_consulta,
-                                    "Descrição Consulta": descricao_consulta,
-                                    "Sobre Consulta": conteudos_limpos
+                                    "Sobre Consulta": conteudos_limpos,
+        
                                 })
 
                             # print("Conteúdo da aba Sobre:\n")
@@ -409,10 +322,11 @@ for i in range(len(cards_filtrados)):
 
                 else:
                     print("Aba 'Sobre' não encontrada.")
-                    
+                
                 proposta_links = [
                     l for l in links_pag if "proposta" in l.text.lower()
                 ]
+                    
 
                 for proposta in proposta_links:
                     proposta_url = proposta.get_attribute("href").rstrip("/")
@@ -498,35 +412,28 @@ for i in range(len(cards_filtrados)):
                                             wait.until(EC.presence_of_element_located((By.CLASS_NAME, "proposal-title")))
                                             titulo_cada_proposta = driver.find_element(By.CLASS_NAME, "proposal-title").text.strip()
                                             descricao = driver.find_element(By.CLASS_NAME, "br-proposal_body").text.strip()
-                        
+                                            elemento = driver.find_element(By.CLASS_NAME, 'author__name')
+                                            autor = elemento.text.strip()
                                             print(titulo_cada_proposta)
                                             print(" ")
                                             print(descricao)
                                             print(" ")
+                                            print("Autor:", autor)
                 
                                             
-                                            with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                            with open("proposta_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                                                 writer = csv.DictWriter(f, fieldnames=[
                                                     'Título Consulta',
-                                                    'Descrição Consulta',
-                                                    'URL da Imagem',
-                                                    'Enquetes',
-                                                    'Sobre Consulta',
                                                     'Título de Cada Proposta',
                                                     'Descrição da Proposta',
-                                                    'Autor da Proposta',
-                                                    'Comentários (Parágrafos)',
-                                                    'Comentários da Consulta (Decreto)',
-                                                    'Comentários da Consulta (Portaria)',
-                                                    'Comentários do Decreto',
-                                                    'Título de Cada Recomendação',
-                                                    'Comentários das Recomendações'
+                                                    'Autor da Proposta'
                                                 ])
                                                 writer.writerow({
                                                     "Título Consulta": titulo_consulta,
-                                                    "Descrição Consulta": descricao_consulta,
                                                     "Título de Cada Proposta": titulo_cada_proposta,
                                                     "Descrição da Proposta": descricao,
+                                                    "Autor da Proposta": autor,
+                            
                                                 })
                                             
                                             
@@ -550,7 +457,7 @@ for i in range(len(cards_filtrados)):
                         driver.switch_to.window(driver.window_handles[1])
                     else:
                         print(f"Pagina de proposta já acessada: {proposta_url}")
-                    
+                    """
 
                 paragrafos_links = [
                     l for l in links_pag if "parágrafos participativos" in l.text.lower()
@@ -565,7 +472,7 @@ for i in range(len(cards_filtrados)):
                     for comentario in comentarios_paragrafos:
                         print("Texto do comentário:", comentario)
                         print(" ")
-                        with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                        '''with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                             writer = csv.DictWriter(f, fieldnames=[
                                 'Título Consulta',
                                 'Descrição Consulta',
@@ -588,7 +495,7 @@ for i in range(len(cards_filtrados)):
                                 'Comentários (Parágrafos)': comentario
                             })
                                             
-                        
+                """        
                     
                     
                 consulta_decreto_links = [
@@ -644,7 +551,7 @@ for i in range(len(cards_filtrados)):
                     for comentario in comentarios_consulta_portaria:
                         print("Texto do comentário:", comentario)
                         print(" ")
-                        with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                        '''with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                             writer = csv.DictWriter(f, fieldnames=[
                                 'Título Consulta',
                                 'Descrição Consulta',
@@ -665,7 +572,7 @@ for i in range(len(cards_filtrados)):
                                 "Título Consulta": titulo_consulta,
                                 "Descrição Consulta": descricao_consulta,
                                 'Comentários da Consulta (Portaria)': comentario
-                            })
+                            })'''
                         
                             
                             
@@ -683,7 +590,7 @@ for i in range(len(cards_filtrados)):
                     for comentario in comentarios_decreto:
                         print("Texto do comentário:", comentario)
                         print(" ")
-                        with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                        '''with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                             writer = csv.DictWriter(f, fieldnames=[
                                 'Título Consulta',
                                 'Descrição Consulta',
@@ -705,7 +612,7 @@ for i in range(len(cards_filtrados)):
                                 "Descrição Consulta": descricao_consulta,
                                 'Comentários do Decreto': comentario
                             })
-                            
+                            '''
                     
                 recomendacoes_links = [
                     l for l in links_pag if "recomendações" in l.text.lower()
@@ -803,7 +710,7 @@ for i in range(len(cards_filtrados)):
                                                     if texto_comentario:  
                                                         print("Texto do comentário:", texto_comentario)
                                                         print(" ")
-                                                        with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
+                                                        '''         with open("dados_consultas.csv", mode="a", newline="", encoding="utf-8") as f:
                                                             writer = csv.DictWriter(f, fieldnames=[
                                                                 'Título Consulta',
                                                                 'Descrição Consulta',
@@ -826,11 +733,11 @@ for i in range(len(cards_filtrados)):
                                                                 'Título de Cada Recomendação': titulo_cada_recomendacao,
                                                                 'Comentários das Recomendações': texto_comentario
                                                             })
-                                                        
+                                                        '''
                                         else:
                                             print("Nenhum comentário encontrado.")
                                             print(" ")
-                                                
+                                            ''    
                                     except Exception as e:
                                         print("Erro ao pegar título", e)
 
