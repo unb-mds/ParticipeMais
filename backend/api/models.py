@@ -67,12 +67,16 @@ class Conferencia(models.Model):
     sobre = models.TextField(blank=True, null=True)
     data_subconferencia = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
-    perguntas = models.TextField(blank=True, null=True)
-    respostas = models.TextField(blank=True, null=True)
     status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.titulo
+    
+class PerguntasParticipativas(models.Model):    
+    perguntas = models.TextField()    
+    respostas = models.TextField()
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
+
 
 
 class Etapas(models.Model):
@@ -115,11 +119,11 @@ class Consultas(models.Model):
 
 
 class Propostas(models.Model):
-    titulo_proposta = models.CharField(max_length=200)
+    titulo_proposta = models.CharField(max_length=400)
     autor = models.CharField(max_length=100)
     descricao_proposta = models.TextField()
     qtd_votos = models.IntegerField(default=0)
-    url_proposta = models.URLField(blank=True, null=True)
+    url_proposta = models.URLField(max_length=500, blank=True, null=True)
 
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)

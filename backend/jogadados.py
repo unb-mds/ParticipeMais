@@ -2,16 +2,24 @@
 import pandas as pd
 import os
 import django
+import re
 
 # Configurações do Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from api.models import Conferencia, Etapas, Planos, Consultas, Propostas
+from api.models import Conferencia, Etapas, Planos, Consultas, Propostas, PerguntasParticipativas
 
 
 # ==================== Conferencias ====================
 df_conferencias = pd.read_csv('WebScraper/resultados/conferencias/conferenciass.csv')
+df_conferencias2 = pd.read_csv('WebScraper/resultados/conferencias/perguntas.csv')
+df_conferencias3 = pd.read_csv(
+    'WebScraper/resultados/conferencias/encerradas.csv',
+    encoding='utf-8',  
+    lineterminator='\n'
+)
+
 
 for _, row in df_conferencias.iterrows():
     Conferencia.objects.get_or_create(
@@ -21,6 +29,30 @@ for _, row in df_conferencias.iterrows():
         sobre=row.get('Sobre Conferência', ''),
         data_subconferencia=row.get('Etapas') or None,
     )
+
+for _, row in df_conferencias2.iterrows():
+    conferencia = Conferencia.objects.filter(titulo=row.iloc[0]).first() if pd.notna(row.iloc[0]) else None
+    PerguntasParticipativas.objects.get_or_create(
+        perguntas=row.iloc[1],
+        respostas=row.iloc[2] if len(row) > 2 else '',
+        conferencia=conferencia,
+    )
+
+df_conferencias3.fillna('', inplace=True)  
+
+for _, row in df_conferencias3.iterrows():
+    titulo = str(row['Conferência']).strip()
+    descricao = str(row['Descrição Conferência']).strip().replace('\n', ' ').replace('\r', ' ')
+    image = str(row.get('Imagem Conferência', '')).strip()
+
+    Conferencia.objects.get_or_create(
+        titulo=titulo,
+        defaults={
+            'descricao': descricao,
+            'image_url': image,
+        }
+    )
+
 print('Conferências importadas')
 
 
@@ -106,27 +138,93 @@ for _, row in df_consultas2.iterrows():
         consulta.sobre = sobre
         consulta.save()
     except Consultas.DoesNotExist:
-        print(f'Plano com nome "{nome}" não encontrado. Não foi possível adicionar o sobre.')
+        # print(f'Plano com nome "{nome}" não encontrado. Não foi possível adicionar o sobre.')
+        print(f'')
 
 print('Consultas importadas com sucesso!')
 
 
 # # ==================== Propostas ====================
-# df_propostas = pd.read_csv('propostas.csv')
+df_propostas_conferencias = pd.read_csv('WebScraper/resultados/conferencias/propostas.csv')
+df_propostas_planos = pd.read_csv('WebScraper/resultados/planos/propostas_planos.csv')
+df_propostas_planos2 = pd.read_csv('WebScraper/resultados/planos/planos.csv')
+df_propostas_consultas = pd.read_csv(
+    'WebScraper/resultados/consultas/proposta_consultas.csv',
+    encoding='utf-8',
+    lineterminator='\n'
+)
 
-# for _, row in df_propostas.iterrows():
-#     conferencia = Conferencia.objects.filter(titulo=row.get('conferencia')).first() if pd.notna(row.get('conferencia')) else None
-#     consulta = Consultas.objects.filter(nome=row.get('consulta')).first() if pd.notna(row.get('consulta')) else None
-#     plano = Planos.objects.filter(nome=row.get('plano')).first() if pd.notna(row.get('plano')) else None
 
-#     Propostas.objects.get_or_create(
-#         titulo_proposta=row['titulo_proposta'],
-#         autor=row['autor'],
-#         descricao_proposta=row['descricao_proposta'],
-#         qtd_votos=int(row.get('qtd_votos', 0)),
-#         url_proposta=row.get('url_proposta', ''),
-#         conferencia=conferencia,
-#         consulta=consulta,
-#         plano=plano
-#     )
-# print('Propostas importadas')
+for _, row in df_propostas_conferencias.iterrows():
+    conferencia = Conferencia.objects.filter(titulo=row.get('Conferência')).first() if pd.notna(row.get('Conferência')) else None
+
+    votos_str = str(row.get('Votos', '0'))
+    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
+
+    Propostas.objects.get_or_create(
+        titulo_proposta=row['Título Proposta'],
+        autor=row['Autor'],
+        descricao_proposta=row['Descrição Proposta'],
+        qtd_votos=votos_num,
+        url_proposta=row.get('Link', ''),
+        conferencia=conferencia,
+    )
+
+for _, row in df_propostas_planos.iterrows():
+    nome_plano = row.get('Plano')
+    if nome_plano == 'Não tem o titulo na página':
+        nome_plano = 'Plano Clima Participativo'
+
+    plano = Planos.objects.filter(nome=nome_plano).first() if pd.notna(nome_plano) else None
+
+    votos_str = str(row.get('Votos', '0'))
+    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
+
+    Propostas.objects.get_or_create(
+        titulo_proposta=row['Título Proposta'],
+        autor=row['Autor'],
+        descricao_proposta=row['Descrição Proposta'],
+        qtd_votos=votos_num,
+        url_proposta=row.get('Link', ''),
+        plano=plano
+    )
+
+for _, row in df_propostas_planos2.iterrows():
+    plano = Planos.objects.filter(nome=row.get('Plano')).first() if pd.notna(row.get('Plano')) else None
+
+    votos_str = str(row.get('Votos', '0'))
+    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
+
+    Propostas.objects.get_or_create(
+        titulo_proposta=row['Título Proposta'],
+        autor=row['Autor'],
+        descricao_proposta=row['Descrição Proposta'],
+        qtd_votos=votos_num,
+        url_proposta=row.get('Link', ''),
+        plano=plano
+    )
+
+df_propostas_consultas.fillna('', inplace=True)  
+
+for _, row in df_propostas_consultas.iterrows():
+    consulta_nome = str(row.get('Título Consulta')).strip()
+    consulta = Consultas.objects.filter(nome=consulta_nome).first() if consulta_nome else None
+
+    votos_str = str(row.get('qtd_votos', '0'))
+    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
+
+    titulo_proposta = str(row.get('Título de Cada Proposta', '')).strip()
+    autor = str(row.get('Autor da Proposta', '')).strip()
+
+    descricao_proposta = str(row.get('Descrição da Proposta', '')).strip()
+    descricao_proposta = descricao_proposta.replace('\n', ' ').replace('\r', ' ')
+
+    Propostas.objects.get_or_create(
+        titulo_proposta=titulo_proposta,
+        autor=autor,
+        descricao_proposta=descricao_proposta,
+        qtd_votos=votos_num,
+        consulta=consulta,
+    )
+
+print('Propostas importadas')
