@@ -1,35 +1,25 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User  # ?
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-# Create your models here.
-
-## Cria o manager para o modelo Usuario
-## O manager é responsável por criar e gerenciar os usuários
-
+# Manager para o modelo Usuario
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
-        """
-        Cria e retorna um usuário com um email e senha.
-        """
         if not email:
             raise ValueError('O email deve ser definido')
         email = self.normalize_email(email)
         usuario = self.model(email=email, **extra_fields)
         usuario.set_password(password)
-        usuario.is_active = True 
+        usuario.is_active = True
         usuario.save(using=self._db)
         return usuario
 
     def create_superuser(self, email, senha=None, **extra_fields):
-        """
-        Cria e retorna um superusuário com um email e senha.
-        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
-
         return self.create_user(email, senha, **extra_fields)
 
 class Usuario(AbstractBaseUser):
@@ -42,11 +32,8 @@ class Usuario(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    
     USERNAME_FIELD = 'email'
-
     REQUIRED_FIELDS = ['data_nascimento']
-
     objects = UsuarioManager()
 
 class Perfil(models.Model):
@@ -55,29 +42,24 @@ class Perfil(models.Model):
     qtd_propostas = models.IntegerField(default=0)
     qtd_comentarios = models.IntegerField(default=0)
     qtd_likes = models.IntegerField(default=0)
-
     def __str__(self):
         return f"{self.cidade} - {self.data_nascimento}"
-
 
 class Conferencia(models.Model):
     titulo = models.TextField(default="Sem titulo")
     descricao = models.TextField()
-    image_url = models.URLField(max_length=500,blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     data_subconferencia = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
-
     def __str__(self):
         return self.titulo
-    
-class PerguntasParticipativas(models.Model):    
-    perguntas = models.TextField()    
+
+class PerguntasParticipativas(models.Model):
+    perguntas = models.TextField()
     respostas = models.TextField()
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
-
-
 
 class Etapas(models.Model):
     titulo_etapa = models.CharField(max_length=500)
@@ -90,10 +72,8 @@ class Etapas(models.Model):
     url_etapa = models.URLField(max_length=500, blank=True, null=True)
     propostas_relacionadas = models.TextField(blank=True, null=True)
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
-
     def __str__(self):
         return self.titulo_etapa
-
 
 class Planos(models.Model):
     nome = models.CharField(max_length=200)
@@ -101,10 +81,8 @@ class Planos(models.Model):
     image_url = models.URLField(max_length=500, blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
-
     def __str__(self):
         return self.nome
-
 
 class Consultas(models.Model):
     nome = models.CharField(max_length=200)
@@ -113,10 +91,8 @@ class Consultas(models.Model):
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
     link = models.URLField(max_length=500, blank=True, null=True)
-
     def __str__(self):
         return self.nome
-
 
 class Propostas(models.Model):
     titulo_proposta = models.CharField(max_length=400)
@@ -124,57 +100,45 @@ class Propostas(models.Model):
     descricao_proposta = models.TextField()
     qtd_votos = models.IntegerField(default=0)
     url_proposta = models.URLField(max_length=500, blank=True, null=True)
-
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)
     plano = models.ForeignKey(Planos, on_delete=models.CASCADE, null=True, blank=True)
-    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)  
-
+    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return self.titulo_proposta
-
 
 class Chat(models.Model):
     pergunta = models.TextField()
     autor = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
     data_criacao = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return self.pergunta
-
 
 class Comentarios(models.Model):
     conteudo = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)  
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-
     def __str__(self):
         return f"{self.autor.nome} - {self.data_criacao}"
-
 
 class Curtidas(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     comentario = models.ForeignKey(Comentarios, on_delete=models.CASCADE)
     curtido = models.BooleanField(default=True)
-
     def __str__(self):
         return f"{self.usuario.nome} -> {self.comentario.id} | Curtido: {self.curtido}"
-    
-    
+
 class Notification(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=200)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
-        return f'Notification for {self.user.username}: {self.message[:20]}'
-
+        return f'Notification for {self.usuario.email}: {self.message[:20]}'
 
 class UsuarioScore(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     pontos = models.IntegerField(default=0)
-

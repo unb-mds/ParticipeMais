@@ -177,14 +177,16 @@ class DescubraView(APIView):
     #essa view só pode ser acessada por usuários autenticados
 
     def get(self, request):
-        conferencia = list(Conferencia.objects.all())
-        proposta = list(Propostas.objects.all())
+        # conferencia = list(Conferencia.objects.all()) mostrar todas as imagens
+        conferencia = list(Conferencia.objects.order_by('?'))[:5]
+        # proposta = list(Propostas.objects.all()) # mostrar todas as propostas (vai travar o site)
+        proposta = list(Propostas.objects.order_by('?'))[:10] #mostrar 10 aleatorias
         random.shuffle(conferencia) 
         random.shuffle(proposta)
         
         data = {
-            'conferencias': ConferenciaSerializer(conferencia, many=True, fields=['imagem_url']).data,  
-            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo', 'descricao', 'autor_nome', 'url']).data
+            'conferencias': ConferenciaSerializer(conferencia, many=True, fields=['image_url']).data,  
+            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo_proposta', 'descricao_proposta', 'autor', 'url_proposta']).data
         }
        
         
@@ -205,7 +207,7 @@ class PesquisarView(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     #filterset_fields = ['nome'] #Filtra registros que correspondem exatamente ao valor passado.
-    search_fields = ['nome', 'descricao']  # Procura pelo termo em qualquer lugar dos campos configurados.
+    search_fields = ['titulo', 'descricao']  # Procura pelo termo em qualquer lugar dos campos configurados.
 
 class NotificationsView(generics.ListAPIView):
     

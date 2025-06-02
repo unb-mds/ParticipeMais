@@ -1,45 +1,27 @@
-from .models import Comentario
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from .models import Comentarios, Curtidas, UsuarioScore
 
 def atualizar_pontuacao(usuario, pontos):
     """
     Atualiza a pontuação do usuário.
-    
+
     :param usuario: O usuário cuja pontuação será atualizada.
     :param pontos: A quantidade de pontos a ser adicionada ou subtraída.
     """
-    from .models import UsuarioScore  # Importa o modelo Usuario
-
-    score = UsuarioScore.objects.get_or_create(usuario=usuario)
+    # Busca ou cria o score do usuário
+    score, created = UsuarioScore.objects.get_or_create(usuario=usuario)
     score.pontos += pontos
     score.save()
 
-#Isso faz com que toda vez que um comentario for criado, chame essa funcao
-@receiver(post_save, sender='Comentario')   
-def adicionar_pontuacao_comentar(sender, instance, created, **kwargs):
-    """
-    Adiciona pontos ao usuário por comentar.
-    
-    :param usuario: O usuário que comentou.
-    :param pontos: A quantidade de pontos a ser adicionada.
-    
-    """
+# Sinal para adicionar pontuação ao criar um comentário
+@receiver(post_save, sender=Comentarios)
+def adicionar_pontuacao_comentario(sender, instance, created, **kwargs):
     if created:
-        atualizar_pontuacao(instance.usuario, 5)
-        
-        
-@receiver(post_save, sender='Curtida')   
-def adicionar_pontuacao_curtidas(sender, instance, created, **kwargs):
-    """
-    Adiciona pontos ao usuário por comentar.
-    
-    :param usuario: O usuário que comentou.
-    :param pontos: A quantidade de pontos a ser adicionada.
-    
-    """
-    if created:
-        atualizar_pontuacao(instance.usuario, 5)
-        
+        atualizar_pontuacao(instance.autor, 5)
 
+# Sinal para adicionar pontuação ao criar uma curtida
+@receiver(post_save, sender=Curtidas)
+def adicionar_pontuacao_curtida(sender, instance, created, **kwargs):
+    if created:
+        atualizar_pontuacao(instance.usuario, 5)
