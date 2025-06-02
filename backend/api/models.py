@@ -37,6 +37,8 @@ class Usuario(AbstractBaseUser):
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
     data_nascimento = models.DateField()
+    status = models.BooleanField(default=True)
+    idPerfilUser = models.OneToOneField('Perfil', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -46,78 +48,119 @@ class Usuario(AbstractBaseUser):
     REQUIRED_FIELDS = ['data_nascimento']
 
     objects = UsuarioManager()
-    
-    
+
+class Perfil(models.Model):
+    data_nascimento = models.DateField()
+    cidade = models.CharField(max_length=100)
+    qtd_propostas = models.IntegerField(default=0)
+    qtd_comentarios = models.IntegerField(default=0)
+    qtd_likes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.cidade} - {self.data_nascimento}"
 
 
 class Conferencia(models.Model):
-    nome = models.CharField(max_length=255)
+    titulo = models.TextField(default="Sem titulo")
     descricao = models.TextField()
-    imagem_url = models.URLField(max_length=500)
-    sobre = models.TextField()
-    qtd_propostas = models.IntegerField()
+    image_url = models.URLField(max_length=500,blank=True, null=True)
+    sobre = models.TextField(blank=True, null=True)
+    data_subconferencia = models.TextField(blank=True, null=True)
+    qtd_propostas = models.IntegerField(default=0)
+    status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.titulo
+    
+class PerguntasParticipativas(models.Model):    
+    perguntas = models.TextField()    
+    respostas = models.TextField()
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
+
+
+
+class Etapas(models.Model):
+    titulo_etapa = models.CharField(max_length=500)
+    descricao_etapa = models.TextField()
+    status = models.CharField(max_length=50)
+    regiao_etapa = models.CharField(default="não informado", max_length=250)
+    duracao_etapa = models.CharField(max_length=100)
+    qtd_propostas_etapa = models.IntegerField(default=0, null=True)
+    qtd_inscritos_etapa = models.IntegerField(default=0, null=True)
+    url_etapa = models.URLField(max_length=500, blank=True, null=True)
+    propostas_relacionadas = models.TextField(blank=True, null=True)
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.titulo_etapa
+
+
+class Planos(models.Model):
+    nome = models.CharField(max_length=200)
+    descricao = models.TextField()
+    image_url = models.URLField(max_length=500, blank=True, null=True)
+    sobre = models.TextField(blank=True, null=True)
+    qtd_propostas = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nome
 
 
-class Etapa(models.Model):
-    titulo = models.CharField(max_length=255)
+class Consultas(models.Model):
+    nome = models.CharField(max_length=200)
     descricao = models.TextField()
-    regiao = models.CharField(max_length=255)
-    status = models.CharField(max_length=100)
-    data_inicio = models.DateField()
-    data_fim = models.DateField()
-    qtd_propostas = models.IntegerField()
-    qtd_inscritos = models.IntegerField()
-    url_proposta_relacionada = models.URLField(max_length=500)
-    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, related_name="etapas")
+    image_url = models.URLField(max_length=500, blank=True, null=True)
+    sobre = models.TextField(blank=True, null=True)
+    qtd_propostas = models.IntegerField(default=0)
+    link = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
-        return self.titulo
+        return self.nome
 
 
-class Proposta(models.Model):
-    url = models.URLField(max_length=500)
-    titulo = models.CharField(max_length=255)
-    descricao = models.TextField()
-    autor_nome = models.CharField(max_length=255)
-    qtd_votos = models.IntegerField()
-    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, related_name="propostas")
-    etapa = models.ForeignKey(Etapa, null=True, blank=True, on_delete=models.SET_NULL, related_name="propostas")
+class Propostas(models.Model):
+    titulo_proposta = models.CharField(max_length=400)
+    autor = models.CharField(max_length=100)
+    descricao_proposta = models.TextField()
+    qtd_votos = models.IntegerField(default=0)
+    url_proposta = models.URLField(max_length=500, blank=True, null=True)
 
-    def __str__(self):
-        return self.titulo
-
-
-class Comentario(models.Model):
-    texto = models.TextField()
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    proposta = models.ForeignKey(Proposta, on_delete=models.CASCADE, related_name='comentarios')
-    criado_em = models.DateTimeField(auto_now_add=True)
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
+    consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)
+    plano = models.ForeignKey(Planos, on_delete=models.CASCADE, null=True, blank=True)
+    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)  
 
     def __str__(self):
-        return f"{self.autor.username} comentou em {self.proposta.titulo}"
+        return self.titulo_proposta
 
 
-class Curtida(models.Model):
-    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, related_name='curtidas')
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('comentario', 'usuario')
-
-    def __str__(self):
-        return f"{self.usuario.username} curtiu um comentário"
-
-
-class PerguntaParticipativa(models.Model):
-    texto = models.TextField()
-    resposta = models.TextField()
-    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, related_name="perguntas")
+class Chat(models.Model):
+    pergunta = models.TextField()
+    autor = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=100)
+    data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.texto[:50]
+        return self.pergunta
+
+
+class Comentarios(models.Model):
+    conteudo = models.TextField()
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)  
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.autor.nome} - {self.data_criacao}"
+
+
+class Curtidas(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    comentario = models.ForeignKey(Comentarios, on_delete=models.CASCADE)
+    curtido = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.usuario.nome} -> {self.comentario.id} | Curtido: {self.curtido}"
     
     
 class Notification(models.Model):
