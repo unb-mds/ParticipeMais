@@ -4,7 +4,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import *
 
 router = DefaultRouter()
-router.register(r'pesquisar', PesquisarView, basename='pesquisar')
+router.register(r'conferencias', ConferenciaViewSet, basename='conferencia')
+router.register(r'planos', PlanosViewSet, basename='planos')
+router.register(r'consultas', ConsultasViewSet, basename='consultas')
 
 urlpatterns = [
     
@@ -12,7 +14,8 @@ urlpatterns = [
     path('descubra/', DescubraView.as_view(), name='descubra_page'),
     path('cadastro/', CadastroView.as_view()),
     path('score/', ScoreView.as_view(), name='score'),
-    # path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('pesquisar/', PesquisaGeralView.as_view(), name='pesquisa-geral'),
+    
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name="logout"),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),

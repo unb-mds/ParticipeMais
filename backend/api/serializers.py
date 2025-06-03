@@ -115,7 +115,17 @@ class ConferenciaSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Conferencia
         fields = '__all__'
+           
+class PlanosSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Planos
+        fields = '__all__'
         
+class ConsultasSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Consultas
+        fields = '__all__'
+
 
 class PesquisaSerializer(serializers.ModelSerializer):
     """
