@@ -8,8 +8,11 @@ import re
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from api.models import Conferencia, Etapas, Planos, Consultas, Propostas, PerguntasParticipativas
-
+# from api.models import Conferencia, Etapas, Planos, Consultas, Propostas, PerguntasParticipativas
+from conferencias.models import Conferencia, Etapas, PerguntasParticipativas
+from planos.models import Planos
+from consultas.models import Consultas
+from propostas.models import Propostas
 
 # ==================== Conferencias ====================
 df_conferencias = pd.read_csv('../WebScraper/resultados/conferencias/conferenciass.csv')

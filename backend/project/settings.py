@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'api.Usuario'
+AUTH_USER_MODEL = 'autenticacao.Usuario'
 
 
 # Application definition
@@ -44,6 +44,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'api',
+    'autenticacao',
+    'conferencias',
+    'consultas',
+    'planos',
+    'comunidade',
+    'propostas',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +86,7 @@ TEMPLATES = [
 # Configurar JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'api.authentication.CookieJWTAuthentication',
+        'autenticacao.authentication.CookieJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': [
@@ -137,9 +143,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
