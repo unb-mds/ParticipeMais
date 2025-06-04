@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { Feather } from "@expo/vector-icons"; 
 
 const PerfilScreen = () => {
   const [dados, setDados] = useState({
@@ -59,7 +59,7 @@ const PerfilScreen = () => {
             style={styles.avatar}
           />
           <TouchableOpacity style={styles.editIcon}>
-            <Icon name="edit-2" size={14} color="#fff" />
+            <Feather name="edit-2" size={14} color="#fff" /> {/* ⬅️ Ícone corrigido */}
           </TouchableOpacity>
         </View>
         <Text style={styles.username}>Fulanin123</Text>
@@ -98,7 +98,7 @@ const PerfilScreen = () => {
               onChangeText={(text) => handleChange(campo, text)}
             />
             <TouchableOpacity onPress={() => handleEdit(campo)}>
-              <Icon name="edit-2" size={16} color="#000" />
+              <Feather name="edit-2" size={16} color="#000" /> {/* ⬅️ Ícone corrigido */}
             </TouchableOpacity>
           </View>
         </View>
