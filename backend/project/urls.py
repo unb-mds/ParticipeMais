@@ -8,5 +8,5 @@ urlpatterns = [
     path('planos/', include('planos.urls')),
     path('consultas/', include('consultas.urls')),
     path('comunidade/', include('comunidade.urls')),
-    path('api/', include('api.urls')),
+    path('', include('api.urls')),
 ]
