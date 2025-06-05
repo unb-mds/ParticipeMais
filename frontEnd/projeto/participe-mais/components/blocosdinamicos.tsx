@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet,FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-
+const { width } = Dimensions.get('window');
 
 
 
@@ -114,11 +114,16 @@ function getIconByCategoria(categoria: string) {
 const styles = StyleSheet.create({
   container: {
     gap: 20,
+    marginTop: 10,
+    alignItems: 'center',
+    overflow: 'scroll',
   },
   banner: {
     backgroundColor: '#e0f7fa',
     padding: 16,
     borderRadius: 8,
+    fontSize: 14,
+    width: '100%',
   },
   lista_comunidade_container: {
     backgroundColor: '#fff',
@@ -132,6 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3e5f5',
     padding: 16,
     borderRadius: 8,
+    width: '100%',
   },
   evento: {
     backgroundColor: '#e8f5e9',
