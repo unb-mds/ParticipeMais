@@ -27,6 +27,16 @@ if not os.path.exists("propostas_planos.csv"):
         ])
         writer.writeheader()
 
+# if not os.path.exists("planos_dados.csv"):
+#     with open("conferenciass.csv", mode="w", newline="", encoding="utf-8") as f:
+#         writer = csv.DictWriter(f, fieldnames=[
+#                 "Plano", 
+#                 "Descrição Plano", 
+#                 "Imagem Plano", 
+#                 "Sobre Plano",
+#             ])
+#         writer.writeheader()  
+
 contador = 0
 paginas_visitadas = set()
 propostas_acessadas = set()
@@ -82,15 +92,13 @@ for i in range(len(cards_filtrados)):
 
         print(f"Encontrado {len(botoes_participar)} botões em {titulo_secao}")
 
-        for j in range(len(botoes_participar)):
-            todos_links = driver.find_elements(By.TAG_NAME, 'a')
-            botoes_participar = [
-                link for link in todos_links
-                if link.text.strip() in ["Participar", "Visualizar"]
-            ]
+        # Definindo os índices desejados: 0 para a primeira aba, 6 para a sétima aba
+        indices_desejados = [0, 6]
+
+        for j in indices_desejados:
 
             link = botoes_participar[j].get_attribute("href")
-            # print(f"Acessando: {link}")
+            print(f"Acessando: {link}")
             driver.execute_script("window.open(arguments[0]);", link)
             driver.switch_to.window(driver.window_handles[1])
             time.sleep(3)
@@ -103,12 +111,11 @@ for i in range(len(cards_filtrados)):
                 try:
                     titulo_plano = soup.find("h1", class_="hero-title-br").get_text(strip=True)
                 except:
-                    titulo_plano = soup.find("h1", class_="page-title").get_text(strip=True)
+                        titulo_plano = 'Não tem o titulo na página'
                 try:
                     descricao_plano = soup.find("p", class_="hero-text-br").get_text(strip=True)
                 except:
-                    descricao_plan = soup.find("div", class_="rich-text-display").get_text(strip=True)
-                    descricao_plano = f'ENCERRADA\nResumo:\n{descricao_plan}' 
+                    descricao_plano = "Sem descrição"
                 print(titulo_plano)
                 print(descricao_plano)
 
@@ -137,8 +144,57 @@ for i in range(len(cards_filtrados)):
                         time.sleep(5)
 
                         try:
-                            wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'p')))
-                            soup_sobre = BeautifulSoup(driver.page_source, "html.parser")
+                                wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'p')))
+                                soup_sobre = BeautifulSoup(driver.page_source, "html.parser")
+
+                                paragrafos = soup_sobre.find_all(["p", "h2", "ol"])
+
+                                blacklist_textos = [
+                                    "você precisa habilitar todos os cookies para poder ver este conteúdo.",
+                                    "site desenvolvido com software livre e mantido por lappis",
+                                    "por favor, inicie a sessão",
+                                    "inscrever-se",
+                                    "esqueceu a sua senha?",
+                                    "estes cookies permitem",
+                                    "esses cookies são usados",
+                                    "estes cookies coletam informações",
+                                    "estes cookies são usados para medir",
+                                    "figura"
+                                ]
+
+                                def normalizar(texto):
+                                    return texto.lower().replace(" ", "")
+
+                                conteudos_limpos = []
+                                for elem in paragrafos:
+                                    texto = elem.get_text(strip=True)
+                                    texto_normalizado = normalizar(texto)
+                                    if texto and all(normalizar(black) not in texto_normalizado for black in blacklist_textos):
+                                        conteudos_limpos.append(texto)
+
+                                # verificação pra ver se a descrição da conferência já está no conteúdo, se tiver nao tem a aba sobre
+                                if any(normalizar(descricao_plano) in normalizar(texto) for texto in conteudos_limpos):
+                                    print("Não existe a aba sobre")
+                                else:
+                                    # print("Conteúdo da aba Sobre:\n")
+                                    for bloco in conteudos_limpos:
+                                        # esse bloco sao os paragrados da pagina sobre
+                                        print(bloco)
+                                        print(" ")
+
+                                # with open("planos_dados.csv", mode="a", newline="", encoding="utf-8") as f:
+                                #             writer = csv.DictWriter(f, fieldnames= [
+                                #                     "Plano", 
+                                #                     "Descrição Plano", 
+                                #                     "Imagem Plano",
+                                #                     "Sobre Plano", 
+                                #                 ])
+                                #             writer.writerow({
+                                #                     "Plano": titulo_plano,
+                                #                     "Descrição Plano": descricao_plano,
+                                #                     "Imagem Plano":img_url, 
+                                #                     "Sobre Plano":conteudos_limpos,
+                                #                 }) 
 
 
 

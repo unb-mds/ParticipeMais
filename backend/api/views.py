@@ -178,7 +178,7 @@ class DescubraView(APIView):
 
     def get(self, request):
         conferencia = list(Conferencia.objects.all())
-        proposta = list(Proposta.objects.all())
+        proposta = list(Propostas.objects.all())
         random.shuffle(conferencia) 
         random.shuffle(proposta)
         
