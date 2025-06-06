@@ -173,39 +173,26 @@ for _, row in df_propostas_conferencias.iterrows():
         conferencia=conferencia,
     )
 
-for _, row in df_propostas_planos.iterrows():
-    nome_plano = row.get('Plano')
-    if nome_plano == 'Não tem o titulo na página':
-        nome_plano = 'Plano Clima Participativo'
+for df in [df_propostas_planos, df_propostas_planos2]:
+    for _, row in df.iterrows():
+        nome_plano = row.get('Plano')
+        if nome_plano == 'Não tem o titulo na página':
+            nome_plano = 'Plano Clima Participativo'
 
-    plano = Planos.objects.filter(nome=nome_plano).first() if pd.notna(nome_plano) else None
+        plano = Planos.objects.filter(nome=nome_plano).first() if pd.notna(nome_plano) else None
 
-    votos_str = str(row.get('Votos', '0'))
-    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
+        votos_str = str(row.get('Votos', '0'))
+        votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
 
-    Propostas.objects.get_or_create(
-        titulo_proposta=row['Título Proposta'],
-        autor=row['Autor'],
-        descricao_proposta=row['Descrição Proposta'],
-        qtd_votos=votos_num,
-        url_proposta=row.get('Link', ''),
-        plano=plano
-    )
+        Propostas.objects.get_or_create(
+            titulo_proposta=row['Título Proposta'],
+            autor=row['Autor'],
+            descricao_proposta=row['Descrição Proposta'],
+            qtd_votos=votos_num,
+            url_proposta=row.get('Link', ''),
+            plano=plano
+        )
 
-for _, row in df_propostas_planos2.iterrows():
-    plano = Planos.objects.filter(nome=row.get('Plano')).first() if pd.notna(row.get('Plano')) else None
-
-    votos_str = str(row.get('Votos', '0'))
-    votos_num = int(re.sub(r'\D', '', votos_str)) if re.sub(r'\D', '', votos_str) else 0
-
-    Propostas.objects.get_or_create(
-        titulo_proposta=row['Título Proposta'],
-        autor=row['Autor'],
-        descricao_proposta=row['Descrição Proposta'],
-        qtd_votos=votos_num,
-        url_proposta=row.get('Link', ''),
-        plano=plano
-    )
 
 df_propostas_consultas.fillna('', inplace=True)  
 
