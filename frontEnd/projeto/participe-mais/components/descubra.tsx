@@ -1,17 +1,18 @@
 import React, { useMemo } from 'react';
-import { View, FlatList, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { View, FlatList, Dimensions, TouchableOpacity, StyleSheet, Text } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 2;
 const QUADRADO_GRANDE_SIZE = width - 40;
 const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
 
+
 const QuadradoProposta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#aaf' }]}>
-    <ThemedText style={styles.textoQuadrado}>Proposta</ThemedText>
+    <Text style={styles.textoQuadrado}>Proposta</Text>
   </View>
 );
+
 type Item = {
   id: string;
   tipo: 'proposta' | 'botao' | 'pergunta';
@@ -19,15 +20,16 @@ type Item = {
 
 const QuadradoBotao = () => (
   <View style={[styles.quadrado, { backgroundColor: '#faa' }]}>
-    <ThemedText style={styles.textoQuadrado}> Qual tema você se interessa mais?</ThemedText>
+    <Text style={styles.textoQuadrado}> Qual tema você se interessa mais?</Text>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
     <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
   </View>
 );
+
 const QuadradoPergunta = () => (
   <View style={[styles.quadrado, { backgroundColor: '#afa' }]}>
-    <ThemedText style={styles.textoQuadrado}>Pergunta</ThemedText>
+    <Text style={styles.textoQuadrado}>Pergunta</Text>
   </View>
 );
 
@@ -58,13 +60,12 @@ export default function DescubraSection() {
     return [...arrShuffle];
   }, []);
 
-const renderItem = ({ item }: { item: Item }) => {
-  if (item.tipo === 'proposta') return <QuadradoProposta />;
-  if (item.tipo === 'botao') return <QuadradoBotao />;
-  if (item.tipo === 'pergunta') return <QuadradoPergunta />;
-  return null;
-};
-
+  const renderItem = ({ item }: { item: Item }) => {
+    if (item.tipo === 'proposta') return <QuadradoProposta />;
+    if (item.tipo === 'botao') return <QuadradoBotao />;
+    if (item.tipo === 'pergunta') return <QuadradoPergunta />;
+    return null;
+  };
 
   return (
     <View style={styles.conteiner_quadrado}>
@@ -75,12 +76,13 @@ const renderItem = ({ item }: { item: Item }) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.gridContent}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<ThemedText style={styles.titulo}>Descubra!</ThemedText>}
+        ListHeaderComponent={<Text style={styles.titulo}>Descubra!</Text>}
         ListHeaderComponentStyle={styles.headerStyle}
       />
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   conteiner_quadrado: {
@@ -99,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
+    fontFamily: 'Raleway_700Bold', // título principal
   },
   headerStyle: {
     alignSelf: 'flex-start',
@@ -124,6 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     padding: 5,
+    fontFamily: 'Raleway_700Bold', // texto central dos quadrados
   },
   botao_retangular: {
     width: 125,
@@ -140,3 +144,4 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
 });
+

@@ -11,6 +11,10 @@ import {
 import { Feather } from "@expo/vector-icons"; 
 
 const PerfilScreen = () => {
+  const campos = ["nome", "email", "senha", "nascimento"] as const;
+  type Campo = typeof campos[number];
+
+
   const [dados, setDados] = useState({
     nome: "Fulanin de Souza Pires",
     email: "Fulanin@gmail.com",
@@ -78,7 +82,8 @@ const PerfilScreen = () => {
       <Text style={styles.sectionTitle}>Seus dados</Text>
 
       {/* Campos */}
-      {["nome", "email", "senha", "nascimento"].map((campo) => (
+        {campos.map((campo: Campo) => (
+
         <View key={campo} style={styles.field}>
           <Text style={styles.label}>
             {campo === "nome"
@@ -113,18 +118,30 @@ const PerfilScreen = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
+  },
   header: {
     fontSize: 20,
-    fontWeight: "bold",
     marginBottom: 20,
     alignSelf: "center",
+    fontFamily: "Raleway_700Bold", // título principal
   },
-  profileSection: { alignItems: "center", marginBottom: 20 },
-  avatarWrapper: { position: "relative" },
-  avatar: { width: 80, height: 80, borderRadius: 40 },
+  profileSection: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatarWrapper: {
+    position: "relative",
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
   editIcon: {
     position: "absolute",
     bottom: 0,
@@ -133,8 +150,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 4,
   },
-  username: { fontSize: 18, fontWeight: "bold", marginTop: 8 },
-  level: { fontSize: 14, color: "#666" },
+  username: {
+    fontSize: 18,
+    marginTop: 8,
+    fontFamily: "Raleway_700Bold", // nome do usuário
+  },
+  level: {
+    fontSize: 14,
+    color: "#666",
+    fontFamily: "Raleway_400Regular", // nível do usuário
+  },
   xpCard: {
     backgroundColor: "#1976D2",
     borderRadius: 12,
@@ -142,7 +167,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  xpText: { color: "#fff", fontWeight: "bold" },
+  xpText: {
+    color: "#fff",
+    fontFamily: "Raleway_700Bold", // XP em destaque
+  },
   xpBarBackground: {
     width: "100%",
     height: 10,
@@ -156,10 +184,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     borderRadius: 5,
   },
-  xpAmount: { color: "#fff", fontSize: 12 },
-  sectionTitle: { fontWeight: "bold", marginBottom: 10, color: "#666" },
-  field: { marginBottom: 12 },
-  label: { fontSize: 13, color: "#777", marginBottom: 4 },
+  xpAmount: {
+    color: "#fff",
+    fontSize: 12,
+    fontFamily: "Raleway_400Regular", // valor do XP
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    color: "#666",
+    fontFamily: "Raleway_700Bold", // título de seção
+  },
+  field: {
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 13,
+    color: "#777",
+    marginBottom: 4,
+    fontFamily: "Raleway_400Regular", // rótulo de campo
+  },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -169,7 +212,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     justifyContent: "space-between",
   },
-  input: { flex: 1, fontSize: 14, marginRight: 8 },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    marginRight: 8,
+    fontFamily: "Raleway_400Regular", // texto de input
+  },
   saveButton: {
     backgroundColor: "#4CAF50",
     paddingVertical: 12,
@@ -178,10 +226,11 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: "#fff",
-    fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
+    fontFamily: "Raleway_700Bold", // texto do botão
   },
 });
+
 
 export default PerfilScreen;

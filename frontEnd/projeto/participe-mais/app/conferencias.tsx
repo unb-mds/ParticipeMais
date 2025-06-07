@@ -13,7 +13,8 @@ import {
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export default function ConferenciaDetalhadaScreen() {
@@ -21,10 +22,14 @@ export default function ConferenciaDetalhadaScreen() {
   const [dadosConferenciasAberto, setDadosConferenciasAberto] = useState(false);
   const [dadosPropostasAberto, setDadosPropostasAberto] = useState(false);
 
-  const toggleSection = (setter, current) => {
+  const toggleSection = (
+    setter: React.Dispatch<React.SetStateAction<boolean>>,
+    current: boolean
+  ) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setter(!current);
   };
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -43,7 +48,10 @@ export default function ConferenciaDetalhadaScreen() {
       </TouchableOpacity>
       {calendarioAberto && (
         <View style={styles.card}>
-          <Text style={styles.itemSelected}>✅ Etapa Digital\nAté 7 de maio de 2025</Text>
+         <Text style={styles.item}>
+          ✅ Etapa Digital{'\n'}Até 7 de maio de 2025
+        </Text>
+
           <Text style={styles.item}>🟢 Conferências Municipais ou Intermunicipais\nAté 26 de janeiro de 2025</Text>
           <Text style={styles.item}>📌 Conferências Estaduais e Distrital\n5 de janeiro a 15 de março de 2025</Text>
           <Text style={styles.item}>📍 Etapa Nacional\n06 a 09 de maio de 2025</Text>
@@ -126,25 +134,124 @@ export default function ConferenciaDetalhadaScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: '#fff' },
-  status: { backgroundColor: '#ccf5d4', padding: 4, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 8 },
-  title: { fontSize: 22, fontWeight: 'bold' },
-  subinfo: { fontSize: 12, color: '#333', marginBottom: 12 },
-  description: { fontSize: 14, color: '#555', marginBottom: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 16, marginBottom: 8 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 },
-  card: { backgroundColor: '#f0f0f0', padding: 12, borderRadius: 12, marginBottom: 12 },
-  item: { marginBottom: 6, color: '#333' },
-  itemSelected: { marginBottom: 6, color: '#267DFF', fontWeight: 'bold' },
-  itemTitle: { fontWeight: 'bold', fontSize: 14, marginBottom: 2 },
-  itemDesc: { fontSize: 12, color: '#555' },
-  itemTag: { fontSize: 10, color: '#888', marginTop: 4 },
-  itemSubtitle: { fontSize: 11, color: '#888', marginBottom: 2 },
-  input: { backgroundColor: '#eee', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8 },
-  filterText: { fontSize: 12, marginBottom: 8, color: '#666' },
-  link: { color: '#267DFF', textAlign: 'center', marginBottom: 16 },
-  blueCard: { backgroundColor: '#267DFF', borderRadius: 16, padding: 12, marginBottom: 16 },
-  blueCardTitle: { color: '#fff', fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
-  blueCardSubtitle: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
-  blueCardText: { color: '#fff', fontSize: 12, marginTop: 4 },
+  container: {
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  status: {
+    backgroundColor: '#ccf5d4',
+    padding: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  title: {
+    fontSize: 22,
+    fontFamily: 'Raleway_700Bold',
+  },
+  subinfo: {
+    fontSize: 12,
+    color: '#333',
+    marginBottom: 12,
+    fontFamily: 'Raleway_400Regular',
+  },
+  description: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 16,
+    fontFamily: 'Raleway_400Regular',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginTop: 16,
+    marginBottom: 8,
+    fontFamily: 'Raleway_700Bold',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  card: {
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  item: {
+    marginBottom: 6,
+    color: '#333',
+    fontFamily: 'Raleway_400Regular',
+  },
+  itemSelected: {
+    marginBottom: 6,
+    color: '#267DFF',
+    fontFamily: 'Raleway_700Bold',
+  },
+  itemTitle: {
+    fontSize: 14,
+    marginBottom: 2,
+    fontFamily: 'Raleway_700Bold',
+  },
+  itemDesc: {
+    fontSize: 12,
+    color: '#555',
+    fontFamily: 'Raleway_400Regular',
+  },
+  itemTag: {
+    fontSize: 10,
+    color: '#888',
+    marginTop: 4,
+    fontFamily: 'Raleway_400Regular',
+  },
+  itemSubtitle: {
+    fontSize: 11,
+    color: '#888',
+    marginBottom: 2,
+    fontFamily: 'Raleway_400Regular',
+  },
+  input: {
+    backgroundColor: '#eee',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
+    fontFamily: 'Raleway_400Regular',
+  },
+  filterText: {
+    fontSize: 12,
+    marginBottom: 8,
+    color: '#666',
+    fontFamily: 'Raleway_400Regular',
+  },
+  link: {
+    color: '#267DFF',
+    textAlign: 'center',
+    marginBottom: 16,
+    fontFamily: 'Raleway_400Regular',
+  },
+  blueCard: {
+    backgroundColor: '#267DFF',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 16,
+  },
+  blueCardTitle: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 4,
+    fontFamily: 'Raleway_700Bold',
+  },
+  blueCardSubtitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Raleway_700Bold',
+  },
+  blueCardText: {
+    color: '#fff',
+    fontSize: 12,
+    marginTop: 4,
+    fontFamily: 'Raleway_400Regular',
+  },
 });

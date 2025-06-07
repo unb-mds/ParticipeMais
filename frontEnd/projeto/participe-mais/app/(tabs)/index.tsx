@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView, Text } from 'react-native'; 
 import Cabecalho from '@/components/cabecalho';
-import { ThemedText } from '@/components/ThemedText';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
 
@@ -25,7 +24,6 @@ export default function HomeScreen() {
     },
   ];
 
-
   return (
     <SafeAreaView style={styles.container}>
       <Cabecalho
@@ -36,16 +34,15 @@ export default function HomeScreen() {
         setAbaAtiva={setAbaAtiva}
       />
 
-
       <View style={styles.contentArea}>
         {abaAtiva === 'descubra' && <DescubraSection />}
-
 
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
 
-              <ThemedText style={styles.title}>Conheça a comunidade!</ThemedText>
+              {/* Texto em negrito: fonte Raleway-Bold */}
+              <Text style={styles.title}>Conheça a comunidade!</Text>
 
               <BlocoDinamico blocos={blocos} />
             </View>
@@ -54,10 +51,12 @@ export default function HomeScreen() {
 
         {abaAtiva === 'pesquisar' && (
           <View style={styles.conteudoCentralizado}>
-            <ThemedText>Conteúdo de Pesquisa</ThemedText>
+
+            {/* Texto normal: fonte Raleway-Regular */}
+            <Text style={styles.textoNormal}>Conteúdo de Pesquisa</Text>
+
           </View>
         )}
-
       </View>
     </SafeAreaView>
   );
@@ -66,7 +65,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: '#fff',
   },
   contentArea: {
@@ -74,7 +72,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 8,
     backgroundColor: '#f1f2f2',
-
   },
   conteudoCentralizado: {
     flex: 1,
@@ -91,12 +88,12 @@ const styles = StyleSheet.create({
     margin: 10,
     minHeight: 550,
   },
-
-  title: {
+ title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    padding: 5,
+    fontFamily: 'Raleway_700Bold', // em negrito
   },
-
+  textoNormal: {
+    fontSize: 16,
+    fontFamily: 'Raleway_400Regular', // normal
+  },
 });

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { View, StyleSheet, FlatList, Dimensions, Text } from 'react-native';
 import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 const { width } = Dimensions.get('window');
 
@@ -28,31 +27,29 @@ export default function BlocoDinamico({ blocos }: { blocos: any[] }) {
 }
 
 function BlocoCategoria({ titulo }: { titulo: string }) {
-  return <View style={styles.banner}><ThemedText>{titulo}</ThemedText></View>;
+  return <View style={styles.banner}><Text>{titulo}</Text></View>;
 }
 
 function BlocoListaDadosComunidade({ usuarios, comentarios }: { usuarios: string[], comentarios: number }) {
   return (
     <View style={styles.lista_comunidade_container}>
-        <View style={styles.containerComentarios}>
-        <ThemedText style = {styles.title_comentarios}> Total de comentários</ThemedText>
-        <ThemedText style = {styles.numero_universal}>{comentarios}</ThemedText>
+      <View style={styles.containerComentarios}>
+        <Text style={styles.title_comentarios}> Total de comentários</Text>
+        <Text style={styles.numero_universal}>{comentarios}</Text>
       </View>
       <View style={styles.containerUSuarios}>
-        <ThemedText style = {styles.title_comentarios_usuario}> Usuários ativos</ThemedText>
-        <ThemedText style = {styles.numero_universal_usuarios}>{usuarios}</ThemedText>
+        <Text style={styles.title_comentarios_usuario}> Usuários ativos</Text>
+        <Text style={styles.numero_universal_usuarios}>{usuarios}</Text>
       </View>
     </View>
   );
 }
 
-
 function BlocoComentariosEnquetes({ titulo, corpo }: { titulo: string, corpo: string }) {
   return (
     <View style={styles.noticia}>
-      <ThemedText style={styles.titulo}>{titulo}</ThemedText>
-      
-      <ThemedText>{corpo}</ThemedText>
+      <Text style={styles.titulo}>{titulo}</Text>
+      <Text>{corpo}</Text>
     </View>
   );
 }
@@ -71,17 +68,18 @@ function BlocoEnqueteCategoria({ dados }: { dados: { categoria: string, totalCom
       keyExtractor={(item, index) => `${item.categoria}-${index}`}
       renderItem={({ item }) => (
         <View style={[styles.bloco_enquente, { backgroundColor: corDaCategoria(item.categoria) }]}>
-            <View style={styles.logo_estilo}>{getIconByCategoria(item.categoria)}</View>
-            <View style={styles.dados_enquete}>
-            <ThemedText style={styles.titulo_carrossel}>{item.categoria}</ThemedText>
-                <View style={styles.dados_enquete_comentarios}>
-                    <View style={styles.logo_pequeno}><MaterialIcons name="chat-bubble-outline" size={12} color="#fff"/> </View>
-                    <ThemedText style={styles.contador}>{item.totalComentarios} chats abertos</ThemedText>
-                </View>
+          <View style={styles.logo_estilo}>{getIconByCategoria(item.categoria)}</View>
+          <View style={styles.dados_enquete}>
+            <Text style={styles.titulo_carrossel}>{item.categoria}</Text>
+            <View style={styles.dados_enquete_comentarios}>
+              <View style={styles.logo_pequeno}>
+                <MaterialIcons name="chat-bubble-outline" size={12} color="#fff" />
+              </View>
+              <Text style={styles.contador}>{item.totalComentarios} chats abertos</Text>
             </View>
+          </View>
         </View>
-        )}
-
+      )}
     />
   );
 }
@@ -110,8 +108,7 @@ function getIconByCategoria(categoria: string) {
     default:
       return <Ionicons name="alert-circle-outline" size={24} color="#fff" />;
   }
-}
-const styles = StyleSheet.create({
+}const styles = StyleSheet.create({
   container: {
     gap: 20,
     marginTop: 10,
@@ -124,6 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 14,
     width: '100%',
+    fontFamily: 'Raleway_400Regular',
   },
   lista_comunidade_container: {
     backgroundColor: '#fff',
@@ -147,86 +145,91 @@ const styles = StyleSheet.create({
   titulo: {
     fontWeight: 'bold',
     marginBottom: 4,
+    fontFamily: 'Raleway_700Bold',
   },
-   containerComentarios: {
+  containerComentarios: {
     width: '60%',
     backgroundColor: '#2670E8',
     borderRadius: 8,
     alignItems: 'center',
   },
-   containerUSuarios: {
+  containerUSuarios: {
     width: '40%',
     backgroundColor: '#ffffff',
     borderRadius: 8,
     alignItems: 'center',
-    borderWidth: 1, // espessura da borda
-    borderColor: '#cccccc', // cor da borda
+    borderWidth: 1,
+    borderColor: '#cccccc',
   },
-    title_comentarios: {
+  title_comentarios: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 15, // adicione esta linha
-    marginRight: 30
+    marginTop: 15,
+    marginRight: 30,
+    fontFamily: 'Raleway_700Bold',
   },
   numero_universal: {
-    fontSize:18,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
     marginRight: 150,
-    marginTop: 10, // adicione esta linha
+    marginTop: 10,
+    fontFamily: 'Raleway_700Bold',
   },
-      title_comentarios_usuario: {
+  title_comentarios_usuario: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#ccc',
-    marginTop: 10, // adicione esta linha
+    marginTop: 10,
+    fontFamily: 'Raleway_700Bold',
   },
-    numero_universal_usuarios: {
-    fontSize:18,
+  numero_universal_usuarios: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#000000',
-    marginTop: 10, // adicione esta linha
+    marginTop: 10,
     marginRight: 80,
+    fontFamily: 'Raleway_700Bold',
   },
   carrossel: {
     paddingHorizontal: 16,
     gap: 6,
   },
-bloco_enquente: {
-  borderRadius: 20,
-  padding: 8,
-  elevation: 2,
-  minWidth: 250,
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'row', // ícone + dados lado a lado // espaçamento entre ícone e texto
-},
-
-dados_enquete: {
-  flexDirection: 'column', // força quebra em coluna
-  justifyContent: 'center',
-  marginRight: 50
-},
-dados_enquete_comentarios: {
-  flexDirection: 'row', // força quebra em coluna
-  justifyContent: 'center',
-  gap:5,
-},
+  bloco_enquente: {
+    borderRadius: 20,
+    padding: 8,
+    elevation: 2,
+    minWidth: 250,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  dados_enquete: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginRight: 50,
+  },
+  dados_enquete_comentarios: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 5,
+  },
   titulo_carrossel: {
     color: "#ffffff",
     fontWeight: 'bold',
-    fontSize: 15
+    fontSize: 15,
+    fontFamily: 'Raleway_700Bold',
   },
   contador: {
     color: '#fff',
     fontSize: 12,
+    fontFamily: 'Raleway_400Regular',
   },
-  logo_estilo:{
+  logo_estilo: {
     marginRight: 50,
   },
-  logo_pequeno:{
-    marginTop:  2
-  }
-
+  logo_pequeno: {
+    marginTop: 2,
+  },
 });
