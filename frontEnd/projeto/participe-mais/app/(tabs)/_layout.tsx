@@ -27,11 +27,13 @@ export default function TabLayout() {
           height: 125,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
-          backgroundColor: '#ffffffff',
+          backgroundColor: '#ffffff',
           paddingBottom: 10,
           paddingTop: 35,
           overflow: 'hidden',
           position: 'absolute',
+          borderColor: '#999',           // cinza médio para o contorno
+
           },
           
           default: {}, // em outras plataformas, usa padrão
