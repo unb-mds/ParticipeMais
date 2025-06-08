@@ -105,9 +105,19 @@ Se funcionar sem erros, sua integração está feita!
 
 ---
 
+```markdown
+## 🔄 Atualizando o banco com dados do scraper
+
+Após realizar as migrações com sucesso, é necessário executar o script que insere os dados coletados pelo web scraper no banco de dados.
+
+No terminal, rode:
+
+```bash
+python jogadados.py
+
 ## ✅ Pronto!
 
-Seu projeto Django agora está usando PostgreSQL como banco de dados. Se quiser criar superusuário:
+Seu projeto Django agora está usando PostgreSQL como banco de dados, com todos os dados coletados pelo web scraper. Se quiser criar superusuário:
 
 ```bash
 python manage.py createsuperuser
