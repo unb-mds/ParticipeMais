@@ -6,9 +6,10 @@ from autenticacao.models import Usuario
 
 class Chat(models.Model):
     pergunta = models.TextField()
-    autor = models.CharField(max_length=100)
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categoria = models.CharField(max_length=100)
     data_criacao = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.pergunta
 
@@ -33,3 +34,4 @@ class Curtidas(models.Model):
 class UsuarioScore(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     pontos = models.IntegerField(default=0)
+    

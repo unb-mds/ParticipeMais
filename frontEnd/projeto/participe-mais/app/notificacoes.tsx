@@ -1,92 +1,44 @@
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Stack } from "expo-router";
+import axios from 'axios';
+import { useEffect, useState } from "react";
 import React from "react";
 
-type Notificacao = {
+interface Notificacao {
   id: number;
   titulo: string;
-  data: string;
   conteudo: string;
-};
+  data: string;
+}
 
-const notificacoes: Notificacao[] = [
-  {
-    id: 1,
-    titulo: "Bem-vindo!",
-    data: "10 de Julho",
-    conteudo: "Conta criada com sucesso.",
-  },
-  {
-    id: 2,
-    titulo: "Atenção",
-    data: "12 de Julho",
-    conteudo: "Verifique seu e-mail.",
-  },
-  {
-    id: 3,
-    titulo: "Erro",
-    data: "13 de Julho",
-    conteudo: "Não foi possível carregar dados.",
-  },
-  {
-    id: 4,
-    titulo: "Bem-vindo!",
-    data: "10 de Julho",
-    conteudo: "Conta criada com sucesso.",
-  },
-  {
-    id: 5,
-    titulo: "Atenção",
-    data: "12 de Julho",
-    conteudo: "Verifique seu e-mail.",
-  },
-  {
-    id: 6,
-    titulo: "Erro",
-    data: "13 de Julho",
-    conteudo: "Não foi possível carregar dados.",
-  },
-  {
-    id: 7,
-    titulo: "Bem-vindo!",
-    data: "10 de Julho",
-    conteudo: "Conta criada com sucesso.",
-  },
-  {
-    id: 8,
-    titulo: "Atenção",
-    data: "12 de Julho",
-    conteudo: "Verifique seu e-mail.",
-  },
-  {
-    id: 9,
-    titulo: "Erro",
-    data: "13 de Julho",
-    conteudo: "Não foi possível carregar dados.",
-  },
-];
 
-export default function Notificacao() {
+export default function Notificacoes() {
+  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/auth/notificacoes/') // ou seu IP real
+      .then((response) => {
+        setNotificacoes(response.data);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar notificações:', error);
+      });
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: "Notificações",
-          headerBackTitle: "Voltar",
-        }}
-      />
-
+    <View style={{ flex: 1, padding: 16 }}>
       <FlatList
         data={notificacoes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => {
-          // const dataFormatada = new Date(item.data).toLocaleDateString('pt-BR');
+          // Se quiser formatar a data:
+          const dataFormatada = new Date(item.data).toLocaleDateString('pt-BR');
 
           return (
             <View style={[styles.card]}>
               <View style={styles.header}>
                 <Text style={styles.cardTitulo}>{item.titulo}</Text>
-                <Text style={styles.cardData}>{item.data}</Text>
+                <Text style={styles.cardData}>{dataFormatada}</Text>
               </View>
               <Text style={styles.cardConteudo}>{item.conteudo}</Text>
             </View>

@@ -18,7 +18,7 @@ pd.set_option('display.max_colwidth', None)  # Mostra todo o conteúdo das célu
 pd.set_option('display.max_rows', None)      # Mostra todas as linhas, se necessário
 
 # Carrega o CSV
-df_conferencias = pd.read_csv('WebScraper/resultados/consultas/dados_consultas.csv')
+df_conferencias = pd.read_csv('../WebScraper/resultados/consultas/dados_consultas.csv')
 
 # Exibe o nome exato das colunas para verificar grafia
 print("Colunas disponíveis:", df_conferencias.columns)

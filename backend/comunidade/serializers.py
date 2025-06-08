@@ -24,36 +24,35 @@ class ComunidadeSerializer(serializers.ModelSerializer):
 
         
 class ComentariosSerializer(serializers.ModelSerializer):
-    
     quantidade_curtidas = serializers.SerializerMethodField()
     nome_autor = serializers.CharField(source='autor.nome', read_only=True)
-  
-    
+
     class Meta:
         model = Comentarios
-        fields = '__all__'
-    
-    
+        fields = ['id', 'conteudo', 'data_criacao', 'quantidade_curtidas', 'nome_autor']
+        read_only_fields = ['data_criacao', 'quantidade_curtidas', 'nome_autor']
+
     def get_quantidade_curtidas(self, obj):
-        
         return Curtidas.objects.filter(comentario=obj).count()
-        
-        
+
     def validate(self, attrs):
-        
         conteudo = attrs.get('conteudo', '').strip()
-        
+
         if not conteudo:
             raise serializers.ValidationError("O comentário não pode estar vazio.")
-        
+
         for palavra in palavras_proibidas:
             if palavra in conteudo.lower():
                 raise serializers.ValidationError("O comentário contém conteúdo inadequado.")
-        
-        return super().validate(attrs)
-    
 
-class ComentarioCarrossel(serializers.ModelSerializer):
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        validated_data['autor'] = self.context['request'].user
+        return super().create(validated_data)
+
+        
+class ComentarioCarrosselSerializer(serializers.ModelSerializer):
     autor_nome = serializers.CharField(source='autor.nome')
     pergunta = serializers.CharField(source='chat.pergunta')
     chat_id = serializers.IntegerField(source='chat.id')
@@ -62,28 +61,27 @@ class ComentarioCarrossel(serializers.ModelSerializer):
         model = Comentarios
         fields = ['id','conteudo', 'autor_nome', 'chat_id', 'pergunta' ]
         
-        
 class ChatSerializer(serializers.ModelSerializer):
-    
-    
-    comentarios = ComentariosSerializer(many=True, read_only=True) 
-    
-    
+    comentarios = ComentariosSerializer(many=True, read_only=True)
+    autor_nome = serializers.CharField(source='autor.nome', read_only=True)  # mostra o nome do autor, mas não espera no input
+
     class Meta:
         model = Chat
-        fields = '__all__'
-        
+        fields = ['id', 'pergunta', 'categoria', 'data_criacao', 'comentarios', 'autor_nome'] 
+
     def validate(self, attrs):
-        
         pergunta = attrs.get('pergunta', '').strip()
-        
+
         if not pergunta:
-            raise serializers.ValidationError("O comentário não pode estar vazio.")
-        
+            raise serializers.ValidationError("A pergunta não pode estar vazia.")
+
         for palavra in palavras_proibidas:
             if palavra in pergunta.lower():
-                raise serializers.ValidationError("O comentário contém conteúdo inadequado.")
-        
+                raise serializers.ValidationError("A pergunta contém conteúdo inadequado.")
+
         return super().validate(attrs)
-        
-        
+
+    def create(self, validated_data):
+        validated_data['autor'] = self.context['request'].user
+        return super().create(validated_data)
+
