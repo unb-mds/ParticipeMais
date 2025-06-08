@@ -1,113 +1,108 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Text} from 'react-native';
 import { Stack } from "expo-router";
 
 
 export default function ScoreScreen() {
   return (
     <>
-    <View style={styles.container_maior}>
-    <ScrollView contentContainerStyle={styles.container}>
-      <Stack.Screen
-        options={{
-          title: "Score",
-          headerBackTitle: "Voltar",
-        }}
-      />
+      <View style={styles.container_maior}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Stack.Screen
+            options={{
+              title: "Score",
+              headerBackTitle: "Voltar",
+            }}
+          />
 
-      <View style={styles.welcomeBox}>
-        <ThemedText style={styles.welcomeText}>
-          Bem-vindo à aba de Score! Aqui você se desafia a se tornar um cidadão mais atento, engajado e consciente das propostas públicas.
-        </ThemedText>
+          <View style={styles.welcomeBox}>
+            <Text style={styles.welcomeText}>
+              Bem-vindo à aba de Score! Aqui você se desafia a se tornar um cidadão mais atento, engajado e consciente das propostas públicas.
+            </Text>
+          </View>
+
+          <Text style={styles.sectionTitle}>Seus dados</Text>
+          <Text style={styles.scoreNumber}>
+            240<Text style={styles.scoreOutOf}>/500</Text>
+          </Text>
+          <Text style={styles.level}>Nível atual: 4 – Cidadão Participativo</Text>
+
+          <View style={styles.progressBarBackground}>
+            <View style={styles.progressBarFill} />
+          </View>
+
+          <Text style={styles.sectionTitle}>Próxima recompensa:</Text>
+          <View style={styles.rewardBox}>
+            <Text style={styles.rewardText}>Nível 5{"\n"}"Explorador de Temas"</Text>
+          </View>
+
+          <View style={styles.unifiedBox}>
+            <Text style={styles.missionsTitle}>Suas Missões</Text>
+            <Text style={styles.missionsSubtitle}>
+              Conclua as missões para avançar de nível e se tornar um cidadão nato!
+            </Text>
+
+            <TouchableOpacity style={styles.missionButtonFilled}>
+              <Text style={styles.missionText}>Comente em 2 propostas</Text>
+              <Text style={styles.missionXP}>+20 xp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.missionButtonGray}>
+              <Text style={styles.missionText}>Vote em 3 temas diferentes</Text>
+              <Text style={styles.missionXP}>+30 xp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.missionButtonGray}>
+              <Text style={styles.missionText}>Compartilhe uma proposta</Text>
+              <Text style={styles.missionXP}>+50 xp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.missionButtonFilled}>
+              <Text style={styles.missionText}>Compartilhe o aplicativo</Text>
+              <Text style={styles.missionXP}>+100 xp</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.linkText}>Ver todas</Text>
+
+            <Text style={styles.sectionTitleBlack}>Níveis</Text>
+            <Text style={styles.levelsDescBlack}>
+              Veja os níveis que você partiu e onde você pode chegar!
+            </Text>
+
+            <View style={styles.levelsListBlack}>
+              <Text style={styles.levelItemBlack}>Nível 1: Iniciante Cívico</Text>
+              <Text style={styles.levelItemBlack}>Nível 2: Votante Iniciante</Text>
+              <Text style={styles.levelItemBlack}>Nível 3: Ativador de Temas</Text>
+              <Text style={styles.levelCurrentBlack}>Nível 4: Cidadão Participativo</Text>
+              <Text style={styles.levelLockedBlack}>🔒 Nível 6: Construtor de Vozes</Text>
+              <Text style={styles.levelLockedBlack}>🔒 Nível 7: Guardião do Debate</Text>
+              <Text style={styles.levelLockedBlack}>🔒 Nível 8: Conselheiro Político</Text>
+              <Text style={styles.levelLockedBlack}>🔒 Nível 9: Líder Comunitário</Text>
+              <Text style={styles.levelLockedBlack}>🔒 Nível 10: Mestre Cívico</Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
-
-      <ThemedText style={styles.sectionTitle}>Seus dados</ThemedText>
-      <ThemedText style={styles.scoreNumber}>
-        240<ThemedText style={styles.scoreOutOf}>240/500</ThemedText>
-      </ThemedText>
-      <ThemedText style={styles.level}>Nível atual: 4 – Cidadão Participativo</ThemedText>
-
-      <View style={styles.progressBarBackground}>
-        <View style={styles.progressBarFill} />
-      </View>
-
-      <ThemedText style={styles.sectionTitle}>Próxima recompensa:</ThemedText>
-      <View style={styles.rewardBox}>
-        <ThemedText style={styles.rewardText}>Nível 5{"\n"}"Explorador de Temas"</ThemedText>
-      </View>
-
-      <View style={styles.unifiedBox}>
-        <ThemedText style={styles.missionsTitle}>Suas Missões</ThemedText>
-        <ThemedText style={styles.missionsSubtitle}>
-          Conclua as missões para avançar de nível e se tornar um cidadão nato!
-        </ThemedText>
-
-
-        <TouchableOpacity style={styles.missionButtonFilled}>
-          <ThemedText style={styles.missionText}>Comente em 2 propostas</ThemedText>
-          <ThemedText style={styles.missionXP}>+20 xp</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.missionButtonGray}>
-          <ThemedText style={styles.missionText}>Vote em 3 temas diferentes</ThemedText>
-          <ThemedText style={styles.missionXP}>+30 xp</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.missionButtonGray}>
-          <ThemedText style={styles.missionText}>Compartilhe uma proposta</ThemedText>
-          <ThemedText style={styles.missionXP}>+50 xp</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.missionButtonFilled}>
-          <ThemedText style={styles.missionText}>Compartilhe o aplicativo</ThemedText>
-          <ThemedText style={styles.missionXP}>+100 xp</ThemedText>
-        </TouchableOpacity>
-
-        <ThemedText style={styles.linkText}>Ver todas</ThemedText>
-
-        <ThemedText style={styles.sectionTitleBlack}>Níveis</ThemedText>
-        <ThemedText style={styles.levelsDescBlack}>
-          Veja os níveis que você partiu e onde você pode chegar!
-        </ThemedText>
-
-
-        <View style={styles.levelsListBlack}>
-          <ThemedText style={styles.levelItemBlack}>Nível 1: Iniciante Cívico</ThemedText>
-          <ThemedText style={styles.levelItemBlack}>Nível 2: Votante Iniciante</ThemedText>
-          <ThemedText style={styles.levelItemBlack}>Nível 3: Ativador de Temas</ThemedText>
-          <ThemedText style={styles.levelCurrentBlack}>Nível 4: Cidadão Participativo</ThemedText>
-          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 6: Construtor de Vozes</ThemedText>
-          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 7: Guardião do Debate</ThemedText>
-          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 8: Conselheiro Político</ThemedText>
-          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 9: Líder Comunitário</ThemedText>
-          <ThemedText style={styles.levelLockedBlack}>🔒 Nível 10: Mestre Cívico</ThemedText>
-
-
-        </View>
-      </View>
-    </ScrollView>
-    </View>
     </>
   );
 }
 
 
 const styles = StyleSheet.create({
-  container_maior:{
- flex: 1,
-  backgroundColor: '#267DFF',
-  }
-,  container: {
+  container_maior: {
+    flex: 1,
+    backgroundColor: '#267DFF',
+  },
+  container: {
     padding: 16,
     backgroundColor: "#267DFF",
   },
   title: {
     fontSize: 22,
     color: "white",
-    fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 16,
+    fontFamily: 'Raleway_700Bold',
   },
   welcomeBox: {
     backgroundColor: "white",
@@ -118,32 +113,33 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 14,
     color: "#333",
+    fontFamily: 'Raleway_400Regular',
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "white",
     marginTop: 16,
+    fontFamily: 'Raleway_700Bold',
   },
   sectionTitleBlack: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "#000",
     marginTop: 16,
+    fontFamily: 'Raleway_700Bold',
   },
   scoreNumber: {
     fontSize: 48,
-    fontWeight: "bold",
     color: "white",
+    fontFamily: 'Raleway_700Bold',
   },
   scoreOutOf: {
     fontSize: 24,
-    fontWeight: "normal",
+    fontFamily: 'Raleway_400Regular',
   },
   level: {
     color: "white",
-    fontWeight: "bold",
     marginBottom: 8,
+    fontFamily: 'Raleway_700Bold',
   },
   progressBarBackground: {
     backgroundColor: "#b0d6b0",
@@ -165,9 +161,9 @@ const styles = StyleSheet.create({
   },
   rewardText: {
     color: "#267DFF",
-    fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+    fontFamily: 'Raleway_700Bold',
   },
   unifiedBox: {
     backgroundColor: "white",
@@ -178,13 +174,14 @@ const styles = StyleSheet.create({
   },
   missionsTitle: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "#333",
+    fontFamily: 'Raleway_700Bold',
   },
   missionsSubtitle: {
     fontSize: 13,
     color: "#444",
     marginBottom: 12,
+    fontFamily: 'Raleway_400Regular',
   },
   missionButtonFilled: {
     backgroundColor: "#267DFF",
@@ -204,20 +201,22 @@ const styles = StyleSheet.create({
   },
   missionText: {
     color: "#000",
-    fontWeight: "bold",
+    fontFamily: 'Raleway_700Bold',
   },
   missionXP: {
     color: "#555",
+    fontFamily: 'Raleway_400Regular',
   },
   linkText: {
     textAlign: "center",
     color: "#267DFF",
     marginTop: 8,
-    fontWeight: "bold",
+    fontFamily: 'Raleway_700Bold',
   },
   levelsDescBlack: {
     color: "#333",
     marginVertical: 8,
+    fontFamily: 'Raleway_400Regular',
   },
   levelsListBlack: {
     borderLeftWidth: 2,
@@ -227,14 +226,17 @@ const styles = StyleSheet.create({
   levelItemBlack: {
     color: "#333",
     marginBottom: 4,
+    fontFamily: 'Raleway_400Regular',
   },
   levelCurrentBlack: {
     color: "#000",
-    fontWeight: "bold",
     marginBottom: 4,
+    fontFamily: 'Raleway_700Bold',
   },
   levelLockedBlack: {
     color: "#999",
     marginBottom: 4,
+    fontFamily: 'Raleway_400Regular',
   },
 });
+

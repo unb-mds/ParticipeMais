@@ -67,7 +67,9 @@ export default function TelaCadastro() {
    * @param {string} campo - Nome do campo para verificar erro
    * @returns {object} - Estilo a ser aplicado
    */
-  const estiloInput = (campo) => (erros[campo] ? styles.inputErro : styles.input);
+  const estiloInput = (campo: keyof typeof erros) =>
+  erros[campo] ? styles.inputErro : styles.input;
+
 
   return (
     <KeyboardAvoidingView
@@ -138,9 +140,21 @@ export default function TelaCadastro() {
 
 // Estilos do componente
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  scrollContainer: { padding: 20, justifyContent: 'center', flexGrow: 1 },
-  logo: { width: 120, height: 120, alignSelf: 'center', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    padding: 20,
+    justifyContent: 'center',
+    flexGrow: 1,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     backgroundColor: '#E6E6E6', // fundo cinza claro
@@ -148,6 +162,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
   },
   inputErro: {
     height: 40,
@@ -158,6 +173,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
   },
-  botaoContainer: { marginTop: 12 },
+  botaoContainer: {
+    marginTop: 12,
+  },
 });
+

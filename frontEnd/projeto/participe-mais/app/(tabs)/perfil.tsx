@@ -92,11 +92,12 @@ const styles = StyleSheet.create({
   },
   nome: {
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: 'Raleway_700Bold', // <- título/nome em destaque
   },
   subtitulo: {
     fontSize: 14,
     color: '#777',
+    fontFamily: 'Raleway_400Regular', // <- texto auxiliar
   },
   avatar: {
     width: 45,
@@ -109,6 +110,7 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 24,
     marginBottom: 8,
+    fontFamily: 'Raleway_700Bold', // <- nome de seção, geralmente com ênfase
   },
   item: {
     flexDirection: 'row',
@@ -124,6 +126,7 @@ const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 16,
+    fontFamily: 'Raleway_400Regular', // <- texto comum
   },
   logout: {
     flexDirection: 'row',
@@ -134,11 +137,13 @@ const styles = StyleSheet.create({
     color: '#e60000',
     fontSize: 16,
     marginLeft: 8,
+    fontFamily: 'Raleway_700Bold', // <- ênfase no "sair"
   },
   footer: {
     textAlign: 'center',
     fontSize: 12,
     color: '#999',
     marginTop: 24,
-  }, //todos os direitos
+    fontFamily: 'Raleway_400Regular', // <- texto informativo secundário
+  },
 });

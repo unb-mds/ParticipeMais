@@ -78,13 +78,14 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 20,
-    fontWeight: "bold",
     marginBottom: 24,
+    fontFamily: "Raleway_700Bold", // título em negrito
   },
   label: {
     alignSelf: "flex-start",
     fontSize: 14,
     marginBottom: 6,
+    fontFamily: "Raleway_400Regular", // rótulo padrão
   },
   input: {
     width: "100%",
@@ -93,18 +94,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
+    fontFamily: "Raleway_400Regular", // entrada de texto
   },
   termos: {
     fontSize: 12,
     color: "#666",
     marginVertical: 12,
     textAlign: "center",
+    fontFamily: "Raleway_400Regular", // texto de termos
   },
   link: {
     color: "#1a73e8",
     textAlign: "center",
     marginVertical: 4,
     fontSize: 14,
+    fontFamily: "Raleway_400Regular", // link normal
   },
   botao: {
     backgroundColor: "#2563eb",
@@ -116,8 +120,9 @@ const styles = StyleSheet.create({
   },
   botaoTexto: {
     color: "#fff",
-    fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
+    fontFamily: "Raleway_700Bold", // texto do botão com destaque
   },
 });
+
