@@ -121,6 +121,4 @@ class CurtidaView(APIView):
             "quantidade_curtidas": quantidade_curtidas
         }, status=status.HTTP_200_OK)
 
-            
-    
 

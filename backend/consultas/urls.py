@@ -8,6 +8,6 @@ router.register(r'', ConsultasViewSet, basename='consultas')
 
 urlpatterns = [
     path('', ListaConsultas.as_view(), name='Lista_consulta'),
-    path('<int:pk>', AcessaConsulta.as_view(), name='Lista_consulta'),
-    path('<int:pk>/propostas', AcessaPropostasConsultas.as_view(), name='Lista_consulta')    
+    path('<int:pk>/', AcessaConsulta.as_view(), name='Acessa_consulta'),
+    path('<int:pk>/propostas/', AcessaPropostasConsultas.as_view(), name='Acessa_propostas_consulta')    
 ]
