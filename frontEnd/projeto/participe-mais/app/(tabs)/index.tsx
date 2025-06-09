@@ -3,10 +3,12 @@ import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity,
 import Cabecalho from '@/components/cabecalho';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
-
+import PesquisaSection from '@/components/pesquisar'; 
 
 export default function HomeScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
+  const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', "Cultura"];
+
   const blocos = [
     { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
     { tipo: 'evento', nome: 'Live XP', data: '2025-06-01' },
@@ -64,12 +66,15 @@ export default function HomeScreen() {
         )}
 
         {abaAtiva === 'pesquisar' && (
-          <View style={styles.conteudoCentralizado}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.fundoBranco}>
 
-            {/* Texto normal: fonte Raleway-Regular */}
-            <Text style={styles.textoNormal}>Conteúdo de Pesquisa</Text>
+              {/* Texto em negrito: fonte Raleway-Bold */}
+              <Text style={styles.title}>Inicie sua pesquisa!</Text>
+              <PesquisaSection filtros={filtros} />
 
-          </View>
+            </View>
+          </ScrollView>
         )}
       </View>
     </SafeAreaView>
