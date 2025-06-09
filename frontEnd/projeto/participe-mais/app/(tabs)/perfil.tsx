@@ -6,11 +6,11 @@ import {
   TextInput,
   Image,
   Alert,
-  Platform,
 } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from "react";
+import { useFonts, Raleway_400Regular, Raleway_700Bold } from '@expo-google-fonts/raleway';
 
 const PerfilScreen = () => {
   const router = useRouter();
@@ -61,11 +61,10 @@ const PerfilScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Perfil</Text>
 
-      {/* Foto e nome */}
       <View style={styles.profileSection}>
         <View style={styles.avatarWrapper}>
           <Image
-            source={{ uri: "https://i.imgur.com/0y8Ftya.png" }} // imagem de teste
+            source={{ uri: "https://i.imgur.com/0y8Ftya.png" }}
             style={styles.avatar}
           />
           <TouchableOpacity style={styles.editIcon} onPress={() => console.log("Editar foto")}>
@@ -76,7 +75,6 @@ const PerfilScreen = () => {
         <Text style={styles.level}>Nível 4 - Cidadão Ativo</Text>
       </View>
 
-      {/* XP */}
       <View style={styles.xpCard}>
         <Text style={styles.xpText}>Nível 4: Cidadão Ativo</Text>
         <View style={styles.xpBarBackground}>
@@ -87,7 +85,6 @@ const PerfilScreen = () => {
 
       <Text style={styles.sectionTitle}>Seus dados</Text>
 
-      {/* Campos */}
       {campos.map((campo: Campo) => (
         <View key={campo} style={styles.field}>
           <Text style={styles.label}>
@@ -114,7 +111,6 @@ const PerfilScreen = () => {
         </View>
       ))}
 
-      {/* Botão de Salvar */}
       {formEditado && (
         <TouchableOpacity style={styles.saveButton} onPress={handleSalvar}>
           <Text style={styles.saveButtonText}>Salvar</Text>
@@ -125,29 +121,16 @@ const PerfilScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
   header: {
     fontSize: 20,
     marginBottom: 20,
     alignSelf: "center",
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_700Bold",
   },
-  profileSection: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  avatarWrapper: {
-    position: "relative",
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
+  profileSection: { alignItems: "center", marginBottom: 20 },
+  avatarWrapper: { position: "relative" },
+  avatar: { width: 80, height: 80, borderRadius: 40 },
   editIcon: {
     position: "absolute",
     bottom: 0,
@@ -159,12 +142,12 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 18,
     marginTop: 8,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_700Bold",
   },
   level: {
     fontSize: 14,
     color: "#666",
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_400Regular",
   },
   xpCard: {
     backgroundColor: "#1976D2",
@@ -175,7 +158,7 @@ const styles = StyleSheet.create({
   },
   xpText: {
     color: "#fff",
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_700Bold",
   },
   xpBarBackground: {
     width: "100%",
@@ -193,21 +176,19 @@ const styles = StyleSheet.create({
   xpAmount: {
     color: "#fff",
     fontSize: 12,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_400Regular",
   },
   sectionTitle: {
     marginBottom: 10,
     color: "#666",
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_700Bold",
   },
-  field: {
-    marginBottom: 12,
-  },
+  field: { marginBottom: 12 },
   label: {
     fontSize: 13,
     color: "#777",
     marginBottom: 4,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_400Regular",
   },
   inputRow: {
     flexDirection: "row",
@@ -222,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     marginRight: 8,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_400Regular",
   },
   saveButton: {
     backgroundColor: "#4CAF50",
@@ -234,7 +215,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontFamily: "Raleway_700Bold",
   },
 });
 
