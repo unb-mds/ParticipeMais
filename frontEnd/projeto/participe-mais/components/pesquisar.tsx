@@ -269,9 +269,8 @@ textoTematicas: {
 },
 vejaMais: {
   fontSize: 14,
-  color: '#1E90FF',
+  color: '#2670E8',
   fontFamily: 'Raleway_400Regular',
-  textDecorationLine: 'underline',
 },
 listaConferencias: {
   paddingVertical: 10,
