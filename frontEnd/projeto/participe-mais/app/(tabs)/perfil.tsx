@@ -1,149 +1,241 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
-import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
-import { reload } from 'expo-router/build/global-state/routing';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  Alert,
+  Platform,
+} from 'react-native';
+import { Ionicons, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React, { useState } from "react";
 
-const router = useRouter();
+const PerfilScreen = () => {
+  const router = useRouter();
 
-export default function Perfil() {
+  const campos = ["nome", "email", "senha", "nascimento"] as const;
+  type Campo = typeof campos[number];
+
+  const [dados, setDados] = useState({
+    nome: "Fulanin de Souza Pires",
+    email: "Fulanin@gmail.com",
+    senha: "*************",
+    nascimento: "10/08/2004",
+  });
+
+  const [editando, setEditando] = useState({
+    nome: false,
+    email: false,
+    senha: false,
+    nascimento: false,
+  });
+
+  const [formEditado, setFormEditado] = useState(false);
+
+  const handleEdit = (campo: Campo) => {
+    console.log("Editando campo:", campo);
+    setEditando((prev) => ({ ...prev, [campo]: true }));
+  };
+
+  const handleChange = (campo: Campo, valor: string) => {
+    console.log(`Alterando ${campo}: ${valor}`);
+    setDados((prev) => ({ ...prev, [campo]: valor }));
+    setFormEditado(true);
+  };
+
+  const handleSalvar = () => {
+    console.log("Salvando dados:", dados);
+    setEditando({
+      nome: false,
+      email: false,
+      senha: false,
+      nascimento: false,
+    });
+    setFormEditado(false);
+    Alert.alert("Sucesso", "Dados salvos com sucesso!");
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {/* Cabeçalho com nome */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.nome}>Usuário</Text>
-          <Text style={styles.subtitulo}>Conta pessoal</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Perfil</Text>
+
+      {/* Foto e nome */}
+      <View style={styles.profileSection}>
+        <View style={styles.avatarWrapper}>
+          <Image
+            source={{ uri: "https://i.imgur.com/0y8Ftya.png" }} // imagem de teste
+            style={styles.avatar}
+          />
+          <TouchableOpacity style={styles.editIcon} onPress={() => console.log("Editar foto")}>
+            <Feather name="edit-2" size={14} color="#fff" />
+          </TouchableOpacity>
         </View>
-        <View style={styles.avatar} />
+        <Text style={styles.username}>Fulanin123</Text>
+        <Text style={styles.level}>Nível 4 - Cidadão Ativo</Text>
       </View>
 
-      {/* Seção: Perfil */}
-      <Text style={styles.secao}>Perfil</Text>
-      <Item texto="Acessar perfil" icon="person-outline" />
-      <TouchableOpacity onPress={() => router.push('/notificacoes')}> 
-      <Item texto="Notificações" icon="notifications-outline"/>      
-      </TouchableOpacity>
-      
-      <Item texto="Favoritos" icon="star-outline" />
-
-      <TouchableOpacity onPress={() => router.push('/agenda')}> 
-      <Item texto="Agenda" icon="calendar-outline" />
-      </TouchableOpacity>
-
-      {/* Seção: Preferências */}
-      <Text style={styles.secao}>Preferências</Text>
-      <Item texto="Tema escuro/claro" icon="settings-outline" switchOption />
-      <Item texto="Layout de interface" icon="help-circle-outline" />
-
-      {/* Seção: Aplicativo */}
-      <Text style={styles.secao}>Aplicativo</Text>
-      <Item texto="Central de ajuda" icon="help-circle-outline" />
-      <Item texto="Nos envie um feedback" icon="chatbox-ellipses-outline" />
-      <Item texto="Privacidade" icon="lock-closed-outline" />
-
-      {/* Sair da conta */}
-      <TouchableOpacity style={styles.logout}>
-        <Ionicons name="exit-outline" size={20} color="#e60000" />
-        <Text style={styles.logoutText}>Sair da conta</Text>
-      </TouchableOpacity>
-
-      {/* Rodapé */}
-      <Text style={styles.footer}>Todos os direitos reservados{'\n'}para Participe+</Text>
-    </ScrollView>
-  );
-}
-
-type ItemProps = {
-  texto: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  switchOption?: boolean;
-};
-
-function Item({ texto, icon, switchOption }: ItemProps) {
-  return (
-    <View style={styles.item}>
-      <View style={styles.left}>
-        <Ionicons name={icon} size={20} color="#333" style={{ marginRight: 12 }} />
-        <Text style={styles.texto}>{texto}</Text>
+      {/* XP */}
+      <View style={styles.xpCard}>
+        <Text style={styles.xpText}>Nível 4: Cidadão Ativo</Text>
+        <View style={styles.xpBarBackground}>
+          <View style={[styles.xpBarFill, { width: "48%" }]} />
+        </View>
+        <Text style={styles.xpAmount}>240 / 500 xp</Text>
       </View>
-      {switchOption ? (
-        <Switch />
-      ) : (
-        <Ionicons name="chevron-forward" size={18} color="#999" />
+
+      <Text style={styles.sectionTitle}>Seus dados</Text>
+
+      {/* Campos */}
+      {campos.map((campo: Campo) => (
+        <View key={campo} style={styles.field}>
+          <Text style={styles.label}>
+            {campo === "nome"
+              ? "Nome completo"
+              : campo === "email"
+              ? "E-mail"
+              : campo === "senha"
+              ? "Senha"
+              : "Data de nascimento"}
+          </Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.input}
+              value={dados[campo]}
+              editable={editando[campo]}
+              secureTextEntry={campo === "senha" && !editando[campo]}
+              onChangeText={(text) => handleChange(campo, text)}
+            />
+            <TouchableOpacity onPress={() => handleEdit(campo)}>
+              <Feather name="edit-2" size={16} color="#000" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ))}
+
+      {/* Botão de Salvar */}
+      {formEditado && (
+        <TouchableOpacity style={styles.saveButton} onPress={handleSalvar}>
+          <Text style={styles.saveButtonText}>Salvar</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     padding: 20,
+    backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    top: 50,
-    marginBottom: 50,
-    // backgroundColor: 'red',
-  },
-  nome: {
     fontSize: 20,
-    fontFamily: 'Raleway_700Bold', // <- título/nome em destaque
+    marginBottom: 20,
+    alignSelf: "center",
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
   },
-  subtitulo: {
-    fontSize: 14,
-    color: '#777',
-    fontFamily: 'Raleway_400Regular', // <- texto auxiliar
+  profileSection: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatarWrapper: {
+    position: "relative",
   },
   avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 100,
-    backgroundColor: '#ff4500',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
-  secao: {
+  editIcon: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#007bff",
+    borderRadius: 10,
+    padding: 4,
+  },
+  username: {
+    fontSize: 18,
+    marginTop: 8,
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  level: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 24,
-    marginBottom: 8,
-    fontFamily: 'Raleway_700Bold', // <- nome de seção, geralmente com ênfase
+    color: "#666",
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
   },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  xpCard: {
+    backgroundColor: "#1976D2",
+    borderRadius: 12,
+    padding: 12,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  xpText: {
+    color: "#fff",
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
   },
-  texto: {
-    fontSize: 16,
-    fontFamily: 'Raleway_400Regular', // <- texto comum
+  xpBarBackground: {
+    width: "100%",
+    height: 10,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginTop: 8,
+    marginBottom: 4,
   },
-  logout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 20,
+  xpBarFill: {
+    height: "100%",
+    backgroundColor: "#4CAF50",
+    borderRadius: 5,
   },
-  logoutText: {
-    color: '#e60000',
-    fontSize: 16,
-    marginLeft: 8,
-    fontFamily: 'Raleway_700Bold', // <- ênfase no "sair"
-  },
-  footer: {
-    textAlign: 'center',
+  xpAmount: {
+    color: "#fff",
     fontSize: 12,
-    color: '#999',
-    marginTop: 24,
-    fontFamily: 'Raleway_400Regular', // <- texto informativo secundário
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    color: "#666",
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  field: {
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 13,
+    color: "#777",
+    marginBottom: 4,
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#eee",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    justifyContent: "space-between",
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    marginRight: 8,
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  saveButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
   },
 });
+
+export default PerfilScreen;
