@@ -1,40 +1,158 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Text} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from 'react-native';
 import { Stack } from "expo-router";
+import { useRouter } from "expo-router";
+import { TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function ScoreScreen() {
-  return (
-    <>
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [score, setScore] = useState<number>(0);
+  const [nivel, setNivel] = useState('');
+  const [token, setToken] = useState('');
+  const [nome, setNome] = useState('');
+
+  useEffect(() => {
+  const obterToken = async () => {
+    try {
+      const tokenSalvo = await AsyncStorage.getItem('accessToken');
+      if (tokenSalvo) {
+        setToken(tokenSalvo);
+      } else {
+        console.error("Token não encontrado");
+        router.replace('/login');
+      }
+    } catch (error) {
+      console.error("Erro ao recuperar token:", error);
+      router.replace('/login');
+    }
+  };
+
+  obterToken();
+}, []);
+
+useEffect(() => {
+  if (token) {
+    fetchScore(); // Só chama quando o token estiver disponível
+  }
+}, [token]);
+
+const fetchScore = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/comunidade/score/', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setScore(data.pontos);
+      setNivel(calcularNivel(data.pontos));
+      setNome(data.usuario);
+    } else if (response.status === 401 || response.status === 403) {
+        // Token inválido ou expirado
+        router.replace('/login');
+      } else {
+      console.error('Erro ao buscar score:', response.status);
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    router.replace('/login'); // Erros genéricos também levam à tela de login
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const calcularNivel = (pontos: number): string => {
+  if (pontos < 50) return "1 – Iniciante Cívico";
+  if (pontos < 100) return "2 – Votante Iniciante";
+  if (pontos < 150) return "3 – Ativador de Temas";
+  if (pontos < 250) return "4 – Cidadão Participativo";
+  if (pontos < 350) return "5 – Explorador de Temas";
+  return "6 – Construtor de Vozes";
+};
+
+  if (loading) {
+    return (
       <View style={styles.container_maior}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <Stack.Screen
-            options={{
-              title: "Score",
-              headerBackTitle: "Voltar",
-            }}
-          />
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
 
-          <View style={styles.welcomeBox}>
-            <Text style={styles.welcomeText}>
-              Bem-vindo à aba de Score! Aqui você se desafia a se tornar um cidadão mais atento, engajado e consciente das propostas públicas.
-            </Text>
-          </View>
+  const niveis = [
+  { nome: "Nível 1: Iniciante Cívico", minimo: 0 },
+  { nome: "Nível 2: Votante Iniciante", minimo: 50 },
+  { nome: "Nível 3: Ativador de Temas", minimo: 100 },
+  { nome: "Nível 4: Cidadão Participativo", minimo: 150 },
+  { nome: "Nível 5: Explorador de Temas", minimo: 250 },
+  { nome: "Nível 6: Construtor de Vozes", minimo: 350 },
+  { nome: "Nível 7: Guardião do Debate", minimo: 450 },
+  { nome: "Nível 8: Conselheiro Político", minimo: 550 },
+  { nome: "Nível 9: Líder Comunitário", minimo: 650 },
+  { nome: "Nível 10: Mestre Cívico", minimo: 800 },
+];
 
-          <Text style={styles.sectionTitle}>Seus dados</Text>
-          <Text style={styles.scoreNumber}>
-            240<Text style={styles.scoreOutOf}>/500</Text>
+const nivelAtualIndex = niveis.findIndex((n, i) => {
+  const proximo = niveis[i + 1];
+  return !proximo || score < proximo.minimo;
+});
+
+const getProximoNivel = (pontos: number) => {
+  for (let i = 0; i < niveis.length; i++) {
+    const nivelAtual = niveis[i];
+    const proximoNivel = niveis[i + 1];
+
+    if (proximoNivel && pontos < proximoNivel.minimo) {
+      return proximoNivel;
+    }
+  }
+  return null; // Já está no nível máximo
+};
+
+
+  return (
+    <View style={styles.container_maior}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Stack.Screen
+          options={{
+            title: "Score",
+            headerBackTitle: "Voltar",
+          }}
+        />
+
+        <View style={styles.welcomeBox}>
+          <Text style={styles.welcomeText}>
+            Bem-vindo à aba de Score{nome ? `, ${nome}` : ""}! Aqui você se desafia a se tornar um cidadão mais atento, engajado e consciente das propostas públicas.
           </Text>
-          <Text style={styles.level}>Nível atual: 4 – Cidadão Participativo</Text>
+        </View>
 
-          <View style={styles.progressBarBackground}>
-            <View style={styles.progressBarFill} />
-          </View>
+        <Text style={styles.sectionTitle}>Seus dados</Text>
+        
+        <Text style={styles.scoreNumber}>
+          {score}<Text style={styles.scoreOutOf}>/500</Text>
+        </Text>
+        <Text style={styles.level}>Nível atual: {nivel}</Text>
 
-          <Text style={styles.sectionTitle}>Próxima recompensa:</Text>
-          <View style={styles.rewardBox}>
-            <Text style={styles.rewardText}>Nível 5{"\n"}"Explorador de Temas"</Text>
-          </View>
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBarFill, { width: `${(score / 500) * 100}%` }]} />
+        </View>
+
+        <Text style={styles.sectionTitle}>Próxima recompensa:</Text>
+          {getProximoNivel(score) ? (
+        <View style={styles.rewardBox}>
+          <Text style={styles.rewardText}>
+            Nível {getProximoNivel(score)?.nome}"
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.rewardBox}>
+          <Text style={styles.rewardText}>Você já está no nível máximo!</Text>
+        </View>
+      )}
 
           <View style={styles.unifiedBox}>
             <Text style={styles.missionsTitle}>Suas Missões</Text>
@@ -70,22 +188,25 @@ export default function ScoreScreen() {
             </Text>
 
             <View style={styles.levelsListBlack}>
-              <Text style={styles.levelItemBlack}>Nível 1: Iniciante Cívico</Text>
-              <Text style={styles.levelItemBlack}>Nível 2: Votante Iniciante</Text>
-              <Text style={styles.levelItemBlack}>Nível 3: Ativador de Temas</Text>
-              <Text style={styles.levelCurrentBlack}>Nível 4: Cidadão Participativo</Text>
-              <Text style={styles.levelLockedBlack}>🔒 Nível 6: Construtor de Vozes</Text>
-              <Text style={styles.levelLockedBlack}>🔒 Nível 7: Guardião do Debate</Text>
-              <Text style={styles.levelLockedBlack}>🔒 Nível 8: Conselheiro Político</Text>
-              <Text style={styles.levelLockedBlack}>🔒 Nível 9: Líder Comunitário</Text>
-              <Text style={styles.levelLockedBlack}>🔒 Nível 10: Mestre Cívico</Text>
+              {niveis.map((n, i) => {
+                if (i < nivelAtualIndex) {
+                  return <Text key={i} style={styles.levelItemBlack}>{n.nome}</Text>;
+                } else if (i === nivelAtualIndex) {
+                  return <Text key={i} style={styles.levelCurrentBlack}>{n.nome}</Text>;
+                } else {
+                  return <Text key={i} style={styles.levelLockedBlack}>🔒 {n.nome}</Text>;
+                }
+              })}
             </View>
           </View>
-        </ScrollView>
-      </View>
-    </>
+      </ScrollView>
+    </View>
+
+    
   );
 }
+
+
 
 
 const styles = StyleSheet.create({

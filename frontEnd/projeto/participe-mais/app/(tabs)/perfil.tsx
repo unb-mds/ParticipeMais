@@ -4,11 +4,33 @@ import { Feather, Octicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import { useFonts, Raleway_400Regular, Raleway_700Bold } from '@expo-google-fonts/raleway';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const larguraTela = SCREEN_WIDTH * 1; // 95% da tela
 
 export default function PerfilScreen() {
+
+  useEffect(() => {
+  const carregarDadosUsuario = async () => {
+    try {
+      const usuario = await AsyncStorage.getItem('usuario');
+      if (usuario) {
+        const userObj = JSON.parse(usuario);
+        setDados({
+          nome: userObj.nome || '',
+          email: userObj.email || '',
+          senha: '*************'  
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados do usuário:", error);
+    }
+  };
+
+  carregarDadosUsuario();
+}, []);
 
   const router = useRouter();
 
@@ -16,9 +38,9 @@ export default function PerfilScreen() {
   type Campo = typeof campos[number];
 
   const [dados, setDados] = useState({
-    nome: "Fulanin de Souza Pires",
-    email: "Fulanin@gmail.com",
-    senha: "*************",
+    nome: "",
+    email: "",
+    senha: "",
   });
 
   const [editando, setEditando] = useState({
@@ -70,9 +92,9 @@ export default function PerfilScreen() {
         </View>
 
         <View style={styles.userInfo}>
-          <Text style={styles.username}>Fulanin123</Text>
-          <Text style={styles.level}>Nível 4 - Cidadão Ativo</Text>
-        </View>
+    <Text style={styles.username}>{dados.nome}</Text>
+    <Text style={styles.level}>Nível 4 - Cidadão Ativo</Text>
+  </View>
       </View>
 
 

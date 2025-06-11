@@ -12,6 +12,10 @@ class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
     
     def get(self, request):
+        print("Usuário autenticado:", request.user)
+        print("ID:", request.user.id)
+        print("Nome:", request.user.nome)
+
         score_obj, created = UsuarioScore.objects.get_or_create(usuario=request.user)
         return Response({
             'usuario': request.user.nome,

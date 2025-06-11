@@ -15,10 +15,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function HomeScreen() {
   const router = useRouter();
 
+  const [nomeUsuario, setNomeUsuario] = useState('');
+
   useEffect(() => {
     const verificarEstadoInicial = async () => {
       // Lógica fictícia: verificar se o usuário já viu a tela de boas-vindas
       const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+      const nome = await AsyncStorage.getItem('nomeUsuario');
+
+      if (nome) {
+        setNomeUsuario(nome);
+    }
       
       if (jaViu) {
         router.replace('../boas_vindas'); // ← ou qualquer outra rota inicial
@@ -70,7 +77,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Cabecalho
-        user="Giovanni"
+        user={nomeUsuario || 'Usuário'}
         xp={50}
         nivel={4}
         abaAtiva={abaAtiva}
