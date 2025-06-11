@@ -4,8 +4,35 @@ import Cabecalho from '@/components/cabecalho';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
 import PesquisaSection from '@/components/pesquisar'; 
+import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const verificarEstadoInicial = async () => {
+      // Lógica fictícia: verificar se o usuário já viu a tela de boas-vindas
+      const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+      
+      if (jaViu) {
+        router.replace('../boas_vindas'); // ← ou qualquer outra rota inicial
+
+      } else {
+        console.log("entrei aqui")        
+
+      }
+    };
+
+    verificarEstadoInicial();
+  }, []);
+
+
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
   const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', "Cultura"];
 
