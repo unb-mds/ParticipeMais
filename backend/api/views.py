@@ -44,8 +44,8 @@ class DescubraView(APIView):
             'conferencias': ConferenciaSerializer(conferencia, many=True, fields=['image_url']).data,  
             'planos': PlanosSerializer(planos, many=True, fields=['image_url']).data,
             'consultas': ConsultasSerializer(consultas, many=True, fields=['image_url']).data,
-            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo_proposta', 'descricao_proposta', 'autor', 'url_proposta']).data
-        }
+            'propostas': PropostaSerializer(proposta, many=True, fields=['titulo_proposta', 'descricao_proposta', 'autor', 'url_proposta', 'palavras_chave']).data
+}
         
         return Response({
                 'message': 'Rota protegida com sucesso!',
