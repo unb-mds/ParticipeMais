@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Comentarios, Curtidas, UsuarioScore
+from django.conf import settings
 
 @receiver(post_save, sender=Comentarios)
 def adicionar_pontuacao_comentario(sender, instance, created, **kwargs):

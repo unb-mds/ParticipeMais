@@ -70,14 +70,16 @@ const styles = StyleSheet.create({
   },
   cardTitulo: {
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 4,
+    fontFamily: 'Raleway_700Bold', // título em negrito
   },
   cardConteudo: {
     fontSize: 16,
+    fontFamily: 'Raleway_400Regular', // conteúdo normal
   },
   cardData: {
     fontSize: 12,
+    fontFamily: 'Raleway_400Regular', // data com peso leve
     // left: 280,
     // marginTop: 20,
   },

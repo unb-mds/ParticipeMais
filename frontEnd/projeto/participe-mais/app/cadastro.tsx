@@ -33,41 +33,67 @@ export default function TelaCadastro() {
   /**
    * Função que valida os campos e realiza o cadastro
    */
-  const handleCadastrar = () => {
-    // Objeto para armazenar erros encontrados na validação
-    const novosErros = {
-      nome: nome.trim() === '',
-      email: email.trim() === '',
-      senha: senha === '',
-      senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
-    };
-
-    // Atualiza o estado de erros para refletir no estilo dos inputs
-    setErros(novosErros);
-
-    // Se algum campo estiver com erro, exibe alerta e interrompe o cadastro
-    if (Object.values(novosErros).some(Boolean)) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
-      return;
-    }
-
-    // Cadastro bem-sucedido: exibe mensagem e navega para a tela inicial
-    Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
-    router.push('/');
-
-    // Limpa os campos após cadastro
-    setNome('');
-    setEmail('');
-    setSenha('');
-    setSenhaNovamente('');
+  const handleCadastrar = async () => {
+  const novosErros = {
+    nome: nome.trim() === '',
+    email: email.trim() === '',
+    senha: senha === '',
+    senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
   };
+
+  setErros(novosErros);
+
+  if (Object.values(novosErros).some(Boolean)) {
+    Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/auth/cadastro/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nome,
+        email,
+        password: senha,
+        data_nascimento: '2000-01-01' 
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
+
+      // Se quiser, pode salvar o token de acesso aqui para autenticação futura
+      // Exemplo:
+      // await AsyncStorage.setItem('token', data.access);
+
+      router.push('/'); // Navega para a tela inicial ou login
+
+      setNome('');
+      setEmail('');
+      setSenha('');
+      setSenhaNovamente('');
+    } else {
+      Alert.alert('Erro', 'Falha no cadastro: ' + JSON.stringify(data.errors || data.message));
+    }
+  } catch (error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  Alert.alert('Erro', 'Erro na requisição: ' + errorMessage);
+  }
+};
 
   /**
    * Retorna o estilo do input baseado no estado de erro do campo
    * @param {string} campo - Nome do campo para verificar erro
    * @returns {object} - Estilo a ser aplicado
    */
-  const estiloInput = (campo) => (erros[campo] ? styles.inputErro : styles.input);
+  const estiloInput = (campo: keyof typeof erros) =>
+  erros[campo] ? styles.inputErro : styles.input;
+
 
   return (
     <KeyboardAvoidingView
@@ -138,9 +164,21 @@ export default function TelaCadastro() {
 
 // Estilos do componente
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  scrollContainer: { padding: 20, justifyContent: 'center', flexGrow: 1 },
-  logo: { width: 120, height: 120, alignSelf: 'center', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    padding: 20,
+    justifyContent: 'center',
+    flexGrow: 1,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     backgroundColor: '#E6E6E6', // fundo cinza claro
@@ -148,6 +186,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
   },
   inputErro: {
     height: 40,
@@ -158,6 +197,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
   },
-  botaoContainer: { marginTop: 12 },
+  botaoContainer: {
+    marginTop: 12,
+  },
 });
+

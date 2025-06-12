@@ -1,51 +1,98 @@
 import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView, Text } from 'react-native'; 
 import Cabecalho from '@/components/cabecalho';
-import { ThemedText } from '@/components/ThemedText';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
+import PesquisaSection from '@/components/pesquisar'; 
+import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  const [nomeUsuario, setNomeUsuario] = useState('');
+
+  useEffect(() => {
+    const verificarEstadoInicial = async () => {
+      // Lógica fictícia: verificar se o usuário já viu a tela de boas-vindas
+      const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+      const nome = await AsyncStorage.getItem('nomeUsuario');
+
+      if (nome) {
+        setNomeUsuario(nome);
+    }
+      
+      if (jaViu) {
+        router.replace('../boas_vindas'); // ← ou qualquer outra rota inicial
+
+      } else {
+        console.log("entrei aqui")        
+
+      }
+    };
+
+    verificarEstadoInicial();
+  }, []);
+
+
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
+  const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', "Cultura"];
+
   const blocos = [
-    { tipo: 'banner', titulo: 'Bem-vindo!' },
     { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
-    { tipo: 'noticia', titulo: 'Nova função!', corpo: 'Foi lançada uma nova versão do app' },
     { tipo: 'evento', nome: 'Live XP', data: '2025-06-01' },
     {
       tipo: 'carrosselCategorias',
       dados: [
         { categoria: 'Meio Ambiente', totalComentarios: 10 },
         { categoria: 'Educação', totalComentarios: 7 },
-        { categoria: 'infraestutura', totalComentarios: 7 },
+        { categoria: 'Infraestrutura', totalComentarios: 9 },
         { categoria: 'Educação', totalComentarios: 7 },
         { categoria: 'Educação', totalComentarios: 7 },
       ],
     },
+    {
+      tipo: 'carroselComentarios',
+      dados: [
+        { categoria: 'Meio Ambiente', comentario: "Na minha cidade começaram hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhha cortar várias árvores...", autor:"joaozin" }, //108 caracteres o limite
+        { categoria: 'Infraestrutura', comentario: "Oi eu sou tantantantan", autor:"joaozin" },
+        { categoria: 'Educação', comentario: "Oi eu sou tantantantan", autor:"joaozin" },
+
+      ],
+    },
+    {
+      tipo: 'carroselComentariosEnquentes',
+      dados: [
+        { categoria: 'Infraestrutura', enquete: "Oi eu sou Arborização nas cidades: mais sombra e menos calor?", curtidas: 5, numeroComentario:10 },
+        { categoria: 'Saúde', enquete: "Oi eu sou Arborização nas cidades: mais sombra e menos calor?", curtidas: 5,numeroComentario:10 },
+        { categoria: 'Meio Ambiente', enquete: "Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll", curtidas: 5, numeroComentario:10 },
+      ],
+    },
   ];
-
-
   return (
     <SafeAreaView style={styles.container}>
       <Cabecalho
-        user="Giovanni"
+        user={nomeUsuario || 'Usuário'}
         xp={50}
         nivel={4}
         abaAtiva={abaAtiva}
         setAbaAtiva={setAbaAtiva}
       />
 
-
       <View style={styles.contentArea}>
         {abaAtiva === 'descubra' && <DescubraSection />}
-
 
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
 
-              <ThemedText style={styles.title}>Conheça a comunidade!</ThemedText>
+              {/* Texto em negrito: fonte Raleway-Bold */}
+              <Text style={styles.title}>Conheça a comunidade!</Text>
 
               <BlocoDinamico blocos={blocos} />
             </View>
@@ -53,11 +100,16 @@ export default function HomeScreen() {
         )}
 
         {abaAtiva === 'pesquisar' && (
-          <View style={styles.conteudoCentralizado}>
-            <ThemedText>Conteúdo de Pesquisa</ThemedText>
-          </View>
-        )}
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.fundoBranco}>
 
+              {/* Texto em negrito: fonte Raleway-Bold */}
+              <Text style={styles.title}>Inicie sua pesquisa!</Text>
+              <PesquisaSection filtros={filtros} />
+
+            </View>
+          </ScrollView>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -66,7 +118,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: '#fff',
   },
   contentArea: {
@@ -74,7 +125,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 8,
     backgroundColor: '#f1f2f2',
-
   },
   conteudoCentralizado: {
     flex: 1,
@@ -91,12 +141,12 @@ const styles = StyleSheet.create({
     margin: 10,
     minHeight: 550,
   },
-
-  title: {
+ title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    padding: 5,
+    fontFamily: 'Raleway_700Bold', // em negrito
   },
-
+  textoNormal: {
+    fontSize: 16,
+    fontFamily: 'Raleway_400Regular', // normal
+  },
 });

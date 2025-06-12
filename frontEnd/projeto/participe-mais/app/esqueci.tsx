@@ -62,9 +62,21 @@ export default function TelaCadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  scrollContainer: { padding: 20, justifyContent: 'center', flexGrow: 1 },
-  logo: { width: 120, height: 120, alignSelf: 'center', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    padding: 20,
+    justifyContent: 'center',
+    flexGrow: 1,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     backgroundColor: '#ccc',
@@ -74,6 +86,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // fonte aplicada
   },
   inputErro: {
     height: 40,
@@ -84,6 +97,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'red',
     marginBottom: 16,
+    fontFamily: 'Raleway_400Regular', // fonte aplicada
   },
-  botaoContainer: { marginTop: 12 },
+  botaoContainer: {
+    marginTop: 12,
+  },
 });
+
