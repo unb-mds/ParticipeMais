@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, FlatList, Dimensions, TouchableOpacity, StyleSheet, Text, ImageBackground } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
+import { Stack } from 'expo-router';
 
 // Obtém a largura da tela para cálculo dos tamanhos dos quadrados
 const { width } = Dimensions.get('window');
@@ -182,6 +182,7 @@ export default function DescubraSection() {
 
   // renderiza o componente
   return (
+    
     <View style={styles.conteiner_quadrado}>
       <FlatList
         data={data}

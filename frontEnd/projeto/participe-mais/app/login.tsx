@@ -19,7 +19,8 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
+      const response = await fetch('http://localhost:8000/auth/login/', {
+        // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,10 +52,6 @@ export default function Login() {
       Alert.alert('Erro', 'Erro na requisição: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
-
-
-
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -91,10 +88,10 @@ export default function Login() {
       <Text style={styles.termos}>Aceito termos e serviços de uso</Text>
 
       {/* Links */}
-      <TouchableOpacity>
+      <TouchableOpacity onPress={()=> router.push('/esqueci')}>
         <Text style={styles.link}>Esqueceu sua senha?</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/cadastro')}>
         <Text style={styles.link}>Ainda não possui uma conta?</Text>
       </TouchableOpacity>
 

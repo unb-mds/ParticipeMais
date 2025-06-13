@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   KeyboardAvoidingView,
+  TouchableOpacity,
   Platform,
   ScrollView,
   Image,
@@ -49,7 +50,8 @@ export default function TelaCadastro() {
   }
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/auth/cadastro/', {
+    const response = await fetch('http://localhost:8000/auth/cadastro/', {
+      // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -96,11 +98,7 @@ export default function TelaCadastro() {
 
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'android' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Logo do app */}
         <Image
           source={require('@/assets/images/icon.png')}
@@ -108,8 +106,11 @@ export default function TelaCadastro() {
           resizeMode="contain"
         />
 
+        {/* Título */}
+        <Text style={styles.titulo}>Crie sua conta!</Text>
+
         {/* Campo Nome */}
-        <Text>Insira seu nome de usuário:</Text>
+        <Text style={styles.label}>Insira seu nome de usuário:</Text>
         <TextInput
           style={estiloInput('nome')}
           placeholder="Nome completo"
@@ -120,7 +121,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Email */}
-        <Text>Insira seu e-mail por favor:</Text>
+        <Text style={styles.label}>Insira seu e-mail por favor:</Text>
         <TextInput
           style={estiloInput('email')}
           placeholder="email@exemplo.com"
@@ -132,7 +133,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Senha */}
-        <Text>Insira sua senha:</Text>
+        <Text style={styles.label}>Insira sua senha:</Text>
         <TextInput
           style={estiloInput('senha')}
           placeholder="Senha"
@@ -143,7 +144,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Repetir Senha */}
-        <Text>Insira sua senha novamente:</Text>
+        <Text style={styles.label}>Insira sua senha novamente:</Text>
         <TextInput
           style={estiloInput('senhaNovamente')}
           placeholder="Repita a senha"
@@ -153,40 +154,48 @@ export default function TelaCadastro() {
           returnKeyType="done"
         />
 
-        {/* Botão para enviar o formulário */}
-        <View style={styles.botaoContainer}>
-          <Button title="Criar conta" onPress={handleCadastrar} />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        {/* Botão Entrar */}
+        <TouchableOpacity style={styles.botao} onPress={handleCadastrar}>
+            <Text style={styles.botaoTexto}>Cadastrar</Text>
+        </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 // Estilos do componente
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContainer: {
-    padding: 20,
-    justifyContent: 'center',
     flexGrow: 1,
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: "#fff",
   },
   logo: {
-    width: 120,
-    height: 120,
-    alignSelf: 'center',
-    marginBottom: 20,
+    width: 100,
+    height: 100,
+    marginBottom: 24,
+    resizeMode: "contain",
   },
+    titulo: {
+    fontSize: 20,
+    marginBottom: 24,
+    fontFamily: "Raleway_700Bold", // título em negrito
+  },
+  label: {
+    alignSelf: "flex-start",
+    fontSize: 14,
+    marginBottom: 6,
+    fontFamily: "Raleway_400Regular", // rótulo padrão
+  },
+
   input: {
-    height: 40,
-    backgroundColor: '#E6E6E6', // fundo cinza claro
-    borderRadius: 5,
+    width: "100%",
+    height: 44,
+    backgroundColor: "#eee",
+    borderRadius: 8,
     paddingHorizontal: 12,
-    fontSize: 16,
     marginBottom: 16,
-    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
+    fontFamily: "Raleway_400Regular", // entrada de texto
   },
   inputErro: {
     height: 40,
@@ -199,8 +208,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontFamily: 'Raleway_400Regular', // <- fonte aplicada
   },
-  botaoContainer: {
-    marginTop: 12,
+    botao: {
+    backgroundColor: "#2563eb",
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 100,
+    marginTop: 24,
+    width: "100%",
+  },
+  botaoTexto: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "Raleway_700Bold", // texto do botão com destaque
   },
 });
 

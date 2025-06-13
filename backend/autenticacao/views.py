@@ -157,7 +157,7 @@ class SetNewPassword(APIView):
 class NotificationsView(generics.ListAPIView):
     
     serializer_class = NotificationSerializer #pega do serializador os trem de notificacoes
-    permission_classes = [permissions.AllowAny] #so acessa se estiver logado
+    permission_classes = [permissions.IsAuthenticated] #so acessa se estiver logado
     
     def get_queryset(self):
         return Notification.objects.filter(usuario=self.request.user).order_by('-created_at')

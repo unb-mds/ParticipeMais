@@ -8,9 +8,6 @@ from .models import *
 from .serializers import *
 
 class ScoreView(APIView):
-    """
-    View para consultar a pontuação do usuário.
-    """
     permission_classes = [permissions.IsAuthenticated]  
     
     def get(self, request):

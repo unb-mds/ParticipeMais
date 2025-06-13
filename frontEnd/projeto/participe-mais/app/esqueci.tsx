@@ -1,106 +1,136 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
 import {
   View,
-  TextInput,
-  Button,
-  StyleSheet,
   Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   Image,
+  ScrollView,
   Alert,
-} from 'react-native';
+} from "react-native";
 
 export default function TelaCadastro() {
-  const [email, setEmail] = useState('');
-  let estiloAtual;
+  const [email, setEmail] = useState("");
+  const [temErro, setTemErro] = useState(false);
+  const router = useRouter();
 
-  const handleEmail = () => {
-
-    if (!email) {
-        Alert.alert('Preencha o campo acima');
-        estiloAtual = styles.inputErro
-        return;
-    } else {
-        Alert.alert('Sucesso')
-        //router.push('/')
+  const handleEnviar = () => {
+    if (!email.trim()) {
+      setTemErro(true);
+      Alert.alert("Erro", "Por favor, preencha o campo de e-mail.");
+      return;
     }
-    };
+
+    setTemErro(false);
+    Alert.alert("Sucesso", "Email enviado com sucesso!");
+    // router.push('/') ou outra ação
+  };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'android' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
-        <Image
-          source={require('@/assets/images/icon.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-    
-        <Text>Esqueceu sua senha?</Text>
-        <Text>Não se preocupe, nós enviaremos um código/token para seu email:</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Logo */}
+      <Image
+        source={require("@/assets/images/icon.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
-        <Text>Insira seu e-mail por favor:</Text>
-        <TextInput
-          style={estiloAtual}
-          placeholder=""
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="words"
-          returnKeyType="next"
-        />
+      {/* Título */}
+      <Text style={styles.titulo}>Esqueceu sua senha?</Text>
+      <Text style={styles.descricao}>
+        Não se preocupe, enviaremos um código para seu e-mail.
+      </Text>
 
-        <View style={styles.botaoContainer}>
-          <Button title="Criar conta" onPress={handleEmail} />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      {/* Input E-mail */}
+      <Text style={styles.label}>Insira seu e-mail por favor:</Text>
+      <TextInput
+        style={[styles.input, temErro && styles.inputErro]}
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      {/* Botão */}
+      <TouchableOpacity style={styles.botao} onPress={handleEnviar}>
+        <Text style={styles.botaoTexto}>Enviar</Text>
+      </TouchableOpacity>
+
+      {/* Voltar para login */}
+      <TouchableOpacity onPress={() => router.push("/login")}>
+        <Text style={styles.link}>Voltar para login</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContainer: {
-    padding: 20,
-    justifyContent: 'center',
     flexGrow: 1,
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: "#fff",
   },
   logo: {
-    width: 120,
-    height: 120,
-    alignSelf: 'center',
-    marginBottom: 20,
+    width: 100,
+    height: 100,
+    marginBottom: 24,
+  },
+  titulo: {
+    fontSize: 20,
+    marginBottom: 12,
+    fontFamily: "Raleway_700Bold",
+    textAlign: "center",
+  },
+  descricao: {
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 24,
+    fontFamily: "Raleway_400Regular",
+    color: "#444",
+  },
+  label: {
+    alignSelf: "flex-start",
+    fontSize: 14,
+    marginBottom: 6,
+    fontFamily: "Raleway_400Regular",
   },
   input: {
-    height: 40,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
+    width: "100%",
+    height: 44,
+    backgroundColor: "#eee",
+    borderRadius: 8,
     paddingHorizontal: 12,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
     marginBottom: 16,
-    fontFamily: 'Raleway_400Regular', // fonte aplicada
+    fontFamily: "Raleway_400Regular",
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
   inputErro: {
-    height: 40,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 12,
-    fontSize: 16,
+    borderColor: "red",
     borderWidth: 2,
-    borderColor: 'red',
-    marginBottom: 16,
-    fontFamily: 'Raleway_400Regular', // fonte aplicada
   },
-  botaoContainer: {
+  botao: {
+    backgroundColor: "#2563eb",
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 100,
     marginTop: 12,
+    width: "100%",
+  },
+  botaoTexto: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "Raleway_700Bold",
+  },
+  link: {
+    color: "#1a73e8",
+    textAlign: "center",
+    marginVertical: 16,
+    fontSize: 14,
+    fontFamily: "Raleway_400Regular",
   },
 });
-

@@ -1,49 +1,130 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { Stack } from "expo-router";
-import axios from 'axios';
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Notificacao {
   id: number;
   titulo: string;
-  conteudo: string;
-  data: string;
+  message: string;
+  created_at: string;
 }
 
-
 export default function Notificacoes() {
-  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+  const router = useRouter();
 
+  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+  const [token, setToken] = useState('');
+  const [nome, setNome] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Obter token ao iniciar
   useEffect(() => {
-    axios.get('http://localhost:8000/auth/notificacoes/') // ou seu IP real
-      .then((response) => {
-        setNotificacoes(response.data);
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar notificações:', error);
-      });
+    const obterToken = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        if (tokenSalvo) {
+          setToken(tokenSalvo);
+        } else {
+          console.error("Token não encontrado");
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error("Erro ao recuperar token:", error);
+        router.replace('/login');
+      }
+    };
+
+    obterToken();
   }, []);
 
+  // Buscar dados após obter token
+  useEffect(() => {
+    if (token) {
+      fetchScore();
+      fetchNotificacoes();
+    }
+  }, [token]);
+
+  const fetchScore = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/comunidade/score/', {
+        // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNome(data.usuario);
+      } else if (response.status === 401 || response.status === 403) {
+        router.replace('/login');
+      } else {
+        console.error('Erro ao buscar score:', response.status);
+      }
+    } catch (error) {
+      console.error('Erro na requisição do score:', error);
+      router.replace('/login');
+    }
+  };
+
+  const fetchNotificacoes = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/auth/notifications/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotificacoes(data);
+      } else {
+        console.error('Erro ao buscar notificações:', response.status);
+      }
+    } catch (error) {
+      console.error('Erro na requisição de notificações:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={styles.container}>
+      <Stack.Screen options={{ title: 'Notificações' }} />
+
       <FlatList
         data={notificacoes}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          // Se quiser formatar a data:
-          const dataFormatada = new Date(item.data).toLocaleDateString('pt-BR');
-
-          return (
-            <View style={[styles.card]}>
-              <View style={styles.header}>
-                <Text style={styles.cardTitulo}>{item.titulo}</Text>
-                <Text style={styles.cardData}>{dataFormatada}</Text>
-              </View>
-              <Text style={styles.cardConteudo}>{item.conteudo}</Text>
+        renderItem={({ item }) => (
+          <TouchableOpacity>
+            <View style={styles.notificacao}>
+              <Text style={styles.notificacaoTitulo}>{item.titulo}</Text>
+              <Text>{item.message}</Text>
+              <Text style={styles.data}>{item.created_at}</Text>
             </View>
-          );
-        }}
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={<Text style={{ textAlign: 'center' }}>Nenhuma notificação encontrada.</Text>}
       />
     </View>
   );
@@ -53,34 +134,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#ffffffff",
+    backgroundColor: '#fff',
   },
-  card: {
-    padding: 16,
-    borderRadius: 10,
+  titulo: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  notificacao: {
+    backgroundColor: '#f2f2f2',
+    padding: 12,
+    borderRadius: 8,
     marginBottom: 12,
-    borderColor: "#D9D9D9",
-    borderWidth: 2,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  cardTitulo: {
-    fontSize: 18,
-    marginBottom: 4,
-    fontFamily: 'Raleway_700Bold', // título em negrito
-  },
-  cardConteudo: {
+  notificacaoTitulo: {
+    fontWeight: 'bold',
     fontSize: 16,
-    fontFamily: 'Raleway_400Regular', // conteúdo normal
+    marginBottom: 4,
   },
-  cardData: {
+  data: {
     fontSize: 12,
-    fontFamily: 'Raleway_400Regular', // data com peso leve
-    // left: 280,
-    // marginTop: 20,
+    color: 'gray',
+    marginTop: 8,
+    textAlign: 'right',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
