@@ -70,6 +70,11 @@ class Login(APIView):
                 "message": "Login realizado com sucesso",
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "user": {
+                    "id": user.id,
+                    "nome": user.nome,
+                    "email": user.email,
+            }
             }, status=status.HTTP_200_OK)
             
             # gerar o cookie

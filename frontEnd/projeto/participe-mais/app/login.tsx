@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
   Text,
@@ -7,11 +10,76 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const router = useRouter();
+
+  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
+
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          router.replace('/perfil');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao verificar login:', error);
+      } finally {
+        setIsVerificandoLogin(false); // só renderiza depois disso
+      }
+    };
+
+    verificarLogin();
+  }, []);
+
+  if (isVerificandoLogin) {
+    return null; 
+  }
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password: senha }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        await AsyncStorage.setItem('accessToken', data.access);
+        await AsyncStorage.setItem('refreshToken', data.refresh);
+        await AsyncStorage.setItem('nomeUsuario', data.user.nome);
+        await AsyncStorage.setItem('usuario', JSON.stringify(data.user));
+
+        const token = await AsyncStorage.getItem('accessToken');
+        console.log("Access token salvo:", token);
+
+        Alert.alert('Sucesso', data.message);
+
+        router.push('/'); 
+
+      } else {
+        const errorData = await response.json();
+        const mensagemErro = errorData.detail || JSON.stringify(errorData);
+        Alert.alert('Erro', mensagemErro);
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Erro na requisição: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+
+
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -56,7 +124,7 @@ export default function Login() {
       </TouchableOpacity>
 
       {/* Botão Entrar */}
-      <TouchableOpacity style={styles.botao}>
+      <TouchableOpacity style={styles.botao} onPress={handleLogin}>
         <Text style={styles.botaoTexto}>Entrar</Text>
       </TouchableOpacity>
     </ScrollView>

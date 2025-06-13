@@ -4,8 +4,52 @@ import Cabecalho from '@/components/cabecalho';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
 import PesquisaSection from '@/components/pesquisar'; 
+import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const [score, setScore] = useState<number>(0);
+  const [nivel, setNivel] = useState<number>(0);
+
+  const [nomeUsuario, setNomeUsuario] = useState('');
+
+  useEffect(() => {
+  const verificarEstadoInicial = async () => {
+    // Verifica se o usuário já viu a tela de boas-vindas
+    const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+    const nome = await AsyncStorage.getItem('nomeUsuario');
+    const score = await AsyncStorage.getItem('score');
+    const nivel = await AsyncStorage.getItem('nivel');
+
+    if (nome) {
+      setNomeUsuario(nome);
+    }
+
+    if (score) {
+      setScore(Number(score));  
+    }
+
+    if (nivel) {
+      setNivel(Number(nivel));
+    }
+
+    if (jaViu) {
+      router.replace('../boas_vindas'); // ou outra rota inicial
+    } else {
+      console.log("entrei aqui");
+    }
+  };
+
+  verificarEstadoInicial();
+}, []);
+
+
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
   const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', "Cultura"];
 
@@ -43,9 +87,9 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Cabecalho
-        user="Giovanni"
-        xp={50}
-        nivel={4}
+        user={nomeUsuario || 'Usuário'}
+        xp={score}
+        nivel={nivel}
         abaAtiva={abaAtiva}
         setAbaAtiva={setAbaAtiva}
       />

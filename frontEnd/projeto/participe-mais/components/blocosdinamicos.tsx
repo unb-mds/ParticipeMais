@@ -180,7 +180,7 @@ function BlocoEnqueteComentariosColuna({
         ))}
       </View>
        <TouchableOpacity onPress={() => {/* sua ação aqui */}}>
-              <Text style={styles.linkVerMais}>Ver mais</Text>
+              <Text style={styles.linkVerMais}>Veja mais</Text>
         </TouchableOpacity>
       
     </>
@@ -478,9 +478,8 @@ iconInline: {
   alignSelf: 'center',      // alinha verticalmente com o texto
 },
 linkVerMais: {
-  color: '#1E90FF', // azul estilo link (você pode usar também '#007AFF' ou '#0645AD')
+  color: '#2670E8', // azul estilo link (você pode usar também '#007AFF' ou '#0645AD')
   fontSize: 14,
-  textDecorationLine: 'underline',
   fontFamily: 'Raleway_400Regular',
   marginTop: 8,
   paddingBottom: 100, // espaço extra ao fim

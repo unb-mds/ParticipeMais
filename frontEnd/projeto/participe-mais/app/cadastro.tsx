@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import {
   View,
@@ -13,9 +15,10 @@ import {
   Alert,
 } from 'react-native';
 
-const router = useRouter();
 
 export default function TelaCadastro() {
+  const router = useRouter();
+  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
   // Estados para armazenar os valores dos campos do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -30,37 +33,84 @@ export default function TelaCadastro() {
     senhaNovamente: false,
   });
 
+  
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          router.replace('/perfil');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao verificar login:', error);
+      } finally {
+        setIsVerificandoLogin(false); // só renderiza depois disso
+      }
+    };
+
+    verificarLogin();
+  }, []);
+
+  if (isVerificandoLogin) {
+    return null; 
+  }
+
   /**
    * Função que valida os campos e realiza o cadastro
    */
-  const handleCadastrar = () => {
-    // Objeto para armazenar erros encontrados na validação
-    const novosErros = {
-      nome: nome.trim() === '',
-      email: email.trim() === '',
-      senha: senha === '',
-      senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
-    };
-
-    // Atualiza o estado de erros para refletir no estilo dos inputs
-    setErros(novosErros);
-
-    // Se algum campo estiver com erro, exibe alerta e interrompe o cadastro
-    if (Object.values(novosErros).some(Boolean)) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
-      return;
-    }
-
-    // Cadastro bem-sucedido: exibe mensagem e navega para a tela inicial
-    Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
-    router.push('/');
-
-    // Limpa os campos após cadastro
-    setNome('');
-    setEmail('');
-    setSenha('');
-    setSenhaNovamente('');
+  const handleCadastrar = async () => {
+  const novosErros = {
+    nome: nome.trim() === '',
+    email: email.trim() === '',
+    senha: senha === '',
+    senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
   };
+
+  setErros(novosErros);
+
+  if (Object.values(novosErros).some(Boolean)) {
+    Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/auth/cadastro/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nome,
+        email,
+        password: senha,
+        data_nascimento: '2000-01-01' 
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
+
+      // Se quiser, pode salvar o token de acesso aqui para autenticação futura
+      // Exemplo:
+      // await AsyncStorage.setItem('token', data.access);
+
+      router.push('/login'); 
+
+      setNome('');
+      setEmail('');
+      setSenha('');
+      setSenhaNovamente('');
+    } else {
+      Alert.alert('Erro', 'Falha no cadastro: ' + JSON.stringify(data.errors || data.message));
+    }
+  } catch (error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  Alert.alert('Erro', 'Erro na requisição: ' + errorMessage);
+  }
+};
 
   /**
    * Retorna o estilo do input baseado no estado de erro do campo
