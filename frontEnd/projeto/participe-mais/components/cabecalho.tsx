@@ -1,20 +1,22 @@
-import { View, StyleSheet, Image, TouchableOpacity, Text, StatusBar, Platform } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, StatusBar } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 
-const router = useRouter();
 
 type Props = {
   user: string;
   xp: number;
   nivel: number;
+  divisor: number;
   abaAtiva: 'descubra' | 'comunidade' | 'pesquisar';
   setAbaAtiva: React.Dispatch<React.SetStateAction<'comunidade' | 'descubra' | 'pesquisar'>>;
 };
 
-export default function Cabecalho({ user, xp, nivel, abaAtiva, setAbaAtiva }: Props) {
+export default function Cabecalho({ user, xp, nivel,divisor, abaAtiva, setAbaAtiva }: Props) {
+  const router = useRouter();
+
   let titulo = 'Bem-vindo(a)';
 
   if (abaAtiva === 'comunidade') {
@@ -85,7 +87,7 @@ export default function Cabecalho({ user, xp, nivel, abaAtiva, setAbaAtiva }: Pr
         <View style={styles.barraFundo}>
           <View style={[styles.barraXp, { width: `${xp}%` }]} />
         </View>
-        <Text style={styles.texto_barra}>{xp} / 500 xp</Text>
+        <Text style={styles.texto_barra}>{xp} / {divisor} xp</Text>
       </View>
     </View>
   </TouchableOpacity>

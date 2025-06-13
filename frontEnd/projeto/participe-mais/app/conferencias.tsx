@@ -64,7 +64,7 @@ export default function ConferenciaDetalhadaScreen() {
         <Text style={styles.blueCardTitle}>Eixos Temáticos</Text>
         <Text style={styles.blueCardSubtitle}>– 1. Mitigação:</Text>
         <Text style={styles.blueCardText}>
-          "Exploração de estratégias e políticas para reduzir as emissões de gases de efeito estufa, promovendo práticas sustentáveis e inovadoras em diversos setores."
+          {`"Exploração de estratégias e políticas para reduzir as emissões de gases de efeito estufa, promovendo práticas sustentáveis e inovadoras em diversos setores."`}
         </Text>
       </View>
 

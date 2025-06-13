@@ -61,7 +61,9 @@ const QuadradoComentario = ({comentario, autor} : { comentario: string; autor: s
       <View style={[styles.quadrado, { backgroundColor: corAleatoria }]}>
         <FontAwesome name="book" size={24} color="#fff" style={styles.iconeCanto} />
         <Text style={styles.nomeCantocomentario}>{autor}</Text>
-        <Text style={[styles.Comentario, { fontSize: getTamanhoFonte(comentario) }]}>"{comentario}"</Text>
+        <Text style={[styles.Comentario, { fontSize: getTamanhoFonte(comentario) }]}>
+          {`"${comentario}"`}
+        </Text>
       </View>
     </TouchableOpacity>
   );

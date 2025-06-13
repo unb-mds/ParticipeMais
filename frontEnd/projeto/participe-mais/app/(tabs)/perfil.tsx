@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Alert, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions, ScrollView } from 'react-native';
 import { Feather, Octicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from "react";
-import { useFonts, Raleway_400Regular, Raleway_700Bold } from '@expo-google-fonts/raleway';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;

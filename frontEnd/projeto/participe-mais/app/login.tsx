@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  View,
   Text,
   StyleSheet,
   TextInput,
@@ -36,7 +35,7 @@ export default function Login() {
     };
 
     verificarLogin();
-  }, []);
+  }, [router]);
 
   if (isVerificandoLogin) {
     return null; 
