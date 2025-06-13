@@ -14,30 +14,40 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [score, setScore] = useState<number>(0);
+  const [nivel, setNivel] = useState<number>(0);
 
   const [nomeUsuario, setNomeUsuario] = useState('');
 
   useEffect(() => {
-    const verificarEstadoInicial = async () => {
-      // Lógica fictícia: verificar se o usuário já viu a tela de boas-vindas
-      const jaViu = await AsyncStorage.getItem('boasVindasVisto');
-      const nome = await AsyncStorage.getItem('nomeUsuario');
+  const verificarEstadoInicial = async () => {
+    // Verifica se o usuário já viu a tela de boas-vindas
+    const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+    const nome = await AsyncStorage.getItem('nomeUsuario');
+    const score = await AsyncStorage.getItem('score');
+    const nivel = await AsyncStorage.getItem('nivel');
 
-      if (nome) {
-        setNomeUsuario(nome);
+    if (nome) {
+      setNomeUsuario(nome);
     }
-      
-      if (jaViu) {
-        router.replace('../boas_vindas'); // ← ou qualquer outra rota inicial
 
-      } else {
-        console.log("entrei aqui")        
+    if (score) {
+      setScore(Number(score));  
+    }
 
-      }
-    };
+    if (nivel) {
+      setNivel(Number(nivel));
+    }
 
-    verificarEstadoInicial();
-  }, []);
+    if (jaViu) {
+      router.replace('../boas_vindas'); // ou outra rota inicial
+    } else {
+      console.log("entrei aqui");
+    }
+  };
+
+  verificarEstadoInicial();
+}, []);
 
 
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
@@ -78,8 +88,8 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <Cabecalho
         user={nomeUsuario || 'Usuário'}
-        xp={50}
-        nivel={4}
+        xp={score}
+        nivel={nivel}
         abaAtiva={abaAtiva}
         setAbaAtiva={setAbaAtiva}
       />

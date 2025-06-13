@@ -101,6 +101,8 @@ const nivelAtualIndex = niveis.findIndex((n, i) => {
   return !proximo || score < proximo.minimo;
 });
 
+const proximoMinimo = niveis[nivelAtualIndex + 1]?.minimo || score;
+
 const getProximoNivel = (pontos: number) => {
   for (let i = 0; i < niveis.length; i++) {
     const nivelAtual = niveis[i];
@@ -133,7 +135,7 @@ const getProximoNivel = (pontos: number) => {
         <Text style={styles.sectionTitle}>Seus dados</Text>
         
         <Text style={styles.scoreNumber}>
-          {score}<Text style={styles.scoreOutOf}>/500</Text>
+          {score}<Text style={styles.scoreOutOf}>/{proximoMinimo}</Text>
         </Text>
         <Text style={styles.level}>Nível atual: {nivel}</Text>
 
@@ -145,7 +147,7 @@ const getProximoNivel = (pontos: number) => {
           {getProximoNivel(score) ? (
         <View style={styles.rewardBox}>
           <Text style={styles.rewardText}>
-            Nível {getProximoNivel(score)?.nome}"
+            {getProximoNivel(score)?.nome}"
           </Text>
         </View>
       ) : (

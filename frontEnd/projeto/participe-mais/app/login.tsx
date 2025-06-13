@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
@@ -16,6 +17,30 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const router = useRouter();
+
+  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
+
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          router.replace('/perfil');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao verificar login:', error);
+      } finally {
+        setIsVerificandoLogin(false); // só renderiza depois disso
+      }
+    };
+
+    verificarLogin();
+  }, []);
+
+  if (isVerificandoLogin) {
+    return null; 
+  }
 
   const handleLogin = async () => {
     try {
