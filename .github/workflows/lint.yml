@@ -22,9 +22,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci || npm install
-        working-directory: ./frontEnd - Projeto - ParticipeMais
+        working-directory: ./frontEnd/projeto/participe-mais
 
       - name: Run ESLint
         run: |
           npm run lint
-        working-directory: ./frontEnd - Projeto - ParticipeMais
+        working-directory: ./frontEnd/projeto/participe-mais
