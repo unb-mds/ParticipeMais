@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView, Text } from 'react-native'; 
+import React, { useState } from 'react';
+import { StyleSheet, View, SafeAreaView, ScrollView, Text } from 'react-native'; 
 import Cabecalho from '@/components/cabecalho';
 import BlocoDinamico from '@/components/blocosdinamicos';
 import DescubraSection from '@/components/descubra'; 
 import PesquisaSection from '@/components/pesquisar'; 
 import { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,34 +19,25 @@ export default function HomeScreen() {
   const [nomeUsuario, setNomeUsuario] = useState('');
 
   useEffect(() => {
-  const verificarEstadoInicial = async () => {
-    // Verifica se o usuário já viu a tela de boas-vindas
-    const jaViu = await AsyncStorage.getItem('boasVindasVisto');
-    const nome = await AsyncStorage.getItem('nomeUsuario');
-    const score = await AsyncStorage.getItem('score');
-    const nivel = await AsyncStorage.getItem('nivel');
+    const verificarEstadoInicial = async () => {
+      const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+      const nome = await AsyncStorage.getItem('nomeUsuario');
+      const score = await AsyncStorage.getItem('score');
+      const nivel = await AsyncStorage.getItem('nivel');
 
-    if (nome) {
-      setNomeUsuario(nome);
-    }
+      if (nome) setNomeUsuario(nome);
+      if (score) setScore(Number(score));
+      if (nivel) setNivel(Number(nivel));
 
-    if (score) {
-      setScore(Number(score));  
-    }
+      if (jaViu) {
+        router.replace('/');
+      } else {
+        console.log("entrei aqui");
+      }
+    };
 
-    if (nivel) {
-      setNivel(Number(nivel));
-    }
-
-    if (jaViu) {
-      router.replace('../boas_vindas'); // ou outra rota inicial
-    } else {
-      console.log("entrei aqui");
-    }
-  };
-
-  verificarEstadoInicial();
-}, []);
+    verificarEstadoInicial();
+  }, [router]);
 
 
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
@@ -91,6 +81,7 @@ export default function HomeScreen() {
         xp={score}
         nivel={nivel}
         abaAtiva={abaAtiva}
+        divisor={50}
         setAbaAtiva={setAbaAtiva}
       />
 

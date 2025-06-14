@@ -122,7 +122,10 @@ function BlocoEnqueteComentarios({ dados }: { dados: { categoria: string, coment
             </View>
 
             {/* Comentário */}
-            <Text style={styles.comentarioTexto}>"{item.comentario}"</Text>
+            <Text style={styles.comentarioTexto}>
+              {`"${item.comentario}"`}
+            </Text>
+
           </View>
         </View>
         </TouchableOpacity>

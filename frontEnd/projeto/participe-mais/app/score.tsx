@@ -140,15 +140,16 @@ const getProximoNivel = (pontos: number) => {
         <Text style={styles.level}>Nível atual: {nivel}</Text>
 
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: `${(score / 500) * 100}%` }]} />
+          <View style={[styles.progressBarFill, { width: `${(score / proximoMinimo) * 100}%` }]} />
         </View>
 
         <Text style={styles.sectionTitle}>Próxima recompensa:</Text>
           {getProximoNivel(score) ? (
         <View style={styles.rewardBox}>
           <Text style={styles.rewardText}>
-            {getProximoNivel(score)?.nome}"
+            {`"${getProximoNivel(score)?.nome}"`}
           </Text>
+
         </View>
       ) : (
         <View style={styles.rewardBox}>
