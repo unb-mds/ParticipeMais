@@ -25,7 +25,7 @@ class Home(APIView):
 
 class DescubraView(APIView):
     
-    permission_classes = [permissions.IsAuthenticated] 
+    permission_classes = [permissions.AllowAny] 
     #essa view só pode ser acessada por usuários autenticados
 
     def get(self, request):
@@ -98,3 +98,22 @@ class PesquisaGeralView(APIView):
                 'consultas': ConsultasSerializer(consultas, many=True).data
              }, status=status.HTTP_200_OK)
        
+class PesquisaListaTudo(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        conferencia = list(Conferencia.objects.order_by('?'))
+        planos = list(Planos.objects.order_by('?'))
+        consultas = list(Consultas.objects.order_by('?'))
+
+        data = {
+            'conferencias': ConferenciaSerializer(conferencia, context={'request': request}, many=True, fields=['id','image_url','titulo']).data,  
+            'planos': PlanosSerializer(planos, many=True, context={'request': request}, fields=['id','image_url','nome']).data,
+            'consultas': ConsultasSerializer(consultas, many=True, context={'request': request},  fields=['id','image_url','nome']).data,
+        }
+        
+        return Response({
+                'message': 'Rota protegida com sucesso!',
+                'data': data
+            })
+        

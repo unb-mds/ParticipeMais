@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,112 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
-import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
+// Ativa animação de layout para Android
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+interface Conferencias {
+  id: number;
+  titulo: string;
+  descricao: string;
+  sobre: string;
+  status: boolean;
+  data_subconferencia: string;
+  qtd_propostas: number;
+}
+
+interface Propostas {
+  titulo_proposta: string;
+  autor: string;
+  descricao_proposta: string;
+  qtd_votos: number;
+}
+
+interface Etapas {
+  titulo_etapa: string;
+  descricao_etapa: string;
+  statusetapa: string;
+  regiao_etapa: string;
+  duracao_etapa: string;
+  qtd_propostas_etapa: number;
+  qtd_inscritos_etapa: number;
+  propostas_relacionadas: string;
+}
+
 export default function ConferenciaDetalhadaScreen() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams();
+
+  const [token, setToken] = useState<string>('');
+  const [conferencias, setConferencias] = useState<Conferencias | null>(null);
+  const [etapas, setEtapas] = useState<Etapas[]>([]);
+  const [propostas, setPropostas] = useState<Propostas[]>([]);
+
   const [calendarioAberto, setCalendarioAberto] = useState(false);
   const [dadosConferenciasAberto, setDadosConferenciasAberto] = useState(false);
   const [dadosPropostasAberto, setDadosPropostasAberto] = useState(false);
 
+  // Recupera token async
+  useEffect(() => {
+    const obterToken = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        if (tokenSalvo) {
+          setToken(tokenSalvo);
+        } else {
+          console.warn('Token não encontrado');
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Erro ao recuperar token:', error);
+        router.replace('/login');
+      }
+    };
+    obterToken();
+  }, []);
+
+  // Busca dados da conferência quando token e id estiverem disponíveis
+  useEffect(() => {
+    if (token && id) {
+      fetchConferencias();
+    }
+  }, [token, id]);
+
+  const fetchConferencias = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/conferencias/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        const data = json.data;
+
+        setConferencias(data.conferencias);
+        setPropostas(data.propostas);
+        setEtapas(data.etapas);
+        
+      } else if (response.status === 401 || response.status === 403) {
+        router.replace('/login');
+      } else {
+        console.error('Erro ao buscar conferências:', response.status);
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      router.replace('/login');
+    }
+  };
+
+  // Função para alternar a abertura das seções com animação
   const toggleSection = (
     setter: React.Dispatch<React.SetStateAction<boolean>>,
     current: boolean
@@ -30,15 +124,23 @@ export default function ConferenciaDetalhadaScreen() {
     setter(!current);
   };
 
+  // Exibe loading enquanto dados não chegam
+  if (!conferencias) {
+    return (
+      <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+        <Text>Carregando...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.status}>🟢 Ativo</Text>
-      <Text style={styles.title}>5ª Conferência Nacional do Meio Ambiente</Text>
-      <Text style={styles.subinfo}>📅 1527 conferências   📄 10794 propostas</Text>
+      <Text style={styles.status}>🟢 {conferencias.status ? 'Ativo' : 'Inativo'}</Text>
+      <Text style={styles.title}>{conferencias.titulo}</Text>
+      <Text style={styles.subinfo}>📅 {etapas?.length || 0} conferências   📄{propostas?.length} propostas</Text>
 
       <Text style={styles.description}>
-        A emergência climática que vivemos, com eventos extremos cada vez mais frequentes e intensos, é o tema da 5ª Conferência Nacional do Meio Ambiente. Vamos debater a emergência climática junto com o desafio da transformação ecológica: como transitamos para um Brasil mais resiliente, menos vulnerável às mudanças climáticas e reduzimos as emissões de gases de efeito estufa, causadores do aquecimento global. Esta 5ª CNMA marca a retomada da governança participativa, depois de onze anos da última Conferência. Os debates em todo o país vão até maio.
+        {conferencias.descricao?.trim() ? conferencias.descricao : 'Não informado'}
       </Text>
 
       {/* Calendário de Etapas */}
@@ -47,16 +149,16 @@ export default function ConferenciaDetalhadaScreen() {
         <Ionicons name={calendarioAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
       </TouchableOpacity>
       {calendarioAberto && (
-        <View style={styles.card}>
-         <Text style={styles.item}>
-          ✅ Etapa Digital{'\n'}Até 7 de maio de 2025
-        </Text>
+      <View style={styles.card}>
+        {JSON.parse(conferencias.data_subconferencia.replace(/'/g, '"')).map((texto: string, index: number) => (
+          <Text key={index} style={styles.item}>
+            🟢 {texto}
+          </Text>
+        ))}
+      </View>
+    )}
 
-          <Text style={styles.item}>🟢 Conferências Municipais ou Intermunicipais\nAté 26 de janeiro de 2025</Text>
-          <Text style={styles.item}>📌 Conferências Estaduais e Distrital\n5 de janeiro a 15 de março de 2025</Text>
-          <Text style={styles.item}>📍 Etapa Nacional\n06 a 09 de maio de 2025</Text>
-        </View>
-      )}
+
 
       {/* Eixos Temáticos */}
       <Text style={styles.sectionTitle}>📎 Eixos Temáticos</Text>

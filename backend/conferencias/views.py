@@ -11,7 +11,7 @@ import re
 
 # Lista todas as conferências cadastradas
 class ListaConferencias(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request):
         conferencias = Conferencia.objects.all().order_by('id')  # Busca todas as conferências ordenadas por ID
@@ -24,19 +24,32 @@ class ListaConferencias(APIView):
 
 # Acessa os detalhes de uma conferência específica por ID
 class AcessaConferencia(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, pk):
         try:
-            conferencia = Conferencia.objects.get(pk=pk)  # Busca a conferência pelo ID
+            conferencia = Conferencia.objects.get(pk=pk)
         except Conferencia.DoesNotExist:
-            return Response({'error': 'Conferência não encontrada.'}, status=status.HTTP_404_NOT_FOUND)  # Retorna erro se não encontrada
+            return Response({'error': 'Conferência não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ConferenciaSerializer(conferencia)  # Serializa a conferência encontrada
+        conferencia_serializer = ConferenciaSerializer(conferencia)
+
+        # Supondo que você tem relacionamentos ou filtros para propostas e etapas
+        propostas = Propostas.objects.filter(conferencia=conferencia)[:500]
+        propostas_serializer = PropostaSerializer(propostas, many=True)
+
+        etapas = Etapas.objects.filter(conferencia=conferencia)
+        etapas_serializer = EtapaSerializer(etapas, many=True)
+
         return Response({
             'message': 'Conferência encontrada!',
-            'data': serializer.data  # Retorna os dados da conferência
+            'data': {
+                'conferencias': conferencia_serializer.data,
+                'propostas': propostas_serializer.data,
+                'etapas': etapas_serializer.data,
+            }
         })
+
 
 # Lista propostas de uma conferência específica + percentual por eixo (extraído do título)
 class AcessaPropostas(APIView):
