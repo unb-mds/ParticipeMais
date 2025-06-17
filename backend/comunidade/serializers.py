@@ -13,6 +13,10 @@ class ComunidadeSerializer(serializers.ModelSerializer):
     quantidade_curtidas = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class para o serializador de comunidade.
+        Define os campos a serem serializados e o modelo associado.
+        """
         model = Chat
         fields = ['pergunta', 'quantidade_comentarios', 'quantidade_curtidas']
 

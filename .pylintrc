@@ -62,4 +62,4 @@ logging-format-style=old
 [DJANGO]
 
 # Detecta se estamos usando django
-django-settings-module=project.settings
+django-settings-module=backend.project.settings

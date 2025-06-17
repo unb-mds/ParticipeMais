@@ -16,8 +16,7 @@ from consultas.models import Consultas
 from consultas.serializers import ConsultasSerializer
 from propostas.models import Propostas
 from propostas.serializers import PropostaSerializer
-from django.contrib.auth import get_user_model
-from rest_framework.decorators import action
+
 
 class Home(APIView):
     """
@@ -34,7 +33,6 @@ class Home(APIView):
 class DescubraView(APIView):
     
     permission_classes = [permissions.AllowAny] 
-    #essa view só pode ser acessada por usuários autenticados
     """
     View para exibir itens aleatórios de cada categoria.
     """
