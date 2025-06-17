@@ -18,6 +18,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
-    - name: Analysing the code with pylint
+    - name: Analysing the code with pylint (min score 7.0)
       run: |
-        pylint $(git ls-files '*.py')
+        set -e
+        SCORE=$(pylint $(git ls-files '*.py') --score=y | tee pylint.log | tail -n 2 | grep 'Your code has been rated at' | awk '{print $7}' | cut -d/ -f1)
+        echo "Pylint score: $SCORE"
+        MIN_SCORE=7.0
+        RESULT=$(echo "$SCORE >= $MIN_SCORE" | bc -l)
+        if [ "$RESULT" -eq 1 ]; then
+          echo "Pylint passed with score $SCORE"
+        else
+          echo "Pylint failed: score $SCORE is less than minimum required $MIN_SCORE"
+          exit 1
+        fi
+

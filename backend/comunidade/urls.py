@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import *
+from .views import ScoreView, ComunidadeView, CriarChat, ComentarioCarrossel, ChatView, CurtidaView
 
 urlpatterns = [
     path('score/', ScoreView.as_view(), name='score'),

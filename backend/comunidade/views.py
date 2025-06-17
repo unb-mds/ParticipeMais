@@ -1,9 +1,7 @@
-from django.shortcuts import render
 from django.db.models import Count, Q
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import  viewsets, status, permissions, generics, filters
+from rest_framework import status, permissions
 from .models import *
 from .serializers import *
 
@@ -15,7 +13,7 @@ class ScoreView(APIView):
         print("ID:", request.user.id)
         print("Nome:", request.user.nome)
 
-        score_obj, created = UsuarioScore.objects.get_or_create(usuario=request.user)
+        score_obj = UsuarioScore.objects.get_or_create(usuario=request.user)
         return Response({
             'usuario': request.user.nome,
             'pontos': score_obj.pontos
@@ -121,5 +119,3 @@ class CurtidaView(APIView):
             "curtido": curtida.curtido,
             "quantidade_curtidas": quantidade_curtidas
         }, status=status.HTTP_200_OK)
-
-

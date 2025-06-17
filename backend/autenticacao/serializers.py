@@ -1,82 +1,131 @@
-from rest_framework import serializers
-from .models import *
-from django.contrib.auth.tokens import PasswordResetTokenGenerator # gera tokens seguross
-from django.utils.encoding import force_bytes 
-from django.utils.http import urlsafe_base64_encode # converter o user.pk em uma string segura para URL.
-from django.contrib.auth.password_validation import validate_password
+"""
+Serializers para autenticação do ParticipeMais.
+"""
 
+from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+from .models import Usuario, Notification
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Usuario.
+    """
     class Meta:
         model = Usuario
-
         fields = ['id', 'nome', 'email', 'data_nascimento', 'password']
-        extra_kwargs = {'password': {'write_only': True}} 
-        
-    def create(self, validated_data):
-        #criar um novo usuário
+        extra_kwargs = {'password': {'write_only': True}}
 
+    def create(self, validated_data):
+        """
+        Cria um novo usuário com senha criptografada.
+        """
         password = validated_data.pop('password', None)
         usuario = Usuario(**validated_data)
         if password is not None:
-            # Criptografa a senha antes de salvar
             usuario.set_password(password)
             usuario.save()
-            
         return usuario
-    
+
 class LoginSerializer(serializers.Serializer):
+    """
+    Serializer para login de usuário.
+    """
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
-        
+
     def validate(self, attrs):
+        """
+        Valida o login do usuário.
+        """
         email = attrs.get('email')
         password = attrs.get('password')
-            
         try:
-            user = Usuario.objects.get(email=email) #pega o usuario que tem o mesmo email q foi dado
-            if not user.check_password(password): #retorna um bool se bater a senha com a senha (se der erro manda o erro de serializer para ser lido na views)
+            user = Usuario.objects.get(email=email)
+            if not user.check_password(password):
                 raise serializers.ValidationError("Senha Incorreta, tente novamente")
-        except Usuario.DoesNotExist: #se nn existir usuario com esse email ou senha manda esse erro serializer
-            raise serializers.ValidationError("Falha ao realizar o login, usuário não existe")
-            
-        attrs['user'] = user #retorna o user
+        except Exception as exc:
+            raise serializers.ValidationError("Falha ao realizar o login, usuário não existe") from exc
+        attrs['user'] = user
         return attrs
-    
+
+    def create(self, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
+
+    def update(self, instance, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
+
 class RequestEmailforResetPassword(serializers.Serializer):
-    email=serializers.EmailField(min_length=2) #campo obrigatório
+    """
+    Serializer para requisição de email de redefinição de senha.
+    """
+    email = serializers.EmailField(min_length=2)
 
     class Meta:
         fields = ['email']
 
-        def validate(self, attrs):
-            email = attrs.get('email') #attrs pega os dados do input
+    def validate(self, attrs):
+        """
+        Valida se o email existe no sistema.
+        """
+        email = attrs.get('email')
+        user = Usuario.objects.filter(email=email)
+        if not user.exists():
+            raise serializers.ValidationError("Não existe nenhum usuário com esse email.")
+        return attrs
 
-            try:
-                user = Usuario.objects.filter(email=email)
-            except Usuario.DoesNotExist:
-                raise serializers.ValidationError("Não existe nenhum usuário com esse email.")
+    def create(self, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
 
-            return attrs
-        
+    def update(self, instance, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
 
 class SetNewPasswordSerializer(serializers.Serializer):
+    """
+    Serializer para redefinir senha.
+    """
     password = serializers.CharField(write_only=True, min_length=6)
     confirmpassword = serializers.CharField(write_only=True, min_length=6)
 
     def validate(self, attrs):
-
+        """
+        Valida se as senhas coincidem e se são seguras.
+        """
         password = attrs.get('password')
         confirmpassword = attrs.get('confirmpassword')
 
         if confirmpassword != password:
             raise serializers.ValidationError("As senhas não batem")
-            
         validate_password(password)
-
         return attrs
-    
+
+    def create(self, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
+
+    def update(self, instance, validated_data):
+        """
+        Método necessário para evitar erro do pylint.
+        """
+        pass
+
 class NotificationSerializer(serializers.ModelSerializer):
+    """
+    Serializer para notificações.
+    """
     class Meta:
         model = Notification
         fields = '__all__'

@@ -4,6 +4,7 @@ from api.serializers import DynamicFieldsModelSerializer
 
 class PropostaSerializer(DynamicFieldsModelSerializer):
     palavras_chave = serializers.SerializerMethodField()
+    favoritada = serializers.SerializerMethodField()
 
     class Meta:
         model = Propostas
@@ -11,3 +12,10 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
 
     def get_palavras_chave(self, obj):
         return list(obj.palavras_chave.values_list('palavras', flat=True))
+    
+    
+    def get_favoritada(self, obj):
+        request = self.context.get('request')
+        usuario = request.user
+        return usuario.favoritos.filter(id=usuario.id).exists()
+        
