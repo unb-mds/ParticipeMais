@@ -7,14 +7,24 @@ from django.contrib.auth.password_validation import validate_password
 from .models import Usuario, Notification
 
 
+class PerfilSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Perfil.
+    """
+    class Meta:
+        model = Usuario
+        fields = ['cidade', 'qtd_propostas', 'qtd_comentarios', 'qtd_likes']
+        read_only_fields = ['qtd_propostas', 'qtd_comentarios', 'qtd_likes']
 class UsuarioSerializer(serializers.ModelSerializer):
     """
     Serializer para o modelo Usuario.
     Serializa os campos básicos e trata a criação com senha criptografada.
     """
+    
+    idPerfilUser = PerfilSerializer(read_only=True)
     class Meta:
         model = Usuario
-        fields = ['id', 'nome', 'email', 'data_nascimento', 'password']
+        fields = ['id', 'nome', 'email', 'data_nascimento', 'password', 'idPerfilUser']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -27,6 +37,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
             usuario.set_password(password)
             usuario.save()
         return usuario
+    
+    
+    def update(self, instance, validated_data):
+        
+        password = validated_data.pop('password', None)
+        if password is not None:
+            instance.set_password(password)
+            instance.save()
+        return super().update(instance, validated_data)
 
 
 class LoginSerializer(serializers.Serializer):
@@ -99,3 +118,6 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = '__all__'
+        
+        
+

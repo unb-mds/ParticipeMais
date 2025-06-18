@@ -16,7 +16,8 @@ from .serializers import (
     LoginSerializer,
     RequestEmailforResetPassword,
     SetNewPasswordSerializer,
-    NotificationSerializer
+    NotificationSerializer,
+    PerfilSerializer
 )
 
 class ListarUsuario(generics.ListAPIView):
@@ -182,3 +183,50 @@ class NotificationsView(generics.ListAPIView):
         return Notification.objects.filter(usuario=self.request.user).order_by('-created_at')
 
 
+class PerfilView(APIView):
+    
+    """
+    View para gerenciar o perfil do usuário autenticado.
+    """
+    
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        """
+        Retorna o perfil do usuário autenticado.
+        """
+        usuario = request.user
+        
+        perfil = UsuarioSerializer(usuario).data
+        
+        return Response({
+            'perfil': perfil
+        }, status=status.HTTP_200_OK)
+        
+        
+    def patch(self, request):
+        """
+        Atualiza o perfil do usuário autenticado.
+        """
+        usuario = request.user
+        
+        serializer = UsuarioSerializer(usuario, data=request.data, partial=True, context={'request': request})
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Perfil atualizado com sucesso!',
+                'perfil': serializer.data
+            }, status=status.HTTP_200_OK)
+        
+        return Response({
+            'errors': serializer.errors,
+            'message': 'Erro ao atualizar perfil.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
+
+        
+        
