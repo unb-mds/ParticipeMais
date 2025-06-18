@@ -50,7 +50,7 @@ export default function TelaCadastro() {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/auth/cadastro/', {
+    const response = await fetch('http://172.20.10.9:8000/auth/cadastro/', {
       // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
       method: 'POST',
       headers: {

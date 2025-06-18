@@ -1,117 +1,151 @@
-import { View, StyleSheet, Image, TouchableOpacity, Text, StatusBar, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Text,
+  StatusBar,
+} from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React from 'react';
-
-const router = useRouter();
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {
   user: string;
-  xp: number;
-  nivel: number;
   abaAtiva: 'descubra' | 'comunidade' | 'pesquisar';
   setAbaAtiva: React.Dispatch<React.SetStateAction<'comunidade' | 'descubra' | 'pesquisar'>>;
 };
 
-export default function Cabecalho({ user, xp, nivel, abaAtiva, setAbaAtiva }: Props) {
-  let titulo = 'Bem-vindo(a)';
+export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
+  const router = useRouter();
+  const [score, setScore] = useState<{ xp: number; nivel: number } | null>(null);
 
-  if (abaAtiva === 'comunidade') {
-    titulo = 'Comunidade';
-  } else if (abaAtiva === 'pesquisar') {
-    titulo = 'Pesquisar';
-  }
+  useEffect(() => {
+    const fetchScore = async () => {
+      try {
+        const response = await fetch('http://172.20.10.9:8000/comunidade/score', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+        const json = await response.json();
+
+        if (json?.data?.score) {
+          setScore(json.data.score);
+        } else {
+          console.warn('Estrutura inesperada na resposta:', json);
+          setScore({ xp: 0, nivel: 1 }); // ou null, dependendo do que for melhor
+        }
+      }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
+    };
+
+    fetchScore();
+  }, []);
+
+  const titulo =
+    abaAtiva === 'comunidade'
+      ? 'Comunidade'
+      : abaAtiva === 'pesquisar'
+      ? 'Pesquisar'
+      : 'Bem-vindo(a)';
 
   return (
     <>
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <View style={styles.headerContainer}>
-  {/* imagem da logo à esquerda */}
-  <Image
-    source={require('@/assets/images/icon.png')}
-    style={styles.logo}
-    resizeMode="contain"
-  />
+          <Image
+            source={require('@/assets/images/icon.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-  {/* bloco central com o título e o nome do usuário */}
-  <View style={styles.container}>
-    <Text
-      style={[
-        styles.title,
-        abaAtiva !== 'descubra' ? styles.title_diferente : undefined,
-      ]}
-    >
-      {abaAtiva === 'comunidade'
-        ? 'Comunidade'
-        : abaAtiva === 'pesquisar'
-        ? 'Pesquisar'
-        : 'Bem-vindo(a)'}
-    </Text>
+          <View style={styles.container}>
+            <Text style={styles.title}>{titulo}</Text>
+            {abaAtiva === 'descubra' && (
+              <Text style={styles.user} numberOfLines={1} adjustsFontSizeToFit>
+                {user}
+              </Text>
+            )}
+          </View>
 
-    {abaAtiva === 'descubra' && (
-      <Text style={styles.user} numberOfLines={1} adjustsFontSizeToFit>
-        {user}
-      </Text>
-    )}
-  </View>
-
-  {/* botão com ícone de sino, alinhado à direita */}
-  <TouchableOpacity
-    style={styles.bell}
-    onPress={() => router.push('/notificacoes')}
-  >
-    <FontAwesome5 name="bell" size={25} color="black" />
-  </TouchableOpacity>
-</View>
-
-<View style={styles.Novocontainer}>
-  <TouchableOpacity onPress={() => router.push('/score')}>
-    <View style={styles.quadrado}>
-      <View style={styles.linhaTextoImagem}>
-        <Text style={styles.textoInfo}>Seu score</Text>
-
-        <Image
-          source={require('@/assets/images/medidor.png')}
-          style={styles.foto}
-          resizeMode="contain"
-        />
-      </View>
-
-      <Text style={styles.textoAbaixo}>Você está no nível {nivel}</Text>
-
-      <View style={styles.linhaBarra}>
-        <View style={styles.barraFundo}>
-          <View style={[styles.barraXp, { width: `${xp}%` }]} />
+          <TouchableOpacity
+            style={styles.bell}
+            onPress={() => router.push('/notificacoes')}
+          >
+            <FontAwesome5 name="bell" size={25} color="black" />
+          </TouchableOpacity>
         </View>
-        <Text style={styles.texto_barra}>{xp} / 500 xp</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-</View>
-<View style={styles.menuAbas}>
-  <TouchableOpacity onPress={() => setAbaAtiva('descubra')}>
-    <Text style={abaAtiva === 'descubra' ? styles.abaAtiva : styles.abaInativa}>
-      Descubra
-    </Text>
-  </TouchableOpacity>
 
-  <TouchableOpacity onPress={() => setAbaAtiva('comunidade')}>
-    <Text style={abaAtiva === 'comunidade' ? styles.abaAtiva : styles.abaInativa}>
-      Comunidade
-    </Text>
-  </TouchableOpacity>
+        <View style={styles.Novocontainer}>
+          <TouchableOpacity onPress={() => router.push('/score')}>
+            <View style={styles.quadrado}>
+              <View style={styles.linhaTextoImagem}>
+                <Text style={styles.textoInfo}>Seu score</Text>
+                <Image
+                  source={require('@/assets/images/medidor.png')}
+                  style={styles.foto}
+                  resizeMode="contain"
+                />
+              </View>
 
-  <TouchableOpacity onPress={() => setAbaAtiva('pesquisar')}>
-    <Text style={abaAtiva === 'pesquisar' ? styles.abaAtiva : styles.abaInativa}>
-      Pesquisar
-    </Text>
-  </TouchableOpacity>
-</View>
+              <Text style={styles.textoAbaixo}>
+                Você está no nível {score?.nivel ?? 1}
+              </Text>
 
+              <View style={styles.linhaBarra}>
+                <View style={styles.barraFundo}>
+                  <View
+                    style={[
+                      styles.barraXp,
+                      { width: `${((score?.xp ?? 0) / 500) * 100}%` },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.texto_barra}>{score?.xp ?? 0} / 500 xp</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
 
+        <View style={styles.menuAbas}>
+          <TouchableOpacity onPress={() => setAbaAtiva('descubra')}>
+            <Text
+              style={
+                abaAtiva === 'descubra' ? styles.abaAtiva : styles.abaInativa
+              }
+            >
+              Descubra
+            </Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity onPress={() => setAbaAtiva('comunidade')}>
+            <Text
+              style={
+                abaAtiva === 'comunidade' ? styles.abaAtiva : styles.abaInativa
+              }
+            >
+              Comunidade
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setAbaAtiva('pesquisar')}>
+            <Text
+              style={
+                abaAtiva === 'pesquisar' ? styles.abaAtiva : styles.abaInativa
+              }
+            >
+              Pesquisar
+            </Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </>
   );
@@ -120,33 +154,26 @@ export default function Cabecalho({ user, xp, nivel, abaAtiva, setAbaAtiva }: Pr
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: '#ffffff',
-    paddingTop: -30,
+    paddingTop: -40,
   },
-
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
     backgroundColor: '#ffffff',
-    borderBottomWidth: 0,
     marginBottom: 15,
   },
-
   logo: {
     width: 40,
     height: 40,
   },
-  centerContent: {
-    flex: 1,
-    justifyContent: 'center',
+  container: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'Raleway_700Bold',
-  },
-  title_diferente: {
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Raleway_700Bold',
@@ -168,16 +195,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
   Novocontainer: {
     padding: 5,
-backgroundColor: '#ffffff', // branco
-    marginBottom: 0,
+    backgroundColor: '#ffffff',
     alignItems: 'center',
   },
   quadrado: {
@@ -185,33 +205,6 @@ backgroundColor: '#ffffff', // branco
     height: 150,
     backgroundColor: '#2670E8',
     borderRadius: 16,
-  },
-  barraFundo: {
-    width: '60%',
-    height: 15,
-    backgroundColor: '#8BC34A',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 10,
-    alignSelf: 'center',
-  },
-  barraXp: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
-  },
-  texto_barra: {
-    color: 'white',
-    fontSize: 10,
-    marginTop: -12,
-    fontFamily: 'Raleway_400Regular',
-  },
-  linhaBarra: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 30,
-    justifyContent: 'center',
-    gap: 10,
   },
   linhaTextoImagem: {
     flexDirection: 'row',
@@ -239,11 +232,36 @@ backgroundColor: '#ffffff', // branco
     marginRight: 195,
     fontFamily: 'Raleway_400Regular',
   },
+  linhaBarra: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 30,
+    justifyContent: 'center',
+    gap: 10,
+  },
+  barraFundo: {
+    width: '60%',
+    height: 15,
+    backgroundColor: '#8BC34A',
+    borderRadius: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+  },
+  barraXp: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+  },
+  texto_barra: {
+    color: 'white',
+    fontSize: 10,
+    marginTop: -12,
+    fontFamily: 'Raleway_400Regular',
+  },
   menuAbas: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 15,
-    borderBottomColor: '#fff',
   },
   abaAtiva: {
     fontWeight: 'bold',

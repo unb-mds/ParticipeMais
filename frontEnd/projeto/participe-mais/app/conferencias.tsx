@@ -40,7 +40,7 @@ interface Propostas {
 interface Etapas {
   titulo_etapa: string;
   descricao_etapa: string;
-  statusetapa: string;
+  status: string;
   regiao_etapa: string;
   duracao_etapa: string;
   qtd_propostas_etapa: number;
@@ -61,7 +61,9 @@ export default function ConferenciaDetalhadaScreen() {
   const [dadosConferenciasAberto, setDadosConferenciasAberto] = useState(false);
   const [dadosPropostasAberto, setDadosPropostasAberto] = useState(false);
 
-  // Recupera token async
+  const [mostrarMaisEtapas, setMostrarMaisEtapas] = useState(false);
+  const [mostrarMaisPropostas, setMostrarMaisPropostas] = useState(false);
+
   useEffect(() => {
     const obterToken = async () => {
       try {
@@ -69,18 +71,15 @@ export default function ConferenciaDetalhadaScreen() {
         if (tokenSalvo) {
           setToken(tokenSalvo);
         } else {
-          console.warn('Token não encontrado');
           router.replace('/login');
         }
       } catch (error) {
-        console.error('Erro ao recuperar token:', error);
         router.replace('/login');
       }
     };
     obterToken();
   }, []);
 
-  // Busca dados da conferência quando token e id estiverem disponíveis
   useEffect(() => {
     if (token && id) {
       fetchConferencias();
@@ -89,7 +88,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/conferencias/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -101,21 +100,16 @@ export default function ConferenciaDetalhadaScreen() {
         const data = json.data;
 
         setConferencias(data.conferencias);
-        setPropostas(data.propostas);
         setEtapas(data.etapas);
-        
-      } else if (response.status === 401 || response.status === 403) {
-        router.replace('/login');
+        setPropostas(data.propostas);
       } else {
-        console.error('Erro ao buscar conferências:', response.status);
+        router.replace('/login');
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
       router.replace('/login');
     }
   };
 
-  // Função para alternar a abertura das seções com animação
   const toggleSection = (
     setter: React.Dispatch<React.SetStateAction<boolean>>,
     current: boolean
@@ -124,10 +118,9 @@ export default function ConferenciaDetalhadaScreen() {
     setter(!current);
   };
 
-  // Exibe loading enquanto dados não chegam
   if (!conferencias) {
     return (
-      <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text>Carregando...</Text>
       </View>
     );
@@ -135,30 +128,27 @@ export default function ConferenciaDetalhadaScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Status e título */}
       <Text style={styles.status}>🟢 {conferencias.status ? 'Ativo' : 'Inativo'}</Text>
       <Text style={styles.title}>{conferencias.titulo}</Text>
-      <Text style={styles.subinfo}>📅 {etapas?.length || 0} conferências   📄{propostas?.length} propostas</Text>
+      <Text style={styles.subinfo}>📅 {etapas.length} conferências   📄 {propostas.length} propostas</Text>
 
       <Text style={styles.description}>
-        {conferencias.descricao?.trim() ? conferencias.descricao : 'Não informado'}
+        {conferencias.descricao?.trim() || 'Descrição não informada'}
       </Text>
 
-      {/* Calendário de Etapas */}
+      {/* Calendário */}
       <TouchableOpacity onPress={() => toggleSection(setCalendarioAberto, calendarioAberto)} style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>🗓️ Calendário de Etapas</Text>
-        <Ionicons name={calendarioAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
+        <Ionicons name={calendarioAberto ? 'chevron-up' : 'chevron-down'} size={20} />
       </TouchableOpacity>
       {calendarioAberto && (
-      <View style={styles.card}>
-        {JSON.parse(conferencias.data_subconferencia.replace(/'/g, '"')).map((texto: string, index: number) => (
-          <Text key={index} style={styles.item}>
-            🟢 {texto}
-          </Text>
-        ))}
-      </View>
-    )}
-
-
+        <View style={styles.card}>
+          {JSON.parse(conferencias.data_subconferencia.replace(/'/g, '"')).map((texto: string, i: number) => (
+            <Text key={i} style={styles.item}>🟢 {texto}</Text>
+          ))}
+        </View>
+      )}
 
       {/* Eixos Temáticos */}
       <Text style={styles.sectionTitle}>📎 Eixos Temáticos</Text>
@@ -170,26 +160,34 @@ export default function ConferenciaDetalhadaScreen() {
         </Text>
       </View>
 
-      {/* Conferências Gerais */}
+      {/* Etapas */}
       <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
       <TextInput placeholder="🔍 Buscar..." style={styles.input} />
       <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
-      <View style={styles.card}>
-        <Text style={styles.itemTitle}>01ª Conferência Intermunicipal de Jaguaré e Alto Rio Novo/ES</Text>
-        <Text style={styles.itemDesc}>A 1ª Conferência Intermunicipal de Jaguaré, em conjunto com o município de Alto Rio Novo/ES, terá como tema central...</Text>
-        <Text style={styles.itemTag}>🟡 Encerrada</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.itemTitle}>01ª Conferência Intermunicipal de Meio Ambiente de Alto Rio</Text>
-        <Text style={styles.itemDesc}>A 1ª Conferência Intermunicipal de Jaguaré, em conjunto com o município de Alto Rio Novo/ES, terá como tema central...</Text>
-        <Text style={styles.itemTag}>🟡 Encerrada</Text>
-      </View>
-      <Text style={styles.link}>Ver mais +</Text>
 
-      {/* Dados estatísticos - Conferências Gerais */}
+      {/* Etapas */}
+      <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
+      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
+      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
+
+      {(mostrarMaisEtapas ? etapas : etapas.slice(0, 3)).map((etapa, i) => (
+        <View key={`etapa-${i}`} style={styles.card}>
+          <Text style={styles.itemTitle}>{etapa.titulo_etapa}</Text>
+          <Text style={styles.itemDesc}>{etapa.descricao_etapa}</Text>
+          <Text style={styles.itemTag}>{etapa.status}</Text>
+        </View>
+      ))}
+
+      {etapas.length > 3 && (
+        <TouchableOpacity onPress={() => setMostrarMaisEtapas(!mostrarMaisEtapas)}>
+          <Text style={styles.link}>{mostrarMaisEtapas ? 'Ver menos -' : 'Ver mais +'}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Dados Etapas */}
       <TouchableOpacity onPress={() => toggleSection(setDadosConferenciasAberto, dadosConferenciasAberto)} style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>📊 DADOS - Conferências Gerais</Text>
-        <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
+        <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
       </TouchableOpacity>
       {dadosConferenciasAberto && (
         <View style={styles.card}>
@@ -198,28 +196,30 @@ export default function ConferenciaDetalhadaScreen() {
         </View>
       )}
 
-      {/* Propostas Gerais */}
+      {/* Propostas */}
       <Text style={styles.sectionTitle}>📍 Propostas gerais</Text>
       <TextInput placeholder="🔍 Buscar..." style={styles.input} />
       <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Eixo: todos</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.itemSubtitle}>Publicado em 05/12/2024</Text>
-        <Text style={styles.itemTitle}>Eixo 3 - Justiça Social: Participação Popular.</Text>
-        <Text style={styles.itemDesc}>Ampliar a participação popular por meio do fortalecimento e controle.</Text>
-        <Text style={styles.itemTag}>Por NONCA</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.itemSubtitle}>Publicado em 08/12/2024</Text>
-        <Text style={styles.itemTitle}>Eixo 1 - Mitigação: Garantia de Planos Municipais de Conservação e Recuperação da Mata Atlântica.</Text>
-        <Text style={styles.itemDesc}>Garantir a elaboração dos Planos Municipais de Conservação e Recuperação da Mata Atlântica.</Text>
-        <Text style={styles.itemTag}>Por Rafael</Text>
-      </View>
+      {(mostrarMaisPropostas ? propostas : propostas.slice(0, 3)).map((proposta, i) => (
+        <View key={`proposta-${i}`} style={styles.card}>
+          <Text style={styles.itemSubtitle}>Publicado em 05/12/2024</Text>
+          <Text style={styles.itemTitle}>{proposta.titulo_proposta}</Text>
+          <Text style={styles.itemDesc}>{proposta.descricao_proposta}</Text>
+          <Text style={styles.itemTag}>Por {proposta.autor}</Text>
+        </View>
+      ))}
 
-      {/* Dados estatísticos - Propostas Gerais */}
+      {propostas.length > 3 && (
+        <TouchableOpacity onPress={() => setMostrarMaisPropostas(!mostrarMaisPropostas)}>
+          <Text style={styles.link}>{mostrarMaisPropostas ? 'Ver menos -' : 'Ver mais +'}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Dados Propostas */}
       <TouchableOpacity onPress={() => toggleSection(setDadosPropostasAberto, dadosPropostasAberto)} style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>📊 DADOS - Propostas Gerais</Text>
-        <Ionicons name={dadosPropostasAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
+        <Ionicons name={dadosPropostasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
       </TouchableOpacity>
       {dadosPropostasAberto && (
         <View style={styles.card}>
@@ -228,7 +228,7 @@ export default function ConferenciaDetalhadaScreen() {
           <Text style={styles.item}>🟨 33% Eixo 3</Text>
           <Text style={styles.item}>🟩 10% Eixo 4</Text>
           <Text style={styles.item}>🟪 10% Eixo 5</Text>
-          <Text style={styles.itemSubtitle}>Total: 10794 propostas</Text>
+          <Text style={styles.itemSubtitle}>Total: {propostas.length} propostas</Text>
         </View>
       )}
     </ScrollView>

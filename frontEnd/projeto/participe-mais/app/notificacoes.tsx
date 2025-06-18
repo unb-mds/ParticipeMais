@@ -56,7 +56,7 @@ export default function Notificacoes() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://localhost:8000/comunidade/score/', {
+      const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
         // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -80,7 +80,7 @@ export default function Notificacoes() {
 
   const fetchNotificacoes = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/notifications/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/notifications/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

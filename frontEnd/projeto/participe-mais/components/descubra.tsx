@@ -40,7 +40,7 @@ const QuadradoProposta = ({ titulo_proposta, autor }: { titulo_proposta: string,
     <TouchableOpacity>
       <View style={[styles.quadrado, { backgroundColor: corAleatoria }]}>
         <FontAwesome name="book" size={24} color="#fff" style={styles.iconeCanto} />
-        <Text style={styles.nomeCantocomentario}>{autor}</Text>
+        <Text style={styles.nomeCantoProp}>{autor}</Text>
         <Text style={[styles.Comentario, { fontSize: getTamanhoFonte(titulo_proposta) }]}>{titulo_proposta}</Text>
       </View>
     </TouchableOpacity>
@@ -182,7 +182,7 @@ const [propostas, setPropostas] = useState<Propostas[]>([])
 
   const fetchDescubra = async ()=> {
     try{
-      const response = await fetch('http://localhost:8000/descubra/', {
+      const response = await fetch('http://172.20.10.9:8000/descubra/', {
         headers: {
            'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -197,18 +197,14 @@ const [propostas, setPropostas] = useState<Propostas[]>([])
         setPlanos(data.planos)
         setConsultas(data.consultas)
         setPropostas(data.propostas)
-        
-      } else if (response.status === 401 || response.status === 403) {
-        router.replace('/login');
       } else {
         console.error('Erro ao buscar conferências:', response.status);
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
-      router.replace('/login');
+      // Não redireciona, apenas exibe erro
     }
   };
-
 
 // gerar dados e por na lista array
 const [data, setData] = useState<Item[]>([]);
@@ -414,6 +410,13 @@ const styles = StyleSheet.create({
     right: 50,
     fontWeight: 'bold',
     fontSize: 16,
+    color: '#fff',
+    fontFamily: 'Raleway_700Bold',
+  },
+  nomeCantoProp: {
+    right: 30,
+    fontWeight: 'bold',
+    fontSize: 12,
     color: '#fff',
     fontFamily: 'Raleway_700Bold',
   },

@@ -37,7 +37,6 @@ export default function PerfilScreen() {
   });
 
   const [formEditado, setFormEditado] = useState(false);
-  const [score, setScore] = useState<number>(0);
   const [token, setToken] = useState('');
 
   // Obter token e dados do usuário
@@ -83,7 +82,7 @@ export default function PerfilScreen() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/logout/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/logout/', {
         // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         method: 'POST',
         headers: {
@@ -104,6 +103,38 @@ export default function PerfilScreen() {
       Alert.alert('Erro', 'Não foi possível se desconectar.');
     }
   };
+
+  const [score, setScore] = useState<{
+    xp: number;
+    nivel: number;
+  } | null> (null)
+
+  useEffect(() => {
+      const fetchScore = async () => {
+        try {
+          const response = await fetch('http://172.20.10.9:8000/comunidade/score', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+  
+          if (response.ok) {
+          const json = await response.json();
+  
+          if (json?.data?.score) {
+            setScore(json.data.score);
+          } else {
+            console.warn('Estrutura inesperada na resposta:', json);
+            setScore({ xp: 0, nivel: 1 }); // ou null, dependendo do que for melhor
+          }
+        }
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+        }
+      };
+  
+      fetchScore();
+    }, []);
 
   if (!fontsLoaded) return null;
 
@@ -129,17 +160,17 @@ export default function PerfilScreen() {
 
           <View style={styles.userInfo}>
             <Text style={styles.username}>{dados.nome}</Text>
-            <Text style={styles.level}>Nível 4 - Cidadão Ativo</Text>
+            <Text style={styles.level}>Nível {score?.nivel}- Cidadão Ativo</Text>
           </View>
         </View>
 
         <View style={styles.xpCard}>
-          <Text style={styles.textoAbaixo}>Nivel 4: Cidadão Ativo</Text>
+          <Text style={styles.textoAbaixo}>Nivel {score?.nivel}: Cidadão Ativo</Text>
           <View style={styles.linhaXp}>
             <View style={styles.barraFundo}>
-              <View style={[styles.barraXp, { width: '50%' }]} />
+              <View style={[styles.barraXp, { width: `${((score?.xp ?? 0) / 500) * 100}%` }]} />
             </View>
-            <Text style={styles.texto_barra}>240 / 500 xp</Text>
+            <Text style={styles.texto_barra}>{score?.xp} / 500 xp</Text>
           </View>
         </View>
 

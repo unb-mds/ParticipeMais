@@ -19,7 +19,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/login/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/login/', {
         // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         method: 'POST',
         headers: {

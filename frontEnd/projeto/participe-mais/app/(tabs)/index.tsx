@@ -1,47 +1,57 @@
-import React, { useState, useMemo } from 'react';
-import { StyleSheet, View, FlatList, Dimensions, SafeAreaView, TouchableOpacity, ScrollView, Text } from 'react-native'; 
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  ScrollView,
+  Text,
+} from 'react-native';
 import Cabecalho from '@/components/cabecalho';
 import BlocoDinamico from '@/components/blocosdinamicos';
-import DescubraSection from '@/components/descubra'; 
-import PesquisaSection from '@/components/pesquisar'; 
-import { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import DescubraSection from '@/components/descubra';
+import PesquisaSection from '@/components/pesquisar';
 import { useRouter } from 'expo-router';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 
 export default function HomeScreen() {
   const router = useRouter();
 
   const [nomeUsuario, setNomeUsuario] = useState('');
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
   useEffect(() => {
-    const verificarEstadoInicial = async () => {
-      // Lógica fictícia: verificar se o usuário já viu a tela de boas-vindas
-      const jaViu = await AsyncStorage.getItem('boasVindasVisto');
-      const nome = await AsyncStorage.getItem('nomeUsuario');
+    const verificarDadosIniciais = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        const nome = await AsyncStorage.getItem('nomeUsuario');
+        const jaViu = await AsyncStorage.getItem('boasVindasVisto');
 
-      if (nome) {
-        setNomeUsuario(nome);
-    }
-      
-      if (jaViu) {
-        router.replace('../boas_vindas'); // ← ou qualquer outra rota inicial
+        if (!tokenSalvo) {
+          router.replace('/login');
+          return;
+        }
 
-      } else {
-        console.log("entrei aqui")        
+        setToken(tokenSalvo);
+        if (nome) setNomeUsuario(nome);
 
+        // if (jaViu) {
+        //   router.replace('../boas_vindas');
+        //   return;
+        // }
+
+        setLoading(false); // tudo pronto para mostrar a tela
+      } catch (error) {
+        console.error('Erro ao recuperar dados iniciais:', error);
+        router.replace('/login');
       }
     };
 
-    verificarEstadoInicial();
+    verificarDadosIniciais();
   }, []);
 
-
-  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
-  const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', "Cultura"];
+  const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', 'Cultura'];
 
   const blocos = [
     { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
@@ -59,54 +69,73 @@ export default function HomeScreen() {
     {
       tipo: 'carroselComentarios',
       dados: [
-        { categoria: 'Meio Ambiente', comentario: "Na minha cidade começaram hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhha cortar várias árvores...", autor:"joaozin" }, //108 caracteres o limite
-        { categoria: 'Infraestrutura', comentario: "Oi eu sou tantantantan", autor:"joaozin" },
-        { categoria: 'Educação', comentario: "Oi eu sou tantantantan", autor:"joaozin" },
-
+        {
+          categoria: 'Meio Ambiente',
+          comentario:
+            'Na minha cidade começaram hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhha cortar várias árvores...',
+          autor: 'joaozin',
+        },
+        { categoria: 'Infraestrutura', comentario: 'Oi eu sou tantantantan', autor: 'joaozin' },
+        { categoria: 'Educação', comentario: 'Oi eu sou tantantantan', autor: 'joaozin' },
       ],
     },
     {
       tipo: 'carroselComentariosEnquentes',
       dados: [
-        { categoria: 'Infraestrutura', enquete: "Oi eu sou Arborização nas cidades: mais sombra e menos calor?", curtidas: 5, numeroComentario:10 },
-        { categoria: 'Saúde', enquete: "Oi eu sou Arborização nas cidades: mais sombra e menos calor?", curtidas: 5,numeroComentario:10 },
-        { categoria: 'Meio Ambiente', enquete: "Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll", curtidas: 5, numeroComentario:10 },
+        {
+          categoria: 'Infraestrutura',
+          enquete: 'Oi eu sou Arborização nas cidades: mais sombra e menos calor?',
+          curtidas: 5,
+          numeroComentario: 10,
+        },
+        {
+          categoria: 'Saúde',
+          enquete: 'Oi eu sou Arborização nas cidades: mais sombra e menos calor?',
+          curtidas: 5,
+          numeroComentario: 10,
+        },
+        {
+          categoria: 'Meio Ambiente',
+          enquete:
+            'Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll',
+          curtidas: 5,
+          numeroComentario: 10,
+        },
       ],
     },
   ];
+
+  if (loading || !token) {
+    return (
+      <View style={styles.conteudoCentralizado}>
+        <Text>Carregando...</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Cabecalho
-        user={nomeUsuario || 'Usuário'}
-        xp={50}
-        nivel={4}
+        user={nomeUsuario || 'usuario'}
         abaAtiva={abaAtiva}
         setAbaAtiva={setAbaAtiva}
       />
 
       <View style={styles.contentArea}>
         {abaAtiva === 'descubra' && <DescubraSection />}
-
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
-
-              {/* Texto em negrito: fonte Raleway-Bold */}
               <Text style={styles.title}>Conheça a comunidade!</Text>
-
               <BlocoDinamico blocos={blocos} />
             </View>
           </ScrollView>
         )}
-
         {abaAtiva === 'pesquisar' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
-
-              {/* Texto em negrito: fonte Raleway-Bold */}
               <Text style={styles.title}>Inicie sua pesquisa!</Text>
               <PesquisaSection filtros={filtros} />
-
             </View>
           </ScrollView>
         )}
@@ -141,12 +170,12 @@ const styles = StyleSheet.create({
     margin: 10,
     minHeight: 550,
   },
- title: {
+  title: {
     fontSize: 20,
-    fontFamily: 'Raleway_700Bold', // em negrito
+    fontFamily: 'Raleway_700Bold',
   },
   textoNormal: {
     fontSize: 16,
-    fontFamily: 'Raleway_400Regular', // normal
+    fontFamily: 'Raleway_400Regular',
   },
 });

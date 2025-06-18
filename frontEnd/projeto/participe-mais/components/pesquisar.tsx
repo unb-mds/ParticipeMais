@@ -20,29 +20,7 @@ function corAleatoria(): string {
 export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
   const router = useRouter();
   const [busca, setBusca] = useState('');
-  const [token, setToken] = useState('');
-  
-  useEffect(() => {
-    const obterToken = async () => {
-      try {
-        const tokenSalvo = await AsyncStorage.getItem('accessToken');
-        if (tokenSalvo) {
-          setToken(tokenSalvo);
-        } else {
-          console.error("Token não encontrado");
-          router.replace('/login');
-        }
-      } catch (error) {
-        console.error("Erro ao recuperar token:", error);
-        router.replace('/login');
-      }
-    };
 
-    obterToken();
-  }, []);
-
-  
-  
   interface Conferencias {
     id: number;
     image_url: string;
@@ -71,7 +49,6 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
     try {
       const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -91,40 +68,9 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
-      router.replace('/login');
+      // Não redireciona, apenas exibe erro
     }
   };
-
-
-
-//     const imagensConferencias = [
-//     { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png'},
-//     { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-//     { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-//     { id: '4', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
-
-// ];
-// const imagensPlanos = [
-//   { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
-//   { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-//   { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-//   { id: '4', imagem: 'https://ns-dtp-prd-df.s3-df-govcloud.dataprev.gov.br/gcc-decidim/gcc-decidim/s8z5gafv6jveenp7mtgozp290jwd?response-content-disposition=inline%3B%20filename%3D"Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%20%25281%2529.png"%3B%20filename%2A%3DUTF-8%27%27Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%2520%25281%2529.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=user_dec_prd_df%2F20250610%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250610T003330Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=d96fe11a81ff2624b90ee0bdb38ecbe97883f3e07f84e119d3a6a4adb665cd9e' },
-//   { id: '5', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png' },
-// ];
-// const imagensConsultas = [
-//   { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOE1ZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--b7fa03d28c577e53ec4d9b381251a2dc84df0788/banner%20consulta%20p%C3%BAblica%20mobile.png' },
-//   { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOGNWQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--aa080fa96a4d87cb600fa928b676d17f6c62a753/Banner_site_mobile.png' },
-//   { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBNG9QQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--2c570e81d7fd4f074255b599c622b9025db71235/Design%20sem%20nome.png' },
-//   { id: '4', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBd2NJQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--a5f506ba49de6dc9edca0a011ae59ae6924b167d/ENPP-Mobile-1.png' },
-//   { id: '5', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaUxDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--9baedf8dd6768599fc421a7f2f6191c70ff15bf7/ASSBAG-BIO-0002-bannerMobile-359x220px.jpg' },
-//   { id: '6', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBb0hBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--d79d38770a199f8daacfe4c16bb0e2f2825b382e/Banner_banner%20f%C3%B3runs.jpg' },
-//   { id: '7', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcWl5IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2626375ef15b5376a8b8ecc7794027b8113b0863/sinpas_banners-v2_1480x220.png' },
-//   { id: '8', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbnF6IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--7def247e40876c9b6df6a2e31b2d9f270cafb8e4/AZUL%20ESCURO%20(5).png' },
-//   { id: '9', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcEt3IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--8973fd85bc8b161c30af898c8416059c9c3c26c1/Banner-G20-Social-Participativo-(1480px220px)-Desktop_2%20(2).png' },
-//   { id: '10', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbEc4IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c9f665f5e436dbe4b06b34c6ce568499d2118c1f/banner-consulta-telefone.png' },
-//   { id: '11', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc1FxIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e26e08f48e34d4fecc0e87d8003b217607831cbb/engd.png' },
-// ];
-
 
   return (
     <View style={styles.container}>
