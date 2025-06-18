@@ -7,6 +7,7 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
     autor_resumido = serializers.SerializerMethodField()
     titulo_resumido = serializers.SerializerMethodField()
     descricao_resumida = serializers.SerializerMethodField()
+    favoritada = serializers.SerializerMethodField()
 
     class Meta:
         model = Propostas
@@ -22,4 +23,9 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
         return obj.titulo_proposta[:50] + '...' if obj.titulo_proposta and len(obj.titulo_proposta) > 50 else obj.titulo_proposta
 
     def get_descricao_resumida(self, obj):
-        return obj.descricao_proposta[:100] + '...' if obj.descricao_proposta and len(obj.descricao_proposta) > 100 else obj.descricao_proposta
+        return obj.descricao_proposta[:100] + '...' if obj.descricao_proposta and len(obj.descricao_proposta) > 100 else obj.descricao_proposta  
+    
+    def get_favoritada(self, obj):
+        request = self.context.get('request')
+        usuario = request.user
+        return usuario.favoritos.filter(id=usuario.id).exists()
