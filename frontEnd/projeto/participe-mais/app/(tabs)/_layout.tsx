@@ -1,6 +1,6 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Stack  } from 'expo-router';
 import React from 'react';
-import { Platform  } from 'react-native';
+import { Platform, View  } from 'react-native';
 
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
@@ -12,14 +12,17 @@ import Octicons from '@expo/vector-icons/Octicons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();  // detecta se o tema é claro ou escuro
-
+   
 
   return (
+    
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,  // cor ativa da tab
         headerShown: false, //esconde o cabeçalho padrão
-        tabBarBackground: TabBarBackground, // fundo personalizado para a tab bar
+        tabBarBackground: () => (
+                  <View style={{ backgroundColor: '#ffffff', flex: 1 }} />
+                ),        
         tabBarStyle: Platform.select({
           ios: { // deixa o fundo transparente no iOS para blur
             
