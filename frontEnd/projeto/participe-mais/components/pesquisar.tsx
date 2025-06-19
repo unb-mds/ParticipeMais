@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, FlatList, TextInput, TouchableOpacity, Text, Dimensions, StyleSheet, ImageBackground  } from 'react-native';
 import { FontAwesome, MaterialIcons, Ionicons, MaterialCommunityIcons,EvilIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const Largura = SCREEN_WIDTH * 0.85;
@@ -15,6 +16,8 @@ function corAleatoria(): string {
 }
 
 export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
+  const router = useRouter();
+  
   const [busca, setBusca] = useState('');
     const imagensConferencias = [
     { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png'},
@@ -98,7 +101,7 @@ const imagensConsultas = [
 {/*  confernecias */}
       <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Conferências</Text>
-        <TouchableOpacity onPress={() => console.log('Veja mais clicado')}>
+        <TouchableOpacity onPress={() => router.push('../conferencias')}>
             <Text style={styles.vejaMais}>Veja mais</Text>
         </TouchableOpacity>
         </View>
