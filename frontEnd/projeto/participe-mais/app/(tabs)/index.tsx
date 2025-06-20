@@ -15,6 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [score, setScore] = useState<number>(0);
+  const [nivel, setNivel] = useState<number>(0);
 
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [token, setToken] = useState<string | null>(null);

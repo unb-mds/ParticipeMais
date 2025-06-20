@@ -111,16 +111,12 @@ export default function TelaBoasVindas() {
       </View>
       
 
-      <Text style={styles.titulo}>Bem vindo ao</Text>
-      <Text style={styles.subtitulo}>Participe+</Text>
-      <Text style={styles.descricao}>
-        Todas as propostas, conferências e ações do governo reunidas em um só lugar para você se informar e interagir.
-      </Text>
+      <Text style={styles.titulo}>Bem vindo Usuario</Text>
 
       <TouchableOpacity
         style={styles.botao}
         onPress={async () => {
-          router.replace('/login');
+          router.replace('/(tabs)');
         }}
       >
         <Text style={styles.textoBotao}>Começar</Text>

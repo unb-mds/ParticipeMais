@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import {
   View,
@@ -14,9 +16,10 @@ import {
   Alert,
 } from 'react-native';
 
-const router = useRouter();
 
 export default function TelaCadastro() {
+  const router = useRouter();
+  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
   // Estados para armazenar os valores dos campos do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -30,6 +33,29 @@ export default function TelaCadastro() {
     senha: false,
     senhaNovamente: false,
   });
+
+  
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          router.replace('/perfil');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao verificar login:', error);
+      } finally {
+        setIsVerificandoLogin(false); // só renderiza depois disso
+      }
+    };
+
+    verificarLogin();
+  }, []);
+
+  if (isVerificandoLogin) {
+    return null; 
+  }
 
   /**
    * Função que valida os campos e realiza o cadastro
@@ -73,7 +99,7 @@ export default function TelaCadastro() {
       // Exemplo:
       // await AsyncStorage.setItem('token', data.access);
 
-      router.push('/'); // Navega para a tela inicial ou login
+      router.push('/login'); 
 
       setNome('');
       setEmail('');
