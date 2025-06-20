@@ -47,7 +47,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   const fetchConferenciasLista = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
+      const response = await fetch('http://192.168.0.16:8000/pesquisar/lista', {
         headers: {
           'Content-Type': 'application/json',
         },

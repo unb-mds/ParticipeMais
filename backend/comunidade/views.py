@@ -13,11 +13,16 @@ class ScoreView(APIView):
         print("ID:", request.user.id)
         print("Nome:", request.user.nome)
 
-        score_obj = UsuarioScore.objects.get_or_create(usuario=request.user)
+        score_obj, created = UsuarioScore.objects.get_or_create(
+                usuario=request.user,
+                defaults={'pontos': 0}  # Valor padrão para novos registros
+            )
+        
         return Response({
-            'usuario': request.user.nome,
-            'pontos': score_obj.pontos
-        })
+                'usuario': request.user.nome,
+                'pontos': score_obj.pontos,
+                'novo_registro': created  # Indica se foi criado um novo registro
+            }, status=status.HTTP_200_OK)
         
 #lista e mostra quantidade perguntas/chat
 class ComunidadeView(APIView):

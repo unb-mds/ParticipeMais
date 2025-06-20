@@ -16,7 +16,6 @@ import {
   Alert,
 } from 'react-native';
 
-
 export default function TelaCadastro() {
   const router = useRouter();
   const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
@@ -34,7 +33,6 @@ export default function TelaCadastro() {
     senhaNovamente: false,
   });
 
-  
   useEffect(() => {
     const verificarLogin = async () => {
       try {
@@ -57,74 +55,65 @@ export default function TelaCadastro() {
     return null; 
   }
 
-  /**
-   * Função que valida os campos e realiza o cadastro
-   */
   const handleCadastrar = async () => {
-  const novosErros = {
-    nome: nome.trim() === '',
-    email: email.trim() === '',
-    senha: senha === '',
-    senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
+    const novosErros = {
+      nome: nome.trim() === '',
+      email: email.trim() === '',
+      senha: senha === '',
+      senhaNovamente: senhaNovamente === '' || senhaNovamente !== senha,
+    };
+
+    setErros(novosErros);
+
+    if (Object.values(novosErros).some(Boolean)) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://192.168.0.16:8000/auth/cadastro/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome,
+          email,
+          password: senha,
+          data_nascimento: '2000-01-01' 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
+        router.push('/login'); 
+        setNome('');
+        setEmail('');
+        setSenha('');
+        setSenhaNovamente('');
+      } else {
+        Alert.alert('Erro', 'Falha no cadastro: ' + JSON.stringify(data.errors || data.message));
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Alert.alert('Erro', 'Erro na requisição: ' + errorMessage);
+    }
   };
 
-  setErros(novosErros);
-
-  if (Object.values(novosErros).some(Boolean)) {
-    Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente e verifique as senhas.');
-    return;
-  }
-
-  try {
-    const response = await fetch('http://172.20.10.9:8000/auth/cadastro/', {
-      // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nome,
-        email,
-        password: senha,
-        data_nascimento: '2000-01-01' 
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
-
-      // Se quiser, pode salvar o token de acesso aqui para autenticação futura
-      // Exemplo:
-      // await AsyncStorage.setItem('token', data.access);
-
-      router.push('/login'); 
-
-      setNome('');
-      setEmail('');
-      setSenha('');
-      setSenhaNovamente('');
-    } else {
-      Alert.alert('Erro', 'Falha no cadastro: ' + JSON.stringify(data.errors || data.message));
-    }
-  } catch (error) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  Alert.alert('Erro', 'Erro na requisição: ' + errorMessage);
-  }
-};
-
-  /**
-   * Retorna o estilo do input baseado no estado de erro do campo
-   * @param {string} campo - Nome do campo para verificar erro
-   * @returns {object} - Estilo a ser aplicado
-   */
   const estiloInput = (campo: keyof typeof erros) =>
-  erros[campo] ? styles.inputErro : styles.input;
-
+    erros[campo] ? styles.inputErro : styles.input;
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Logo do app */}
         <Image
           source={require('@/assets/images/icon.png')}
@@ -136,7 +125,7 @@ export default function TelaCadastro() {
         <Text style={styles.titulo}>Crie sua conta!</Text>
 
         {/* Campo Nome */}
-        <Text style={styles.label}>Insira seu nome de usuário:</Text>
+        <Text style={styles.label}>Nome de usuário</Text>
         <TextInput
           style={estiloInput('nome')}
           placeholder="Nome completo"
@@ -147,7 +136,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Email */}
-        <Text style={styles.label}>Insira seu e-mail por favor:</Text>
+        <Text style={styles.label}>E-mail</Text>
         <TextInput
           style={estiloInput('email')}
           placeholder="email@exemplo.com"
@@ -159,7 +148,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Senha */}
-        <Text style={styles.label}>Insira sua senha:</Text>
+        <Text style={styles.label}>Senha</Text>
         <TextInput
           style={estiloInput('senha')}
           placeholder="Senha"
@@ -170,7 +159,7 @@ export default function TelaCadastro() {
         />
 
         {/* Campo Repetir Senha */}
-        <Text style={styles.label}>Insira sua senha novamente:</Text>
+        <Text style={styles.label}>Confirme sua senha</Text>
         <TextInput
           style={estiloInput('senhaNovamente')}
           placeholder="Repita a senha"
@@ -180,73 +169,117 @@ export default function TelaCadastro() {
           returnKeyType="done"
         />
 
-        {/* Botão Entrar */}
+        {/* Botão Cadastrar */}
         <TouchableOpacity style={styles.botao} onPress={handleCadastrar}>
-            <Text style={styles.botaoTexto}>Cadastrar</Text>
+          <Text style={styles.botaoTexto}>Cadastrar</Text>
         </TouchableOpacity>
-    </ScrollView>
+
+        {/* Link para Login */}
+        <View style={styles.rodape}>
+          <Text style={styles.rodapeTexto}>Já tem uma conta?</Text>
+          <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.rodapeLink}>Faça login</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 // Estilos do componente
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+  },
+  scrollContainer: {
     flexGrow: 1,
     alignItems: "center",
+    justifyContent: "center",
     padding: 24,
-    backgroundColor: "#fff",
   },
   logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 24,
-    resizeMode: "contain",
+    width: 120,
+    height: 120,
+    marginBottom: 32,
   },
-    titulo: {
-    fontSize: 20,
-    marginBottom: 24,
-    fontFamily: "Raleway_700Bold", // título em negrito
+  titulo: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 32,
+    color: "#1e293b",
   },
   label: {
     alignSelf: "flex-start",
     fontSize: 14,
-    marginBottom: 6,
-    fontFamily: "Raleway_400Regular", // rótulo padrão
+    marginBottom: 8,
+    color: "#475569",
+    width: "100%",
   },
-
   input: {
     width: "100%",
-    height: 44,
-    backgroundColor: "#eee",
+    height: 50,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     marginBottom: 16,
-    fontFamily: "Raleway_400Regular", // entrada de texto
+    fontSize: 16,
+    color: "#1e293b",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 1,
+    elevation: 1,
   },
   inputErro: {
-    height: 40,
-    backgroundColor: '#E6E6E6',
-    borderWidth: 2,
-    borderColor: 'red', // borda vermelha para erro
-    borderRadius: 5,
-    paddingHorizontal: 12,
-    fontSize: 16,
+    width: "100%",
+    height: 50,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#dc2626",
+    borderRadius: 8,
+    paddingHorizontal: 16,
     marginBottom: 16,
-    fontFamily: 'Raleway_400Regular', // <- fonte aplicada
+    fontSize: 16,
+    color: "#1e293b",
   },
-    botao: {
+  botao: {
     backgroundColor: "#2563eb",
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 100,
+    paddingVertical: 16,
+    borderRadius: 8,
     marginTop: 24,
     width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#2563eb",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   botaoTexto: {
-    color: "#fff",
-    textAlign: "center",
+    color: "#ffffff",
     fontSize: 16,
-    fontFamily: "Raleway_700Bold", // texto do botão com destaque
+    fontWeight: "600",
+  },
+  rodape: {
+    flexDirection: "row",
+    marginTop: 24,
+    gap: 4,
+  },
+  rodapeTexto: {
+    color: "#64748b",
+  },
+  rodapeLink: {
+    color: "#2563eb",
+    fontWeight: "600",
   },
 });
-

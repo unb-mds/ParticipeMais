@@ -63,7 +63,7 @@ export default function PerfilScreen() {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const response = await fetch('http://172.20.10.9:8000/comunidade/score', {
+        const response = await fetch('http://192.168.0.16:8000/comunidade/score', {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -93,7 +93,7 @@ export default function PerfilScreen() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/auth/logout/', {
+      const response = await fetch('http://192.168.0.16:8000/auth/logout/', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -114,16 +114,16 @@ export default function PerfilScreen() {
     }
   };
 
-  if (usuarioCarregado && !nomeUsuario) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={styles.header}>Faça login para acessar o perfil</Text>
-        <TouchableOpacity style={styles.botao} onPress={() => router.replace('/login')}>
-          <Text style={styles.logoutButtonText}>Ir para login</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  // if (usuarioCarregado && !nomeUsuario) {
+  //   return (
+  //     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+  //       <Text style={styles.header}>Faça login para acessar o perfil</Text>
+  //       <TouchableOpacity style={styles.botao} onPress={() => router.push('/login')}>
+  //         <Text style={styles.logoutButtonText}>Ir para login</Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // }
 
   const nivelAtualIndex = niveis.findIndex((n, i) => {
     const proximo = niveis[i + 1];

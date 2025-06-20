@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+@gdz3wj=z+y93nic@(e67k*s8lm8zz!(2psqs)z)mnmb@89#g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '172.20.10.9', '192.168.0.16', 'localhost'] # se quiser adicionar o ipv4 do seu computador
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.16', 'localhost'] # se quiser adicionar o ipv4 do seu computador
 
 AUTH_USER_MODEL = 'autenticacao.Usuario'
 

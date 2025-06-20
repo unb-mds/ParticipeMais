@@ -1,72 +1,82 @@
-import React, { useMemo, useEffect, useState } from 'react';
-import { View, FlatList, Dimensions, TouchableOpacity, StyleSheet, Text, ImageBackground } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  FlatList,
+  Dimensions,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  ImageBackground,
+  ActivityIndicator,
+  RefreshControl
+} from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Obtém a largura da tela para cálculo dos tamanhos dos quadrados
+// Configurações de dimensão
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 2;
 const QUADRADO_GRANDE_SIZE = width - 40;
-const taman_quadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
+const tamanhoQuadrado = (QUADRADO_GRANDE_SIZE - (GRID_SIZE + 1) * 14) / GRID_SIZE;
 
-const getTamanhoFonte = (texto: string) => {
-  if (texto.length <= 90) return 16;
-  if (texto.length <= 110) return 14;
-  if (texto.length <= 130) return 12;
-  if (texto.length >= 130) return 12;
-  return 10;
-};
+// Tipos de dados
+interface Conferencia { id: number; image_url: string; titulo: string; }
+interface Plano { id: number; image_url: string; nome: string; }
+interface Consulta { id: number; image_url: string; nome: string; }
+interface Proposta { id: number; titulo_proposta: string; autor: string; }
 
-//items/dados em que os quadrados vao receber
-type Item = {
+type ItemType = 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' | 'forum' | 'plano' | 'consulta';
+
+interface Item {
   id: string;
-  tipo: 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' | 'forum' | 'plano' | 'consulta';
+  tipo: ItemType;
   imagemUrl?: string;
   pergunta?: string;
   titulo_proposta?: string;
   autor?: string;
   comentario_usuario?: string;
-};
+}
 
-//tipos de quadrados
+// Cores disponíveis para os quadrados
+const CORES_QUADRADOS = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
 
+// Componentes
 const QuadradoProposta = ({ titulo_proposta, autor }: { titulo_proposta: string, autor: string }) => {
-  const cores = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', "#F44336"];
-  const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+  const corAleatoria = CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity activeOpacity={0.7}>
       <View style={[styles.quadrado, { backgroundColor: corAleatoria }]}>
         <FontAwesome name="book" size={24} color="#fff" style={styles.iconeCanto} />
         <Text style={styles.nomeCantoProp}>{autor}</Text>
-        <Text style={[styles.Comentario, { fontSize: getTamanhoFonte(titulo_proposta) }]}>{titulo_proposta}</Text>
+        <Text style={[styles.textoComentario, { fontSize: getTamanhoFonte(titulo_proposta) }]}>
+          {titulo_proposta}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-
 const QuadradoBotao = () => (
   <View style={styles.quadradoBotao}>
     <Text style={styles.textoQuadrado}>Qual tema você se interessa mais?</Text>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
+    {[...Array(3)].map((_, i) => (
+      <TouchableOpacity key={i} style={styles.botaoRetangular} />
+    ))}
   </View>
 );
 
 const QuadradoComentario = ({ comentario, autor }: { comentario: string; autor: string }) => {
-  const cores = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
-  const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+  const corAleatoria = CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity activeOpacity={0.7}>
       <View style={[styles.quadrado, { backgroundColor: corAleatoria }]}>
         <FontAwesome name="book" size={24} color="#fff" style={styles.iconeCanto} />
-        <Text style={styles.nomeCantocomentario}>{autor}</Text>
-        <Text style={[styles.Comentario, { fontSize: getTamanhoFonte(comentario) }]}>
+        <Text style={styles.nomeCantoComentario}>{autor}</Text>
+        <Text style={[styles.textoComentario, { fontSize: getTamanhoFonte(comentario) }]}>
           {`"${comentario}"`}
         </Text>
       </View>
@@ -75,7 +85,7 @@ const QuadradoComentario = ({ comentario, autor }: { comentario: string; autor: 
 };
 
 const QuadradoEnquete = () => (
-  <TouchableOpacity>
+  <TouchableOpacity activeOpacity={0.7}>
     <View style={[styles.quadrado, { backgroundColor: '#ffd' }]}>
       <Text style={styles.textoQuadrado}>Enquete</Text>
     </View>
@@ -83,9 +93,9 @@ const QuadradoEnquete = () => (
 );
 
 const QuadradoConferencia = ({ imagemUrl }: { imagemUrl: string }) => (
-  <TouchableOpacity>
+  <TouchableOpacity activeOpacity={0.7}>
     <ImageBackground
-      source={{ uri: imagemUrl }}
+      source={{ uri: imagemUrl || 'https://via.placeholder.com/150' }}
       style={styles.quadrado}
       imageStyle={{ borderRadius: 12 }}
     />
@@ -93,40 +103,55 @@ const QuadradoConferencia = ({ imagemUrl }: { imagemUrl: string }) => (
 );
 
 const QuadradoForum = ({ pergunta, autor }: { pergunta: string; autor: string }) => {
-  const cores = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
-  const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+  const corAleatoria = CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity activeOpacity={0.7}>
       <View style={[styles.quadrado, { backgroundColor: corAleatoria, padding: 10 }]}>
         <Text style={[styles.textoQuadradoForum, { fontSize: getTamanhoFonte(pergunta) }]}>
           {pergunta}
         </Text>
         <View style={styles.viewForum}>
           <AntDesign name="user" size={24} color="white" />
-          <Text style={{ fontSize: 12, color: '#fff', marginTop: 4 }}>{autor} compartilhou</Text>
+          <Text style={styles.textoAutorForum}>{autor} compartilhou</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-function shuffle(array: any[]) {
-  let currentIndex = array.length, randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]
-    ];
-  }
-  return array;
-}
+// Funções auxiliares
+const getTamanhoFonte = (texto: string = '') => {
+  if (!texto) return 14;
+  if (texto.length <= 90) return 16;
+  if (texto.length <= 110) return 14;
+  if (texto.length <= 130) return 12;
+  return 10;
+};
 
+const shuffle = <T,>(array: T[]): T[] => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
+// Componente principal
 export default function DescubraSection() {
+  const [data, setData] = useState<Item[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [conferencias, setConferencias] = useState<Conferencia[]>([]);
+  const [planos, setPlanos] = useState<Plano[]>([]);
+  const [consultas, setConsultas] = useState<Consulta[]>([]);
+  const [propostas, setPropostas] = useState<Proposta[]>([]);
+  const [loadingToken, setLoadingToken] = useState(true);
   const [token, setToken] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Obter token
   useEffect(() => {
     const obterToken = async () => {
       try {
@@ -134,175 +159,171 @@ export default function DescubraSection() {
         if (tokenSalvo) {
           setToken(tokenSalvo);
         } else {
-          console.error("Token não encontrado");
           router.replace('/login');
         }
       } catch (error) {
-        console.error("Erro ao recuperar token:", error);
+        console.error('Erro ao recuperar token:', error);
         router.replace('/login');
+      } finally {
+        setLoadingToken(false);
       }
     };
-
+    
     obterToken();
   }, []);
 
+  // Buscar dados quando o token estiver disponível
   useEffect(() => {
     if (token) {
-      // Exemplo: buscar dados reais com token
       fetchDescubra();
     }
   }, [token]);
 
-  interface Conferencias {
-    id: number;
-    image_url: string;
-    titulo: string;
-  }
-  interface Planos {
-    id: number;
-    image_url: string;
-    nome: string;
-  }
-  interface Consultas {
-    id: number;
-    image_url: string;
-    nome: string;
-  }
-  interface Propostas {
-    id: number;
-    titulo_proposta: string;
-    autor: string;
-  }
+  // Atualizar dados quando os dados da API mudarem
+  useEffect(() => {
+    atualizarDados();
+  }, [conferencias, planos, consultas, propostas]);
 
-const [conferencia, setConferencias] = useState<Conferencias[]>([])
-const [planos, setPlanos] = useState<Planos[]>([])
-const [consultas, setConsultas] = useState<Consultas[]>([])
-const [propostas, setPropostas] = useState<Propostas[]>([])
-
-
-  const fetchDescubra = async ()=> {
-    try{
-      const response = await fetch('http://172.20.10.9:8000/descubra/', {
+  // Buscar dados da API
+  const fetchDescubra = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      setError(null);
+      
+      const response = await fetch('http://192.168.0.16:8000/descubra/', {
         headers: {
-           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
       });
-
-      if(response.ok) {
+      
+      if (response.ok) {
         const json = await response.json();
-        const data = json.data;
-
-        setConferencias(data.conferencias)
-        setPlanos(data.planos)
-        setConsultas(data.consultas)
-        setPropostas(data.propostas)
+        setConferencias(json.data.conferencias || []);
+        setPlanos(json.data.planos || []);
+        setConsultas(json.data.consultas || []);
+        setPropostas(json.data.propostas || []);
+      } else if (response.status === 401 || response.status === 403) {
+        router.replace('/login');
       } else {
-        console.error('Erro ao buscar conferências:', response.status);
+        setError('Erro ao carregar dados');
+        console.error('Erro ao buscar dados:', response.status);
       }
     } catch (error) {
+      setError('Erro na conexão');
       console.error('Erro na requisição:', error);
-      // Não redireciona, apenas exibe erro
+    } finally {
+      setRefreshing(false);
     }
-  };
+  }, [token]);
 
-// gerar dados e por na lista array
-const [data, setData] = useState<Item[]>([]);
-const [refreshing, setRefreshing] = useState(false);
+  // Atualizar dados locais
+  const atualizarDados = useCallback(() => {
+    const comentariosMock: Item[] = Array.from({ length: 5 }, (_, i) => ({
+      id: `comentario-${i}`,
+      tipo: 'comentario',
+      comentario_usuario: 'Exemplo de comentário',
+      autor: 'UsuárioX',
+    }));
 
-const handleRefresh = () => {
-  setRefreshing(true);
+    const enquetesMock: Item[] = Array.from({ length: 2 }, (_, i) => ({
+      id: `enquete-${i}`,
+      tipo: 'enquete',
+    }));
 
-  setTimeout(()=> {
-    const nova_ordem = shuffle([...data]); // Embaralha uma cópia do array atual
-    setData(nova_ordem);
-    setRefreshing(false);
-  }, 1000) // tempo de loading
-};
+    const forunsMock: Item[] = Array.from({ length: 1 }, (_, i) => ({
+      id: `forum-${i}`,
+      tipo: 'forum',
+      pergunta: 'O que você acha da arborização urbana?',
+      autor: 'ForistaX',
+    }));
 
-useEffect(() => {
-  const botoes = 1;
-  const comentarios = 5;
-  const enquetes = 2;
-  const foruns = 1;
+    const propostasData: Item[] = propostas.map((item, i) => ({
+      id: `proposta-${i}`,
+      tipo: 'proposta',
+      titulo_proposta: item.titulo_proposta,
+      autor: item.autor,
+    }));
 
-  const comentariosMock = Array.from({ length: comentarios }, (_, i) => ({
-    id: `comentario-${i}`,
-    tipo: 'comentario' as const,
-    comentario_usuario: 'comentarios',
-    autor: 'autor',
-  }));
+    const imagensData: Item[] = [
+      ...conferencias.map((item, i) => ({ 
+        id: `conferencia-${i}`, 
+        tipo: 'conferencia' as const, 
+        imagemUrl: item.image_url 
+      })),
+      ...planos.map((item, i) => ({ 
+        id: `plano-${i}`, 
+        tipo: 'plano' as const, 
+        imagemUrl: item.image_url 
+      })),
+      ...consultas.map((item, i) => ({ 
+        id: `consulta-${i}`, 
+        tipo: 'consulta' as const, 
+        imagemUrl: item.image_url 
+      })),
+    ];
 
-  const enquetesMock = Array.from({ length: enquetes }, (_, i) => ({
-    id: `enquete-${i}`,
-    tipo: 'enquete' as const,
-  }));
+    const blocos: Item[] = shuffle([
+      { id: 'botao-0', tipo: 'botao' },
+      ...propostasData,
+      ...comentariosMock,
+      ...enquetesMock,
+      ...forunsMock,
+      ...imagensData,
+    ]);
 
-  const forunsMock = Array.from({ length: foruns }, (_, i) => ({
-    id: `forum-${i}`,
-    tipo: 'forum' as const,
-    pergunta: 'O que você acha da arborização da sua cidade?',
-    autor: 'foruns autor',
-  }));
+    setData(blocos);
+  }, [conferencias, planos, consultas, propostas]);
 
-  const propostasData = propostas.map((item, i) => ({
-    id: `proposta-${i}`,
-    tipo: 'proposta' as const,
-    titulo_proposta: item.titulo_proposta,
-    autor: item.autor,
-  }));
+  // Atualizar manualmente
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchDescubra().finally(() => setRefreshing(false));
+  }, [fetchDescubra]);
 
-  const conferenciasData = conferencia.map((item, i) => ({
-    id: `conferencia-${i}`,
-    tipo: 'conferencia' as const,
-    imagemUrl: item.image_url,
-  }));
+  // Renderizar item da lista
+  const renderItem = useCallback(({ item }: { item: Item }) => {
+    switch (item.tipo) {
+      case 'proposta': 
+        return <QuadradoProposta titulo_proposta={item.titulo_proposta || ''} autor={item.autor || ''} />;
+      case 'botao': 
+        return <QuadradoBotao />;
+      case 'comentario': 
+        return <QuadradoComentario comentario={item.comentario_usuario || ''} autor={item.autor || ''} />;
+      case 'enquete': 
+        return <QuadradoEnquete />;
+      case 'conferencia':
+      case 'plano':
+      case 'consulta':
+        return <QuadradoConferencia imagemUrl={item.imagemUrl || ''} />;
+      case 'forum': 
+        return <QuadradoForum pergunta={item.pergunta || ''} autor={item.autor || ''} />;
+      default: 
+        return null;
+    }
+  }, []);
 
-  const planosData = planos.map((item, i) => ({
-    id: `plano-${i}`,
-    tipo: 'conferencia' as const,
-    imagemUrl: item.image_url,
-  }));
-
-  const consultasData = consultas.map((item, i) => ({
-    id: `consulta-${i}`,
-    tipo: 'conferencia' as const,
-    imagemUrl: item.image_url,
-  }));
-
-  const arr = [
-    ...propostasData,
-    ...comentariosMock,
-    ...enquetesMock,
-    ...forunsMock,
-    ...conferenciasData,
-    ...planosData,
-    ...consultasData,
-  ];
-
-  const arrShuffle = shuffle(arr);
-  const dataComBotao = [{ id: `botao-${botoes}`, tipo: 'botao' as const }, ...arrShuffle];
-
-  setData(dataComBotao);
-}, [conferencia, planos, consultas]);
-
-
-  const renderItem = ({ item }: { item: Item }) => {
-    if (item.tipo === 'proposta') return (
-    <QuadradoProposta titulo_proposta={item.titulo_proposta!} autor={item.autor!} />
-  );
-    if (item.tipo === 'botao') return <QuadradoBotao />;
-    if (item.tipo === 'comentario') return (
-      <QuadradoComentario comentario={item.comentario_usuario!} autor={item.autor!} />
+  if (loadingToken) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2670E8" />
+      </View>
     );
-    if (item.tipo === 'enquete') return <QuadradoEnquete />;
-    if (item.tipo === 'conferencia') return <QuadradoConferencia imagemUrl={item.imagemUrl!} />;
-    if (item.tipo === 'forum') return <QuadradoForum pergunta={item.pergunta!} autor={item.autor!} />;
-    return null;
-  };
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity onPress={fetchDescubra} style={styles.retryButton}>
+          <Text style={styles.retryButtonText}>Tentar novamente</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.conteiner_quadrado}>
+    <View style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -312,21 +333,58 @@ useEffect(() => {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={<Text style={styles.titulo}>Descubra!</Text>}
         ListHeaderComponentStyle={styles.headerStyle}
-        refreshing={refreshing}              // <- indicador de carregamento
-        onRefresh={handleRefresh}            // <- executa quando puxa pra cima
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#2670E8']}
+            tintColor={'#2670E8'}
+          />
+        }
       />
     </View>
   );
 }
 
+// Estilos
 const styles = StyleSheet.create({
-  conteiner_quadrado: {
+  container: {
+    flex: 1,
     backgroundColor: 'white',
     margin: 10,
     minHeight: QUADRADO_GRANDE_SIZE,
     width: QUADRADO_GRANDE_SIZE,
     alignSelf: 'center',
     overflow: 'hidden',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'white',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#F44336',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: '#2670E8',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
   gridContent: {
     alignItems: 'center',
@@ -345,8 +403,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   quadrado: {
-    width: taman_quadrado,
-    height: taman_quadrado,
+    width: tamanhoQuadrado,
+    height: tamanhoQuadrado,
     borderRadius: 12,
     margin: 7,
     justifyContent: 'center',
@@ -364,7 +422,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_700Bold',
     textAlign: 'center',
   },
-  botao_retangular: {
+  botaoRetangular: {
     width: 150,
     height: 25,
     borderRadius: 12,
@@ -374,8 +432,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   quadradoBotao: {
-    width: taman_quadrado,
-    height: taman_quadrado,
+    width: tamanhoQuadrado,
+    height: tamanhoQuadrado,
     borderRadius: 12,
     backgroundColor: '#fff',
     borderWidth: 1.5,
@@ -400,31 +458,41 @@ const styles = StyleSheet.create({
   viewForum: {
     flexDirection: 'row',
     gap: 10,
+    alignItems: 'center',
+  },
+  textoAutorForum: {
+    fontSize: 12,
+    color: '#fff',
+    marginTop: 4
   },
   iconeCanto: {
     position: 'absolute',
     top: 8,
     right: 8,
   },
-  nomeCantocomentario: {
-    right: 50,
+  nomeCantoComentario: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
     fontWeight: 'bold',
     fontSize: 16,
     color: '#fff',
     fontFamily: 'Raleway_700Bold',
   },
   nomeCantoProp: {
-    right: 30,
+    position: 'absolute',
+    top: 8,
+    left: 8,
     fontWeight: 'bold',
     fontSize: 12,
     color: '#fff',
     fontFamily: 'Raleway_700Bold',
   },
-  Comentario: {
-    fontSize: 12,
+  textoComentario: {
+    fontSize: 14,
     color: '#fff',
     textAlign: 'center',
-    fontFamily: 'Raleway_400Bold',
+    fontFamily: 'Raleway_400Regular',
     padding: 6,
   },
 });

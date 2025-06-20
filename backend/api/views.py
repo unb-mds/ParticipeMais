@@ -22,7 +22,7 @@ class Home(APIView):
     """
     View para rota inicial protegida.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         """
@@ -31,11 +31,6 @@ class Home(APIView):
         return Response({"message": "Você está logado!", "user": request.user.email})
 
 class DescubraView(APIView):
-    
-    permission_classes = [permissions.AllowAny] 
-    """
-    View para exibir itens aleatórios de cada categoria.
-    """
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):

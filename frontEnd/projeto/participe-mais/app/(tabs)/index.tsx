@@ -15,43 +15,40 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [score, setScore] = useState<number>(0);
-  const [nivel, setNivel] = useState<number>(0);
-
   const [nomeUsuario, setNomeUsuario] = useState('');
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra');
 
+  const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const verificarDadosIniciais = async () => {
+    const obterToken = async () => {
       try {
         const tokenSalvo = await AsyncStorage.getItem('accessToken');
-        const nome = await AsyncStorage.getItem('nomeUsuario');
-        const jaViu = await AsyncStorage.getItem('boasVindasVisto');
+        const usuarioSalvo = await AsyncStorage.getItem('usuario');
 
         if (!tokenSalvo) {
-          router.replace('/login');
+          console.error("Token não encontrado");
+          router.push('/login');
           return;
         }
 
         setToken(tokenSalvo);
-        if (nome) setNomeUsuario(nome);
 
-        // if (jaViu) {
-        //   router.replace('../boas_vindas');
-        //   return;
-        // }
+        if (usuarioSalvo) {
+          const userObj = JSON.parse(usuarioSalvo);
+          setNomeUsuario(userObj.nome);
+        }
 
-        setLoading(false); // tudo pronto para mostrar a tela
+        setLoading(false);
       } catch (error) {
-        console.error('Erro ao recuperar dados iniciais:', error);
+        console.error("Erro ao recuperar token ou usuário:", error);
         router.replace('/login');
       }
     };
 
-    verificarDadosIniciais();
-  }, []);
+    obterToken();
+  }, [token]);
 
   const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', 'Cultura'];
 
@@ -73,8 +70,7 @@ export default function HomeScreen() {
       dados: [
         {
           categoria: 'Meio Ambiente',
-          comentario:
-            'Na minha cidade começaram hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhha cortar várias árvores...',
+          comentario: 'Na minha cidade começaram ha cortar várias árvores...',
           autor: 'joaozin',
         },
         { categoria: 'Infraestrutura', comentario: 'Oi eu sou tantantantan', autor: 'joaozin' },
@@ -98,8 +94,7 @@ export default function HomeScreen() {
         },
         {
           categoria: 'Meio Ambiente',
-          enquete:
-            'Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll',
+          enquete: 'Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll',
           curtidas: 5,
           numeroComentario: 10,
         },
@@ -107,7 +102,7 @@ export default function HomeScreen() {
     },
   ];
 
-  if (loading || !token) {
+  if (loading) {
     return (
       <View style={styles.conteudoCentralizado}>
         <Text>Carregando...</Text>
