@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter} from 'expo-router';
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Header from '../components/conferencia/header';
@@ -9,9 +9,129 @@ import StatusBadge from '../components/conferencia/statusbagde';
 import EtapasCalendar from '../components/conferencia/etapascalendar';
 import LinkAcesso from '../components/planos/linkacesso';
 import Objetivos from '../components/planos/objetivos';
+import Metas from '../components/planos/metas';
+import Oficinas from '../components/planos/oficinas';
+import Dados from '../components/conferencia/dados';
+import Eventos from '../components/planos/eventos';
+
+
+type Oficina = {
+  id: number;
+  cidade: string;
+  estado: string;
+  dataInicio: string;
+  dataTermino: string;
+  status: 'Ativa' | 'Encerrada';
+  modalidade: 'Presencial' | 'Online';
+};
+
+type Evento = {
+  id: number;
+  estado: string;
+  data?: string;
+  status: 'Inscrições em breve' | 'Finalizado';
+};
+
 
 export default function PlanoScreen() {
   const router = useRouter();
+  const propostas = [
+    {
+      id: 1,
+      eixo: 'Eixo 1 - Desenvolvimento Sustentável',
+      publicadoEm: '05/06/2025',
+      usuario: 'ANA',
+      descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
+    },
+    {
+      id: 2,
+      eixo: 'Eixo 2 - Justiça Climática',
+      publicadoEm: '15/07/2025',
+      usuario: 'JOÃO',
+      descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
+    },
+        {
+      id: 3,
+      eixo: 'Eixo 1 - Desenvolvimento Sustentável',
+      publicadoEm: '05/06/2025',
+      usuario: 'ANA',
+      descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
+    },
+    {
+      id: 4,
+      eixo: 'Eixo 2 - Justiça Climática',
+      publicadoEm: '15/07/2025',
+      usuario: 'JOÃO',
+      descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
+    },
+  ];
+
+
+  const eventos: Evento[] = [
+    {
+      id: 1,
+      estado: 'Distrito Federal',
+      data: '15/06/2025',
+      status: 'Inscrições em breve', // ou 'Finalizado' se desejar
+    },
+    {
+      id: 2,
+      estado: 'São Paulo',
+      status: 'Inscrições em breve', // Sem data, aparece "Inscrições em breve"
+    },
+    {
+      id: 3,
+      estado: 'Bahia',
+      status: 'Finalizado', // Sem data, aparece "Finalizado"
+    },
+        {
+      id: 4,
+      estado: 'Distrito Federal',
+      data: '15/06/2025',
+      status: 'Inscrições em breve', // ou 'Finalizado' se desejar
+    },
+    {
+      id: 5,
+      estado: 'São Paulo',
+      status: 'Inscrições em breve', // Sem data, aparece "Inscrições em breve"
+    },
+    {
+      id: 6,
+      estado: 'Bahia',
+      status: 'Finalizado', // Sem data, aparece "Finalizado"
+    },
+  ];
+
+
+const oficinas: Oficina[] = [
+  {
+    id: 1,
+    cidade: 'Brasília',
+    estado: 'DIstritoF',
+    dataInicio: '15/06/2025',
+    dataTermino: '17/06/2025',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },
+  {
+    id: 2,
+    cidade: 'São Paulo',
+    estado: 'SP',
+    dataInicio: '20/07/2025',
+    dataTermino: '22/07/2025',
+    status: 'Encerrada',
+    modalidade: 'Online',
+  },
+  {
+    id: 3,
+    cidade: 'Salvador',
+    estado: 'BA',
+    dataInicio: '10/08/2025',
+    dataTermino: '12/08/2025',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },
+];
 
   const objetivos = [
     'Reduzir desigualdades sociais e regionais',
@@ -27,10 +147,27 @@ export default function PlanoScreen() {
     { nome: 'Oficinas Regionais', data: '2025-03-05', ativo: false },
     { nome: 'Finalização', data: '2025-04-20', ativo: true },
   ];
+  const dadosEstatisticos = {
+    total: 1527,
+    andamento: 57, // percentual
+    encerradas: 43, // percentual
+  };
+  
+const palavrasChave = [
+  'Sustentabilidade',
+  'Clima',
+  'Energia',
+  'Resíduos',
+  'Água',
+  'Educação Ambiental',
+  'Transporte',
+  'Justiça Climática',
+  'Inovação',
+];
 
   return (
     <SafeAreaView style={styles.container_total}>
-      <Header router={router} titulo="Plano Nacional" />
+      <Header router={router} titulo="Planos" />
 
       <FlatList
         data={[]}
@@ -85,6 +222,23 @@ export default function PlanoScreen() {
             <EtapasCalendar etapas={etapas} />
 
             <Objetivos objetivos={objetivos} />
+            <Metas
+              metas={[
+                { id: 1, titulo: 'Reduzir emissão de carbono', cidade: 'São Paulo', estado: 'SP', votos: 150 },
+                { id: 2, titulo: 'Aumentar áreas verdes', cidade: 'Salvador', estado: 'BA', votos: 89 },
+                { id: 3, titulo: 'Educação ambiental', cidade: 'Manaus', estado: 'AM', votos: 112 },
+                 { id: 4, titulo: 'Reduzir emissão de carbono', cidade: 'São Paulo', estado: 'SP', votos: 150 },
+                { id: 5, titulo: 'Aumentar áreas verdes', cidade: 'Salvador', estado: 'BA', votos: 89 },
+                { id: 6, titulo: 'Educação ambiental', cidade: 'Manaus', estado: 'AM', votos: 112 },
+              ]}
+            />
+            <Oficinas oficinas={oficinas} propostas={propostas} />
+               <Dados
+                  estatisticas={dadosEstatisticos}
+                  palavrasChave={palavrasChave}
+                />
+                <Eventos eventos={eventos} />
+
           </View>
         }
       />

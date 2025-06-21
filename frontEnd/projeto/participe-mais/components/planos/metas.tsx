@@ -2,51 +2,44 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   TextInput,
+  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Octicons,Feather } from '@expo/vector-icons';
-import ConferenciaModal from './conferenciamodal';
+import { Ionicons, Feather, Octicons } from '@expo/vector-icons';
 
-type Conferencia = {
+type Meta = {
   id: number;
   titulo: string;
-  origem: string;
-  descricao: string;
-  status: string;
-  modalidade: string;
+  cidade: string;
+  estado: string;
+  votos: number;
 };
 
-export default function Conferencias({ conferencias }: { conferencias: Conferencia[] }) {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [conferenciaSelecionada, setConferenciaSelecionada] = useState<Conferencia | null>(null);
+export default function Metas({ metas }: { metas: Meta[] }) {
   const [search, setSearch] = useState('');
   const [expandido, setExpandido] = useState<number | null>(null);
 
-  const abrirModal = (item: Conferencia) => {
-    setConferenciaSelecionada(item);
-    setModalVisible(true);
-  };
-
-  const conferenciasFiltradas = conferencias.filter((item) =>
-    item.titulo.toLowerCase().includes(search.toLowerCase()) ||
-    item.origem.toLowerCase().includes(search.toLowerCase())
+  const metasFiltradas = metas.filter(
+    (item) =>
+      item.titulo.toLowerCase().includes(search.toLowerCase()) ||
+      item.cidade.toLowerCase().includes(search.toLowerCase()) ||
+      item.estado.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
-    <Octicons name="location" size={24} color="black" />
-        <Text style={styles.tituloTexto}>Conferências Gerais</Text>
+        <Feather name="target" size={20} color="black" />
+        <Text style={styles.tituloTexto}>Metas</Text>
       </View>
 
-      {/* Search + Filtro */}
+      {/* Barra de pesquisa */}
       <View style={styles.pesquisaContainer}>
         <View style={styles.inputContainer}>
-          <Ionicons name="search-outline" size={24} color="#000" />
+          <Ionicons name="search-outline" size={20} color="#000" />
           <TextInput
             placeholder="Buscar..."
             style={styles.input}
@@ -62,34 +55,27 @@ export default function Conferencias({ conferencias }: { conferencias: Conferenc
       {/* Linha de separação */}
       <View style={styles.linha} />
 
-      {/* Lista com altura fixa e scroll interno */}
+      {/* Lista */}
       <View style={styles.listaContainer}>
         <ScrollView
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
         >
-          {conferenciasFiltradas.map((item) => {
+          {metasFiltradas.map((item) => {
             const estaExpandido = expandido === item.id;
             return (
               <TouchableOpacity
                 key={item.id}
                 activeOpacity={0.9}
-                onPress={() => {
-                  if (estaExpandido) abrirModal(item);
-                }}
+                onPress={() => setExpandido(estaExpandido ? null : item.id)}
                 style={styles.card}
               >
+                {/* Header */}
                 <View style={styles.headerCard}>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.tituloCard}>{item.titulo}</Text>
-
-                    <View style={styles.origemContainer}>
-                      <MaterialCommunityIcons
-                        name="office-building"
-                        size={14}
-                        color="#2670E8"
-                      />
-                      <Text style={styles.origemCard}>{item.origem}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <Feather name="target" size={14} color="#000" />
+                      <Text style={styles.tituloCard}>{item.titulo}</Text>
                     </View>
                   </View>
 
@@ -108,35 +94,36 @@ export default function Conferencias({ conferencias }: { conferencias: Conferenc
                 <View style={styles.linhaDentro} />
 
                 {estaExpandido && (
-                  <>
-                    <Text style={styles.descricao}>
-                      {item.descricao.length > 90
-                        ? item.descricao.slice(0, 90) + '...'
-                        : item.descricao}
-                    </Text>
-
-                    <View style={styles.tags}>
-                      <View style={styles.tagStatus}>
-                        <Text style={styles.tagText}>{item.status}</Text>
+                  <View style={styles.expandidoContainer}>
+                    <View style={{ flex: 1 }}>
+                      {/* Localização */}
+                      <View style={styles.localizacaoContainer}>
+                        <Octicons name="location" size={12} color="#2670E8" />
+                        <Text style={styles.localizacaoTexto}>
+                          {item.cidade} - {item.estado}
+                        </Text>
                       </View>
-                      <View style={styles.tagModalidade}>
-                        <Text style={styles.tagText}>{item.modalidade}</Text>
+
+                      <Text style={styles.realizadoTexto}>
+                        Propostas realizadas na oficina de {item.cidade} - {item.estado}
+                      </Text>
+                    </View>
+
+                    {/* Votos */}
+                    <View style={styles.votosContainer}>
+                      <Text style={styles.votosNumero}>{item.votos}</Text>
+                      <View style={styles.votosLabelContainer}>
+                        <Feather name="thumbs-up" size={14} color="#000" />
+                        <Text style={styles.votosLabel}>Votos</Text>
                       </View>
                     </View>
-                  </>
+                  </View>
                 )}
               </TouchableOpacity>
             );
           })}
         </ScrollView>
       </View>
-        <ConferenciaModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          conferencia={conferenciaSelecionada}
-        />
-
-
     </View>
   );
 }
@@ -148,6 +135,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     backgroundColor: '#fff',
+    marginTop: 20,
   },
   tituloComIcone: {
     flexDirection: 'row',
@@ -191,15 +179,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     marginBottom: 16,
   },
-  linhaDentro: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginTop: 8,
-    marginBottom: 8,
-  },
   listaContainer: {
-    height: 300,
-    backgroundColor: '#fff',
+    height: 300, // 👈 altura que define o scroll interno
   },
   card: {
     backgroundColor: '#fff',
@@ -212,49 +193,57 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  expandButton: {
-    padding: 4,
-  },
   tituloCard: {
     fontFamily: 'Raleway-Bold',
     fontSize: 16,
     color: '#000',
+  },
+  expandButton: {
+    padding: 4,
+  },
+  linhaDentro: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  expandidoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  localizacaoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     marginBottom: 4,
   },
-  origemContainer: {
+  localizacaoTexto: {
+    fontSize: 10,
+    color: '#2670E8',
+  },
+  realizadoTexto: {
+    color: '#555',
+    lineHeight: 18,
+    fontSize: 13,
+    flex: 1,
+  },
+  votosContainer: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  votosNumero: {
+    fontSize: 30,
+    fontFamily: 'Raleway-Bold',
+    color: '#000',
+  },
+  votosLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  origemCard: {
+  votosLabel: {
     fontSize: 12,
-    color: '#2670E8',
-  },
-  descricao: {
-    color: '#555',
-    lineHeight: 18,
-    fontSize: 13,
-  },
-  tags: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginTop: 8,
-  },
-  tagStatus: {
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  tagModalidade: {
-    backgroundColor: '#FFA726',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  tagText: {
-    fontSize: 12,
-    color: '#333',
+    color: '#000',
   },
 });

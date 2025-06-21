@@ -167,7 +167,9 @@ const palavrasChave = [
               estatisticas={[
                 { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
                 { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
-                { eixo: 'Eixo 3', percentual: 25, cor: '#FFC107' },
+                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
+                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
+
               ]}
               total={10794}
               palavrasChave={[
