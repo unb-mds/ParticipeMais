@@ -129,7 +129,7 @@ const palavrasChave = [
 
  return (
     <SafeAreaView style={styles.container_total}>
-      <Header router={router} />
+    <Header router={router} titulo="Conferências" />
 
       <FlatList
         data={[]} // vazio, porque o conteúdo real está no header
@@ -137,7 +137,7 @@ const palavrasChave = [
         renderItem={null}
         ListHeaderComponent={
           <View style={styles.container}>
-            <StatusBadge />
+          <StatusBadge status="Ativa" />
 
             <Text style={styles.title}>
               5ª Conferência Nacional do Meio Ambiente

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text,StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
-export default function Header({ router }: { router: ReturnType<typeof useRouter> }) {
+type Props = {
+  router: ReturnType<typeof useRouter>;
+  titulo: string;
+};
+
+export default function Header({ router, titulo }: Props) {
   const [favorito, setFavorito] = useState(false);
 
   return (
@@ -12,7 +17,7 @@ export default function Header({ router }: { router: ReturnType<typeof useRouter
         <Ionicons name="arrow-back" size={28} color="#000" />
       </TouchableOpacity>
 
-      <Text style={styles.headerTitle}>Conferências</Text>
+      <Text style={styles.headerTitle}>{titulo}</Text>
 
       <TouchableOpacity onPress={() => setFavorito(!favorito)}>
         <Ionicons

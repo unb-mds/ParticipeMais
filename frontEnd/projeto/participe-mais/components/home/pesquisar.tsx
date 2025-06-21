@@ -126,7 +126,7 @@ const imagensConsultas = [
         {/* planos */}
         <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Planos</Text>
-        <TouchableOpacity onPress={() => console.log('Veja mais planos')}>
+        <TouchableOpacity onPress={() => router.push('../planos')}>
             <Text style={styles.vejaMais}>Veja mais</Text>
         </TouchableOpacity>
         </View>
@@ -150,7 +150,7 @@ const imagensConsultas = [
 {/* consultas */}
         <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Consultas</Text>
-        <TouchableOpacity onPress={() => console.log('Veja mais consultas')}>
+        <TouchableOpacity onPress={() => router.push('../consultas')}>
             <Text style={styles.vejaMais}>Veja mais</Text>
         </TouchableOpacity>
         </View>
