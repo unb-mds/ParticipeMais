@@ -30,14 +30,14 @@ class AcessaConferencia(APIView):
         except Conferencia.DoesNotExist:
             return Response({'error': 'Conferência não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
 
-        conferencia_serializer = ConferenciaSerializer(conferencia)
+        conferencia_serializer = ConferenciaSerializer(conferencia, context={'request': request})
 
         # Supondo que você tem relacionamentos ou filtros para propostas e etapas
         propostas = Propostas.objects.filter(conferencia=conferencia)[:500]
-        propostas_serializer = PropostaSerializer(propostas, many=True)
+        propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
 
         etapas = Etapas.objects.filter(conferencia=conferencia)
-        etapas_serializer = EtapaSerializer(etapas, many=True)
+        etapas_serializer = EtapaSerializer(etapas, many=True, context={'request': request})
 
         return Response({
             'message': 'Conferência encontrada!',
@@ -141,3 +141,58 @@ class EtapaDireta(APIView):
             'conferencia': conferencia.titulo,
             'sub-conferencias': serializer.data
         })
+
+class AgendarConferenciaView(APIView):
+    
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+    def post(self, request, pk):
+        
+        usuario = request.user
+        
+        conferencia = Conferencia.objects.get(pk=pk)
+        
+        agenda, criado = Agenda.objects.get_or_create(usuario=usuario, conferencia=conferencia)
+        
+        if not criado:
+            agenda.agendado = not agenda.agendado
+            agenda.save()
+            
+            
+        return Response({
+            "mensagem": "Conferencia agendado com sucesso.",
+            "agendado": agenda.agendado,
+        }, status=status.HTTP_200_OK)
+            
+        
+
+
+
+class AgendarEtapaView(APIView):
+    
+    def post(self, request, pk, jk):
+        usuario = request.user
+        
+        
+        conferencia = Conferencia.objects.get(pk=pk)
+        
+        etapa = Etapas.objects.get(pk=jk, conferencia=conferencia)
+        
+        
+        agenda, criado = Agenda.objects.get_or_create(usuario=usuario, etapa=etapa)
+        
+        if not criado:
+            agenda.agendado = not agenda.agendado
+            agenda.save()
+
+
+        return Response({
+                "mensagem": "Etapa agendada com sucesso.",
+                "curtido": agenda.agendado,
+            }, status=status.HTTP_200_OK)
+            
+        
+        
+        

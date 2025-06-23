@@ -9,9 +9,11 @@ router.register(r'', ConferenciaViewSet, basename='conferencias')
 urlpatterns = [
     path('', ListaConferencias.as_view(), name='listar_conferencias'),
     path('<int:pk>/', AcessaConferencia.as_view(), name='conferencia'),
+    path('<int:pk>/agendar', AgendarConferenciaView.as_view(), name='agendar_conferencia'),
     path('<int:pk>/propostas/', AcessaPropostas.as_view(), name='propostas'),
     path('<int:pk>/propostas/<int:jk>/', PropostaDireta.as_view(), name='essa_proposta'),
     path('<int:pk>/perguntas', AcessaPerguntas.as_view(), name='perguntas'),
     path('<int:pk>/etapas', AcessaEtapas.as_view(), name='etapas'),
-    path('<int:pk>/etapas/<int:jk>/', EtapaDireta.as_view(), name='essa_etapa')
+    path('<int:pk>/etapas/<int:jk>/', EtapaDireta.as_view(), name='essa_etapa'),
+    path('<int:pk>/etapas/<int:jk>/agendar', AgendarEtapaView.as_view(), name='agendar_etapa')
 ]

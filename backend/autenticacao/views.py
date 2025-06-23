@@ -226,7 +226,38 @@ class PerfilView(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
         
         
+class AlterarSenhaView(APIView):
+    """
+    View para alterar a senha do usuário autenticado.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        """
+        Altera a senha do usuário autenticado.
+        """
+        usuario = request.user
+        senha_atual = request.data.get('senha_atual')
+        nova_senha = request.data.get('nova_senha')
         
+        if not senha_atual or not nova_senha:
+            return Response(
+                {'message': 'É necessário fornecer a senha atual e a nova senha.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        
-        
+        if not usuario.check_password(senha_atual):
+            return Response(
+                {'message': 'Senha atual incorreta.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if senha_atual == nova_senha:
+            return Response(
+                {'message': 'A nova senha deve ser diferente da atual.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        usuario.set_password(nova_senha)
+        usuario.save()
+        return Response({'message': 'Senha alterada com sucesso!'}, status=status.HTTP_200_OK)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from autenticacao.models import Usuario
 
 
 class Conferencia(models.Model):
@@ -24,7 +25,7 @@ class Etapas(models.Model):
     descricao_etapa = models.TextField()
     status = models.CharField(max_length=50)
     regiao_etapa = models.CharField(default="não informado", max_length=250)
-    duracao_etapa = models.CharField(max_length=100)
+    duracao_etapa = models.CharField(max_length=100, default="não informado", null=False, blank=False)
     qtd_propostas_etapa = models.IntegerField(default=0, null=True)
     qtd_inscritos_etapa = models.IntegerField(default=0, null=True)
     url_etapa = models.URLField(max_length=500, blank=True, null=True)
@@ -32,3 +33,10 @@ class Etapas(models.Model):
     conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE)
     def __str__(self):
         return self.titulo_etapa
+    
+    
+class Agenda(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
+    etapa = models.ForeignKey(Etapas, on_delete=models.CASCADE, null=True, blank=True)
+    agendado = models.BooleanField(default=True)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Conferencia, Etapas, PerguntasParticipativas
+from .models import Conferencia, Etapas, PerguntasParticipativas, Agenda
 from api.serializers import DynamicFieldsModelSerializer
 from propostas.serializers import PropostaSerializer
 
@@ -28,4 +28,4 @@ class ConferenciaSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Conferencia
         fields = '__all__'
-        
+

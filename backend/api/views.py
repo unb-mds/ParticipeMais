@@ -7,8 +7,11 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status, permissions, filters
 from django_filters.rest_framework import DjangoFilterBackend
+import random
 
-from conferencias.models import Conferencia
+from .serializers import PerguntaSerializer, AgendaSerializer, RespostaSerializer
+from .models import Pergunta
+from conferencias.models import Conferencia, Agenda
 from conferencias.serializers import ConferenciaSerializer
 from planos.models import Planos
 from planos.serializers import PlanosSerializer
@@ -16,6 +19,7 @@ from consultas.models import Consultas
 from consultas.serializers import ConsultasSerializer
 from propostas.models import Propostas
 from propostas.serializers import PropostaSerializer
+import datetime
 
 
 class Home(APIView):
@@ -200,3 +204,59 @@ class FavoritosView(APIView):
         
         usuario.favoritos.remove(proposta)
         return Response({'message': 'Proposta removida dos favoritos!'}, status=status.HTTP_200_OK)
+
+
+class PerguntasView(APIView):
+    
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+    def get(self, request):
+        perguntas_respondidas = Pergunta.objects.filter(resposta__usuario=request.user)
+        perguntas_disponiveis = Pergunta.objects.exclude(id__in=perguntas_respondidas)
+
+        perguntas = list(perguntas_disponiveis)
+        
+        if not perguntas:
+            return Response(
+                {"detail": "Nenhuma pergunta disponível."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        pergunta = random.choice(perguntas)
+        serializer = PerguntaSerializer(pergunta)
+        
+        return Response({'data': serializer.data}, status= status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = RespostaSerializer(data=request.data, context={'usuario': request.user})
+        if serializer.is_valid():
+            try:
+                resposta = serializer.save()
+                return Response({'detail': 'Resposta registrada com sucesso.', 'id': resposta.id}, status=status.HTTP_201_CREATED)
+            except:
+                return Response(
+                    {"detail": "Você já respondeu essa pergunta."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+
+class AgendaView(APIView):
+    
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+    def get(self, request):
+        
+        usuario = request.user
+        
+        agendados = Agenda.objects.filter(usuario=usuario)\
+                                .select_related('conferencia', 'etapa')
+                                
+        serializer = AgendaSerializer(agendados, many=True)
+        
+        return Response(serializer.data)
+
+        
