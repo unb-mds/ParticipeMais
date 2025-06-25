@@ -68,7 +68,7 @@ export default function ScoreScreen() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://192.168.0.16:8000/comunidade/score/', {
+      const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -228,6 +228,7 @@ const MissionButton = ({ title, xp, completed }: { title: string; xp: string; co
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
     backgroundColor: '#267DFF',
   },
   scrollContent: {

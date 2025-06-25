@@ -88,7 +88,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const response = await fetch(`http://192.168.0.16:8000/conferencias/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function ConferenciaDetalhadaScreen() {
       <Text style={styles.subinfo}>📅 {etapas.length} conferências   📄 {propostas.length} propostas</Text>
 
       <Text style={styles.description}>
-        {conferencias.descricao?.trim() || 'Descrição não informada'}
+        {conferencias.descricao && conferencias.descricao.trim().toLowerCase() !== 'nan' ? conferencias.descricao?.trim() : 'Descrição não informada'}
       </Text>
 
       {/* Calendário */}
@@ -160,44 +160,53 @@ export default function ConferenciaDetalhadaScreen() {
         </Text>
       </View>
 
-      {/* Etapas */}
+      
+
       <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
-      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
+      {etapas.length > 1 ? (
+        <>
+          <TextInput placeholder="🔍 Buscar..." style={styles.input} />
+          <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
 
-      {/* Etapas */}
-      <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
-      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
+          {(mostrarMaisEtapas ? etapas : etapas.slice(0, 3)).map((etapa, i) => (
+            <View key={`etapa-${i}`} style={styles.card}>
+              <Text style={styles.itemTitle}>{etapa.titulo_etapa}</Text>
+              <Text style={styles.itemDesc}>{etapa.descricao_etapa}</Text>
+              <Text style={styles.itemTag}>{etapa.status}</Text>
+            </View>
+          ))}
 
-      {(mostrarMaisEtapas ? etapas : etapas.slice(0, 3)).map((etapa, i) => (
-        <View key={`etapa-${i}`} style={styles.card}>
-          <Text style={styles.itemTitle}>{etapa.titulo_etapa}</Text>
-          <Text style={styles.itemDesc}>{etapa.descricao_etapa}</Text>
-          <Text style={styles.itemTag}>{etapa.status}</Text>
-        </View>
-      ))}
+          {etapas.length > 3 && (
+            <TouchableOpacity onPress={() => setMostrarMaisEtapas(!mostrarMaisEtapas)}>
+              <Text style={styles.link}>
+                {mostrarMaisEtapas ? 'Ver menos -' : 'Ver mais +'}
+              </Text>
+            </TouchableOpacity>
+          )}
 
-      {etapas.length > 3 && (
-        <TouchableOpacity onPress={() => setMostrarMaisEtapas(!mostrarMaisEtapas)}>
-          <Text style={styles.link}>{mostrarMaisEtapas ? 'Ver menos -' : 'Ver mais +'}</Text>
+        {/* Dados Etapas */}
+        <TouchableOpacity onPress={() => toggleSection(setDadosConferenciasAberto, dadosConferenciasAberto)} style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>📊 DADOS - Conferências Gerais</Text>
+          <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
         </TouchableOpacity>
+        {dadosConferenciasAberto && (
+          <View style={styles.card}>
+            <Text style={styles.item}>✅ 87% Em andamento</Text>
+            <Text style={styles.item}>🟡 23% Encerradas</Text>
+          </View>
+        )}
+
+        </>
+      ) : (
+        <Text>Não foram encontradas nenhuma conferência ;-;</Text>
       )}
 
-      {/* Dados Etapas */}
-      <TouchableOpacity onPress={() => toggleSection(setDadosConferenciasAberto, dadosConferenciasAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>📊 DADOS - Conferências Gerais</Text>
-        <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
-      </TouchableOpacity>
-      {dadosConferenciasAberto && (
-        <View style={styles.card}>
-          <Text style={styles.item}>✅ 87% Em andamento</Text>
-          <Text style={styles.item}>🟡 23% Encerradas</Text>
-        </View>
-      )}
+
+      <Text style={styles.sectionTitle}>📍 Propostas gerais</Text>
+      {propostas.length > 1 ? (
+        <>
 
       {/* Propostas */}
-      <Text style={styles.sectionTitle}>📍 Propostas gerais</Text>
       <TextInput placeholder="🔍 Buscar..." style={styles.input} />
       <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Eixo: todos</Text>
 
@@ -231,6 +240,12 @@ export default function ConferenciaDetalhadaScreen() {
           <Text style={styles.itemSubtitle}>Total: {propostas.length} propostas</Text>
         </View>
       )}
+        </>
+      ) : (
+        <Text> Não foram encontradas nenhuma propostas ;-;</Text>
+      )}
+
+
     </ScrollView>
   );
 }
@@ -238,6 +253,7 @@ export default function ConferenciaDetalhadaScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingTop: 60,
     backgroundColor: '#fff',
   },
   status: {

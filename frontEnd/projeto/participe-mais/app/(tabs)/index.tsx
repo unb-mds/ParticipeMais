@@ -164,11 +164,12 @@ const styles = StyleSheet.create({
   fundoBranco: {
     backgroundColor: '#ffffff',
     padding: 10,
-    margin: 10,
     minHeight: 550,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
     fontFamily: 'Raleway_700Bold',
   },
   textoNormal: {

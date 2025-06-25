@@ -41,36 +41,40 @@ class DescubraView(APIView):
         """
         Retorna 5 conferências, planos e consultas aleatórias, e 10 propostas aleatórias.
         """
-        conferencias = list(getattr(Conferencia, "objects").order_by('?'))[:5]
-        planos = list(getattr(Planos, "objects").order_by('?'))[:5]
-        consultas = list(getattr(Consultas, "objects").order_by('?'))[:5]
-        propostas = list(getattr(Propostas, "objects").order_by('?'))[:10]
+        conferencias = Conferencia.objects.order_by('?')[:5]
+        planos = Planos.objects.order_by('?')[:5]
+        consultas = Consultas.objects.order_by('?')[:5]
+        propostas = Propostas.objects.order_by('?')[:10]
 
         data = {
             'conferencias': ConferenciaSerializer(
-                conferencias, many=True, fields=['image_url']
+                conferencias, 
+                many=True, 
+                context={'request': request},  # Para URLs absolutas
+                fields=['id', 'image_url']
             ).data,
             'planos': PlanosSerializer(
-                planos, many=True, fields=['image_url']
+                planos, 
+                many=True,
+                context={'request': request},  # Para URLs absolutas
+                fields=['id', 'image_url']
             ).data,
             'consultas': ConsultasSerializer(
-                consultas, many=True, fields=['image_url']
+                consultas, 
+                many=True,
+                context={'request': request},  # Para URLs absolutas
+                fields=['id', 'image_url']
             ).data,
             'propostas': PropostaSerializer(
                 propostas,
                 many=True,
-                fields=[
-                    'titulo_proposta',
-                    'descricao_proposta',
-                    'autor',
-                    'url_proposta',
-                    'palavras_chave'
-                ]
+                context={'request': request},  # Para URLs absolutas
+                fields=['id', 'titulo_proposta', 'autor']
             ).data
         }
 
         return Response({
-            'message': 'Rota protegida com sucesso!',
+            'status': 'success',
             'data': data
         })
 
