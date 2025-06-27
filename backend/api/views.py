@@ -262,5 +262,13 @@ class AgendaView(APIView):
         serializer = AgendaSerializer(agendados, many=True)
         
         return Response(serializer.data)
+    
+    
+    def post(self, request):
+        
+        pass
+        
+        
+        
 
         
