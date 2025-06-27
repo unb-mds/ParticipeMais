@@ -22,8 +22,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: unbook
           POSTGRES_DB: participemais
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -52,13 +50,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install PostgreSQL client
+      run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+
     - name: Wait for PostgreSQL
       run: |
         until pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT; do
           echo "Aguardando banco de dados..."
           sleep 1
         done
-        
+
     - name: Run migrations
       working-directory: ./backend
       run: |
