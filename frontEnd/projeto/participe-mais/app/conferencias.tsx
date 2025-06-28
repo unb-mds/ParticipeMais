@@ -1,257 +1,226 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  LayoutAnimation,
-  UIManager,
-  Platform,
-  TextInput,
-} from 'react-native';
-import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import React from 'react';
+import { Text, View, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental &&
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import Header from '../components/conferencia/header';
+import StatusBadge from '../components/conferencia/statusbagde';
+import EtapasCalendar from '../components/conferencia/etapascalendar';
+import EixosTematicos from '../components/conferencia/eixostematicos';
+import Conferencias from '../components/conferencia/conferencias_gerais';
+import Dados from '../components/conferencia/dados';
+import DadosPizza from '../components/conferencia/dadosPizza';
+import Propostas from '../components/conferencia/propostas_gerais';
+
+
+
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ConferenciaDetalhadaScreen() {
-  const [calendarioAberto, setCalendarioAberto] = useState(false);
-  const [dadosConferenciasAberto, setDadosConferenciasAberto] = useState(false);
-  const [dadosPropostasAberto, setDadosPropostasAberto] = useState(false);
+  const router = useRouter();
+  const conferencias = [
+  {
+    id: 1,
+    titulo: '5ª Conferência Nacional do Meio Ambiente',
+    origem: 'Brasília, DF',
+    descricao: 'Discussão sobre mudanças climáticas e governança ambientalaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaawwwadwddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },
+  {
+    id: 2,
+    titulo: 'Conferência de Desenvolvimento Sustentável',
+    origem: 'São Paulo, SP',
+    descricao: 'Abordagem sobre desenvolvimento sustentável e ESG.',
+    status: 'Encerrada',
+    modalidade: 'Online',
+  },
+  {
+    id: 3,
+    titulo: 'Conferência Global de Energias Renováveis',
+    origem: 'Rio de Janeiro, RJ',
+    descricao: 'Exploração de alternativas em energia limpa.',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },{
+    id: 4,
+    titulo: 'Conferência Global de Energias Renováveis',
+    origem: 'Rio de Janeiro, RJ',
+    descricao: 'Exploração de alternativas em energia limpa.',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },{
+    id: 5,
+    titulo: 'Conferência Global de Energias Renováveis',
+    origem: 'Rio de Janeiro, RJ',
+    descricao: 'Exploração de alternativas em energia limpa.',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },{
+      id: 6,
+    titulo: 'Conferência Global de Energias Renováveis',
+    origem: 'Rio de Janeiro, RJ',
+    descricao: 'Exploração de alternativas em energia limpa.',
+    status: 'Ativa',
+    modalidade: 'Presencial',
+  },
+];
 
-  const toggleSection = (
-    setter: React.Dispatch<React.SetStateAction<boolean>>,
-    current: boolean
-  ) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setter(!current);
+ const etapas = [
+    { nome: 'Etapa Digital', data: '2025-05-07', ativo: true },
+    { nome: 'Conferências Municipais', data: '2025-01-26', ativo: true },
+    { nome: 'Conferências Estaduais', data: '2025-03-15', ativo: false },
+    { nome: 'Etapa Nacional', data: '2025-05-09', ativo: true },
+  ];
+
+  const eixos = [
+    {
+      titulo: 'I – Mitigação',
+      descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.',
+    },
+    {
+      titulo: 'II – Adaptação',
+      descricao: 'Fortalecer a resiliência às mudanças climáticas.',
+    },
+    {
+      titulo: 'III – Financiamento',
+      descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.',
+    },
+    {
+      titulo: 'IV – Governança',
+      descricao: 'Promover uma governança climática participativa.',
+    },
+  ];
+  const dadosEstatisticos = {
+    total: 1527,
+    andamento: 57, // percentual
+    encerradas: 43, // percentual
   };
+const palavrasChave = [
+  'Sustentabilidade',
+  'Clima',
+  'Energia',
+  'Resíduos',
+  'Água',
+  'Educação Ambiental',
+  'Transporte',
+  'Justiça Climática',
+  'Inovação',
+];
+
+  const propostas = [
+  {
+    id: 1,
+    eixo: 'Eixo 3 - Justiça Social: Participação Popular',
+    publicadoEm: '05/12/2024',
+    usuario: 'MONICA',
+    descricao:
+      'Ampliar a participação popular de forma a implantar, consolidar e fortalecer programas de incentivo educacional e técnico em sistemas agroflorestais...',
+  },
+  {
+    id: 2,
+    eixo: 'Eixo 2 - Meio Ambiente e Sustentabilidade',
+    publicadoEm: '10/01/2025',
+    usuario: 'CARLOS',
+    descricao:
+      'Fortalecer ações de proteção ambiental com foco em resíduos sólidos e conservação da biodiversidade...',
+  },
+];
+
+ return (
+    <SafeAreaView style={styles.container_total}>
+    <Header router={router} titulo="Conferências" />
+
+      <FlatList
+        data={[]} // vazio, porque o conteúdo real está no header
+        keyExtractor={() => 'dummy'}
+        renderItem={null}
+        ListHeaderComponent={
+          <View style={styles.container}>
+          <StatusBadge status="Ativa" />
+
+            <Text style={styles.title}>
+              5ª Conferência Nacional do Meio Ambiente
+            </Text>
+
+            <View style={styles.subinfo}>
+              <Entypo name="location" size={14} />
+              <Text style={styles.subinfoText}>1527 conferências</Text>
+              <MaterialCommunityIcons name="file-document-outline" size={14} />
+              <Text style={styles.subinfoText}>10794 propostas</Text>
+            </View>
+
+            <Text style={styles.description}>
+              A emergência climática que vivemos, com eventos extremos cada vez mais frequentes e intensos, é o tema da 5ª Conferência Nacional do Meio Ambiente. Vamos debater a emergência climática junto com o desafio da transformação ecológica: como transitamos para um Brasil mais resiliente, menos vulnerável às mudanças climáticas e reduzimos as emissões de gases de efeito estufa, causadores do aquecimento global. Esta 5ª CNMA marca a retomada da governança participativa, depois de onze anos da última Conferência. Os debates em todo o país vão até maio.
+            </Text>
+
+            <EtapasCalendar etapas={etapas} />
+            <EixosTematicos eixos={eixos} />
+            <Conferencias conferencias={conferencias} />
+            <Dados
+                estatisticas={dadosEstatisticos}
+                palavrasChave={palavrasChave}
+              />
+            <Propostas propostas={propostas} />
+
+            <DadosPizza
+              estatisticas={[
+                { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
+                { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
+                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
+                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
+
+              ]}
+              total={10794}
+              palavrasChave={[
+                'Sustentabilidade',
+                'Inovação',
+                'Energia',
+                'Clima',
+                'Justiça',
+                'Biodiversidade',
+              ]}
+            />
 
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.status}>🟢 Ativo</Text>
-      <Text style={styles.title}>5ª Conferência Nacional do Meio Ambiente</Text>
-      <Text style={styles.subinfo}>📅 1527 conferências   📄 10794 propostas</Text>
-
-      <Text style={styles.description}>
-        A emergência climática que vivemos, com eventos extremos cada vez mais frequentes e intensos, é o tema da 5ª Conferência Nacional do Meio Ambiente. Vamos debater a emergência climática junto com o desafio da transformação ecológica: como transitamos para um Brasil mais resiliente, menos vulnerável às mudanças climáticas e reduzimos as emissões de gases de efeito estufa, causadores do aquecimento global. Esta 5ª CNMA marca a retomada da governança participativa, depois de onze anos da última Conferência. Os debates em todo o país vão até maio.
-      </Text>
-
-      {/* Calendário de Etapas */}
-      <TouchableOpacity onPress={() => toggleSection(setCalendarioAberto, calendarioAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>🗓️ Calendário de Etapas</Text>
-        <Ionicons name={calendarioAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
-      </TouchableOpacity>
-      {calendarioAberto && (
-        <View style={styles.card}>
-         <Text style={styles.item}>
-          ✅ Etapa Digital{'\n'}Até 7 de maio de 2025
-        </Text>
-
-          <Text style={styles.item}>🟢 Conferências Municipais ou Intermunicipais\nAté 26 de janeiro de 2025</Text>
-          <Text style={styles.item}>📌 Conferências Estaduais e Distrital\n5 de janeiro a 15 de março de 2025</Text>
-          <Text style={styles.item}>📍 Etapa Nacional\n06 a 09 de maio de 2025</Text>
-        </View>
-      )}
-
-      {/* Eixos Temáticos */}
-      <Text style={styles.sectionTitle}>📎 Eixos Temáticos</Text>
-      <View style={styles.blueCard}>
-        <Text style={styles.blueCardTitle}>Eixos Temáticos</Text>
-        <Text style={styles.blueCardSubtitle}>– 1. Mitigação:</Text>
-        <Text style={styles.blueCardText}>
-          {`"Exploração de estratégias e políticas para reduzir as emissões de gases de efeito estufa, promovendo práticas sustentáveis e inovadoras em diversos setores."`}
-        </Text>
-      </View>
-
-      {/* Conferências Gerais */}
-      <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
-      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
-      <View style={styles.card}>
-        <Text style={styles.itemTitle}>01ª Conferência Intermunicipal de Jaguaré e Alto Rio Novo/ES</Text>
-        <Text style={styles.itemDesc}>A 1ª Conferência Intermunicipal de Jaguaré, em conjunto com o município de Alto Rio Novo/ES, terá como tema central...</Text>
-        <Text style={styles.itemTag}>🟡 Encerrada</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.itemTitle}>01ª Conferência Intermunicipal de Meio Ambiente de Alto Rio</Text>
-        <Text style={styles.itemDesc}>A 1ª Conferência Intermunicipal de Jaguaré, em conjunto com o município de Alto Rio Novo/ES, terá como tema central...</Text>
-        <Text style={styles.itemTag}>🟡 Encerrada</Text>
-      </View>
-      <Text style={styles.link}>Ver mais +</Text>
-
-      {/* Dados estatísticos - Conferências Gerais */}
-      <TouchableOpacity onPress={() => toggleSection(setDadosConferenciasAberto, dadosConferenciasAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>📊 DADOS - Conferências Gerais</Text>
-        <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
-      </TouchableOpacity>
-      {dadosConferenciasAberto && (
-        <View style={styles.card}>
-          <Text style={styles.item}>✅ 87% Em andamento</Text>
-          <Text style={styles.item}>🟡 23% Encerradas</Text>
-        </View>
-      )}
-
-      {/* Propostas Gerais */}
-      <Text style={styles.sectionTitle}>📍 Propostas gerais</Text>
-      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Eixo: todos</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.itemSubtitle}>Publicado em 05/12/2024</Text>
-        <Text style={styles.itemTitle}>Eixo 3 - Justiça Social: Participação Popular.</Text>
-        <Text style={styles.itemDesc}>Ampliar a participação popular por meio do fortalecimento e controle.</Text>
-        <Text style={styles.itemTag}>Por NONCA</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.itemSubtitle}>Publicado em 08/12/2024</Text>
-        <Text style={styles.itemTitle}>Eixo 1 - Mitigação: Garantia de Planos Municipais de Conservação e Recuperação da Mata Atlântica.</Text>
-        <Text style={styles.itemDesc}>Garantir a elaboração dos Planos Municipais de Conservação e Recuperação da Mata Atlântica.</Text>
-        <Text style={styles.itemTag}>Por Rafael</Text>
-      </View>
-
-      {/* Dados estatísticos - Propostas Gerais */}
-      <TouchableOpacity onPress={() => toggleSection(setDadosPropostasAberto, dadosPropostasAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>📊 DADOS - Propostas Gerais</Text>
-        <Ionicons name={dadosPropostasAberto ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
-      </TouchableOpacity>
-      {dadosPropostasAberto && (
-        <View style={styles.card}>
-          <Text style={styles.item}>🟥 24% Eixo 1</Text>
-          <Text style={styles.item}>🟦 13% Eixo 2</Text>
-          <Text style={styles.item}>🟨 33% Eixo 3</Text>
-          <Text style={styles.item}>🟩 10% Eixo 4</Text>
-          <Text style={styles.item}>🟪 10% Eixo 5</Text>
-          <Text style={styles.itemSubtitle}>Total: 10794 propostas</Text>
-        </View>
-      )}
-    </ScrollView>
+          </View>
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  container_total: {
+    flex: 1,
     backgroundColor: '#fff',
   },
-  status: {
-    backgroundColor: '#ccf5d4',
-    padding: 4,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
+  container: {
+    marginTop: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 22,
-    fontFamily: 'Raleway_700Bold',
-  },
-  subinfo: {
-    fontSize: 12,
-    color: '#333',
-    marginBottom: 12,
-    fontFamily: 'Raleway_400Regular',
+    fontSize: 30,
+    fontFamily: 'Raleway-Bold',
+    marginBottom: 8,
   },
   description: {
     fontSize: 14,
     color: '#555',
     marginBottom: 16,
-    fontFamily: 'Raleway_400Regular',
+    lineHeight: 20,
+    marginTop: 10,
   },
-  sectionTitle: {
-    fontSize: 18,
-    marginTop: 16,
-    marginBottom: 8,
-    fontFamily: 'Raleway_700Bold',
-  },
-  sectionHeader: {
+  subinfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    gap: 6,
+    marginBottom: 16,
   },
-  card: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  item: {
-    marginBottom: 6,
-    color: '#333',
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemSelected: {
-    marginBottom: 6,
-    color: '#267DFF',
-    fontFamily: 'Raleway_700Bold',
-  },
-  itemTitle: {
-    fontSize: 14,
-    marginBottom: 2,
-    fontFamily: 'Raleway_700Bold',
-  },
-  itemDesc: {
+  subinfoText: {
     fontSize: 12,
     color: '#555',
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemTag: {
-    fontSize: 10,
-    color: '#888',
-    marginTop: 4,
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemSubtitle: {
-    fontSize: 11,
-    color: '#888',
-    marginBottom: 2,
-    fontFamily: 'Raleway_400Regular',
-  },
-  input: {
-    backgroundColor: '#eee',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 8,
-    fontFamily: 'Raleway_400Regular',
-  },
-  filterText: {
-    fontSize: 12,
-    marginBottom: 8,
-    color: '#666',
-    fontFamily: 'Raleway_400Regular',
-  },
-  link: {
-    color: '#267DFF',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontFamily: 'Raleway_400Regular',
-  },
-  blueCard: {
-    backgroundColor: '#267DFF',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
-  },
-  blueCardTitle: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 4,
-    fontFamily: 'Raleway_700Bold',
-  },
-  blueCardSubtitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Raleway_700Bold',
-  },
-  blueCardText: {
-    color: '#fff',
-    fontSize: 12,
-    marginTop: 4,
-    fontFamily: 'Raleway_400Regular',
   },
 });

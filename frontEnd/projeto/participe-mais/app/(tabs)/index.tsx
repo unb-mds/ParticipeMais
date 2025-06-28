@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView, Text } from 'react-native'; 
-import Cabecalho from '@/components/cabecalho';
-import BlocoDinamico from '@/components/blocosdinamicos';
-import DescubraSection from '@/components/descubra'; 
-import PesquisaSection from '@/components/pesquisar'; 
+import Cabecalho from '@/components/home/cabecalho';
+import BlocoDinamico from '@/components/home/blocosdinamicos';
+import DescubraSection from '@/components/home/descubra'; 
+import PesquisaSection from '@/components/home/pesquisar'; 
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 

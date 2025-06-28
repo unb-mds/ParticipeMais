@@ -119,6 +119,9 @@ export default function Login() {
         <Text style={styles.link}>Esqueceu sua senha?</Text>
       </TouchableOpacity>
       <TouchableOpacity>
+        <Text style={styles.link_semlogin}>Continuar sem login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
         <Text style={styles.link}>Ainda não possui uma conta?</Text>
       </TouchableOpacity>
 
@@ -172,6 +175,13 @@ const styles = StyleSheet.create({
   },
   link: {
     color: "#1a73e8",
+    textAlign: "center",
+    marginVertical: 4,
+    fontSize: 14,
+    fontFamily: "Raleway_400Regular", // link normal
+  },
+    link_semlogin: {
+    color: "#FF0000",
     textAlign: "center",
     marginVertical: 4,
     fontSize: 14,
