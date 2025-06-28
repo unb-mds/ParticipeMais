@@ -32,10 +32,14 @@ jobs:
 
     - name: Run migrations
       working-directory: ./backend
+      env:
+        PYTHONPATH: ${{ github.workspace }}
       run: |
         python3 manage.py migrate
 
     - name: Run Tests
       working-directory: ./backend
+      env:
+        PYTHONPATH: ${{ github.workspace }}
       run: |
         python3 manage.py test
