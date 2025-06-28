@@ -1,87 +1,103 @@
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 from rest_framework import status
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from .models import Conferencia, Etapas, PerguntasParticipativas
+from django.urls import reverse
+from .models import Conferencia, PerguntasParticipativas, Etapas
 from propostas.models import Propostas
+from autenticacao.models import Usuario
 
-
-User = get_user_model()
 class ConferenciaAPITests(APITestCase):
-    
-    def setUp(self):
-        # Cria um usuário para autenticação
-        self.user = User.objects.create_user(
-            email='katia@example.com',
-            password='1234',
-            nome='katia',
-            data_nascimento='2000-01-01'
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.usuario = Usuario.objects.create_user(
+            nome='Usuario Teste',
+            email='usuario@teste.com',
+            password='senha123',
+            data_nascimento='1990-01-01'
         )
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.user)
+        cls.conferencia = Conferencia.objects.create(
+            titulo="Conferencia Teste",
+            descricao="Descricao da conferencia teste"
+        )
+        cls.etapa = Etapas.objects.create(
+            titulo_etapa="Etapa Teste",
+            descricao_etapa="Descricao da etapa",
+            status="Ativa",
+            conferencia=cls.conferencia
+        )
+        cls.proposta = Propostas.objects.create(
+            conferencia=cls.conferencia,
+            titulo_proposta="Proposta Teste eixo 1",
+            # preencha demais campos necessários no modelo Propostas
+        )
+        cls.pergunta = PerguntasParticipativas.objects.create(
+            conferencia=cls.conferencia,
+            perguntas="Pergunta teste?",
+            respostas="Resposta teste."
+        )
 
-        # Cria uma conferência
-        self.conferencia = Conferencia.objects.create(titulo='Conferencia Teste')
-
-        # Cria etapas associadas
-        self.etapa1 = Etapas.objects.create(titulo_etapa='Etapa 1', conferencia=self.conferencia)
-        self.etapa2 = Etapas.objects.create(titulo_etapa='Etapa 2', conferencia=self.conferencia)
-
-        # Cria propostas associadas
-        self.proposta1 = Propostas.objects.create(titulo_proposta='Proposta 1', conferencia=self.conferencia)
-        self.proposta2 = Propostas.objects.create(titulo_proposta='Proposta 2', conferencia=self.conferencia)
-
-        # Cria perguntas associadas
-        self.pergunta1 = PerguntasParticipativas.objects.create(perguntas='Pergunta 1', conferencia=self.conferencia)
-        self.pergunta2 = PerguntasParticipativas.objects.create(perguntas='Pergunta 2', conferencia=self.conferencia)
-
-    def test_lista_conferencias_autenticado(self):
-        url = reverse('listar_conferencias')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('data', response.data)
-        self.assertGreaterEqual(len(response.data['data']), 1)
-
-    def test_lista_conferencias_nao_autenticado(self):
-        self.client.logout()
-        url = reverse('listar_conferencias')
+    def test_listar_conferencias_requer_autenticacao(self):
+        url = reverse('conferencias:listar_conferencias')
+        # sem autenticação
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_acessa_conferencia_valida(self):
-        url = reverse('conferencia', args=[self.conferencia.pk])
+        # com autenticação
+        self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['data']['id'], self.conferencia.id)
+        self.assertIn('data', response.data)
+        self.assertIsInstance(response.data['data'], list)
 
-    def test_acessa_conferencia_invalida(self):
-        url = reverse('conferencia', args=[9999])
+    def test_acessar_conferencia_existe(self):
+        url = reverse('conferencias:conferencia', kwargs={'pk': self.conferencia.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'Conferência encontrada!')
+        self.assertEqual(response.data['data']['conferencias']['titulo'], self.conferencia.titulo)
+
+    def test_acessar_conferencia_nao_existe(self):
+        url = reverse('conferencias:conferencia', kwargs={'pk': 9999})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_acessa_propostas(self):
-        url = reverse('propostas', args=[self.conferencia.pk])
+    def test_acessar_propostas_e_eixos(self):
+        url = reverse('conferencias:propostas', kwargs={'pk': self.conferencia.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
-        self.assertEqual(response.data['total_propostas'], 2)
-        self.assertEqual(len(response.data['propostas']), 2)
+        self.assertIn('eixos', response.data)
+        self.assertIn('propostas', response.data)
+        self.assertEqual(response.data['total_propostas'], 1)
 
-    def test_acessa_perguntas(self):
-        url = reverse('perguntas', args=[self.conferencia.pk])
+    def test_acessar_perguntas(self):
+        url = reverse('conferencias:perguntas', kwargs={'pk': self.conferencia.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
-        self.assertEqual(response.data['total_perguntas'], 2)
-        self.assertEqual(len(response.data['perguntas']), 2)
+        self.assertEqual(response.data['total_perguntas'], 1)
+        self.assertIsInstance(response.data['perguntas'], list)
 
-    def test_acessa_etapas(self):
-        url = reverse('etapas', args=[self.conferencia.pk])
+    def test_acessar_etapas(self):
+        url = reverse('conferencias:etapas', kwargs={'pk': self.conferencia.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
-        self.assertEqual(response.data['total_etapas'], 2)
-        # Aqui no seu código a chave está como 'perguntas' para os dados das etapas, é isso mesmo?
-        self.assertEqual(len(response.data['perguntas']), 2)
+        self.assertEqual(response.data['total_etapas'], 1)
+        self.assertIsInstance(response.data['sub-conferencias'], list)
+
+    def test_proposta_direta(self):
+        url = reverse('conferencias:essa_proposta', kwargs={'pk': self.conferencia.pk, 'jk': self.proposta.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
+        self.assertIsInstance(response.data['proposta'], list)
+        self.assertEqual(len(response.data['proposta']), 1)
+
+    def test_etapa_direta(self):
+        url = reverse('conferencias:essa_etapa', kwargs={'pk': self.conferencia.pk, 'jk': self.etapa.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
+        self.assertIsInstance(response.data['sub-conferencias'], list)
+        self.assertEqual(len(response.data['sub-conferencias']), 1)
