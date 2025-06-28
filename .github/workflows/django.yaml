@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [ "main", "desenvolvimento" ]
+    branches: [ "main", "desenvolvimento", "backends" ]
   pull_request:
     branches: [ "main", "desenvolvimento" ]
 
@@ -14,54 +14,28 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ["3.10"]
-
+        
     env:
       USE_SQLITE: true
       DJANGO_SETTINGS_MODULE: backend.project.settings
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-
-
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Install PostgreSQL client
-      run: sudo apt-get update && sudo apt-get install -y postgresql-client
-
-
-    - name: Wait for PostgreSQL
-      run: |
-        timeout=60
-        until pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT; do
-          echo "Aguardando banco de dados..."
-          sleep 1
-          timeout=$((timeout - 1))
-          if [ $timeout -le 0 ]; then
-            echo "Timeout esperando PostgreSQL"
-            exit 1
-          fi
-        done
-
-    - name: Test PostgreSQL connection with psql
-      env:
-        PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
-      run: |
-        psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -c '\l'
 
     - name: Run migrations
       working-directory: ./backend
       run: |
         python3 manage.py migrate
 
-    - name: Run tests
-      working-directory: ./backend
-      run: |
+    - name: Run Tests
+    working-directory: ./backend
+    run: |
         python3 manage.py test
