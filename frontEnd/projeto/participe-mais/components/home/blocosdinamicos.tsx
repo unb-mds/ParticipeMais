@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, Text,  TouchableOpacity } from 'react-native';
 import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -11,6 +12,8 @@ const { width } = Dimensions.get('window'); // obtém a largura da tela
 
 // Componente principal que recebe um array de blocos dinâmicos e renderiza diferentes componentes com base no tipo
 export default function BlocoDinamico({ blocos }: { blocos: any[] }) {
+  
+  
   return (
     <View style={styles.container}>
       {blocos.map((bloco, index) => {
@@ -137,8 +140,10 @@ function BlocoEnqueteComentarios({ dados }: { dados: { categoria: string, coment
 }
 
 function BlocoEnqueteComentariosColuna({
+  
   dados,
-}: {
+}:
+ {
   dados: {
     categoria: string;
     enquete: string;
@@ -146,7 +151,10 @@ function BlocoEnqueteComentariosColuna({
     numeroComentario: number;
   }[];
 }) {
+    const router = useRouter(); // ✅ declara aqui dentro
+
   return (
+    
     <>
       <View style={styles.viewAlinhador}>
         <Text style={styles.titulo_enquete}>Todas as enquetes</Text>
@@ -182,7 +190,7 @@ function BlocoEnqueteComentariosColuna({
          
         ))}
       </View>
-       <TouchableOpacity onPress={() => {/* sua ação aqui */}}>
+       <TouchableOpacity onPress={() => router.push('../enquete')}>
               <Text style={styles.linkVerMais}>Veja mais</Text>
         </TouchableOpacity>
       

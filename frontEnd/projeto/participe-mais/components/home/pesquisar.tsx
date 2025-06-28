@@ -82,7 +82,7 @@ const imagensConsultas = [
       {/* Carrossel de bolinhas com ícones */}
       <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Acesse as temáticas</Text>
-        <TouchableOpacity onPress={() => console.log('Veja mais clicado')}>
+        <TouchableOpacity onPress={() =>  router.push('../categoria')}>
             <Text style={styles.vejaMais}>Veja mais</Text>
         </TouchableOpacity>
         </View>
