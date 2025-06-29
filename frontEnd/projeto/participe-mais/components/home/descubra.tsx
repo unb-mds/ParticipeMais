@@ -135,7 +135,7 @@ export default function DescubraSection() {
 
   // Atualizar dados quando os dados da API mudarem
   useEffect(() => {
-    console.log('Dados atualizados:', { conferencias, planos, consultas, propostas });
+    // console.log('Dados atualizados:', { conferencias, planos, consultas, propostas });
     atualizarDados();
   }, [conferencias, planos, consultas, propostas]);
 
@@ -145,7 +145,7 @@ export default function DescubraSection() {
       setRefreshing(true);
       setError(null);
       
-      const response = await fetch('http://172.20.10.9:8000/descubra/', {
+      const response = await fetch('http://192.168.0.15:8000/descubra/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -284,7 +284,7 @@ export default function DescubraSection() {
           <TouchableOpacity
             onPress={() => {
               if (idNumerico) {
-                router.push({ pathname: '/conferencias', params: { id: idNumerico } });
+                router.push({ pathname: '../conferencias', params: { id: idNumerico } });
               } else {
                 console.warn('ID numérico inválido:', item.id);
               }

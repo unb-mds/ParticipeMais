@@ -10,37 +10,39 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons, Octicons, Feather } from '@expo/vector-icons';
+import { Proposta } from '../../app/conferencias';
 
-type Proposta = {
-  id: number;
-  eixo: string;
-  publicadoEm: string;
-  usuario: string;
-  descricao: string;
+type PropostasProps = {
+  propostas: Proposta[];
 };
 
-export default function Propostas({ propostas }: { propostas: Proposta[] }) {
+export default function Propostas({ propostas }: PropostasProps) {
   const [search, setSearch] = useState('');
   const [expandido, setExpandido] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [propostaSelecionada, setPropostaSelecionada] = useState<Proposta | null>(null);
 
-
   const propostasFiltradas = propostas.filter(
-    (item) =>
-      item.eixo.toLowerCase().includes(search.toLowerCase()) ||
-      item.usuario.toLowerCase().includes(search.toLowerCase())
-  );
+  (item) =>
+    (item.titulo_proposta?.toLowerCase() || '').includes(search.toLowerCase()) ||
+    (item.autor?.toLowerCase() || '').includes(search.toLowerCase())
+);
+
+
+  const abrirModal = (proposta: Proposta) => {
+    setPropostaSelecionada(proposta);
+    setModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
-        <Octicons name="location" size={20} color="black" />
+        <Octicons name="light-bulb" size={20} color="black" />
         <Text style={styles.tituloTexto}>Propostas Gerais</Text>
       </View>
 
-      {/* Search + Filtro */}
+      {/* Barra de busca */}
       <View style={styles.pesquisaContainer}>
         <View style={styles.inputContainer}>
           <Ionicons name="search-outline" size={20} color="#000" />
@@ -59,10 +61,10 @@ export default function Propostas({ propostas }: { propostas: Proposta[] }) {
       {/* Linha de separação */}
       <View style={styles.linha} />
 
-      {/* Lista com scroll interno */}
+      {/* Lista de propostas */}
       <View style={styles.listaContainer}>
         <ScrollView
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator
           contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
         >
           {propostasFiltradas.map((item) => {
@@ -72,24 +74,20 @@ export default function Propostas({ propostas }: { propostas: Proposta[] }) {
                 key={item.id}
                 activeOpacity={0.9}
                 onPress={() => setExpandido(estaExpandido ? null : item.id)}
-
                 style={styles.card}
               >
-                {/* Header */}
+                {/* Header do card */}
                 <View style={styles.headerCard}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.publicadoEm}>
                       <Ionicons name="calendar-outline" size={12} color="#2670E8" />{' '}
-                      Publicado em {item.publicadoEm}
+                      Publicado em {item.data_criacao}
                     </Text>
-
-                    <Text style={styles.tituloCard}>{item.eixo}</Text>
-
+                    <Text style={styles.tituloCard}>{item.titulo_proposta}</Text>
                     <Text style={styles.por}>
-                      <Text style={{ color: '#2670E8' }}>Por</Text> {item.usuario}
+                      <Text style={{ color: '#2670E8' }}>Por</Text> {item.autor}
                     </Text>
                   </View>
-
                   <TouchableOpacity
                     onPress={() => setExpandido(estaExpandido ? null : item.id)}
                     style={styles.expandButton}
@@ -107,19 +105,20 @@ export default function Propostas({ propostas }: { propostas: Proposta[] }) {
                 {/* Conteúdo expandido */}
                 {estaExpandido && (
                   <>
-                    <Text style={styles.descricao}>
-                    {item.descricao}
-                    </Text>
-
-
+                    <Text style={styles.descricao}>{item.descricao_proposta}</Text>
                     <Text style={styles.avaliacaoTexto}>Você gostou da proposta?</Text>
-
                     <View style={styles.botoesAvaliacao}>
-                      <TouchableOpacity style={styles.botaoSim}>
+                      <TouchableOpacity
+                        style={styles.botaoSim}
+                        onPress={() => abrirModal(item)}
+                      >
                         <Feather name="thumbs-up" size={16} color="#4CAF50" />
                         <Text style={styles.textoSim}> Sim</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.botaoNao}>
+                      <TouchableOpacity
+                        style={styles.botaoNao}
+                        onPress={() => abrirModal(item)}
+                      >
                         <Feather name="thumbs-down" size={16} color="#F44336" />
                         <Text style={styles.textoNao}> Não</Text>
                       </TouchableOpacity>
@@ -135,16 +134,21 @@ export default function Propostas({ propostas }: { propostas: Proposta[] }) {
       {/* Modal */}
       <Modal
         animationType="fade"
-        transparent={true}
+        transparent
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
-          <Pressable style={styles.modalContainer} onPress={() => {}}>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        >
+          <Pressable style={styles.modalContainer}>
             <ScrollView>
-              <Text style={styles.modalTitulo}>{propostaSelecionada?.eixo}</Text>
-              <Text style={styles.modalOrigem}>{propostaSelecionada?.usuario}</Text>
-              <Text style={styles.modalDescricao}>{propostaSelecionada?.descricao}</Text>
+              <Text style={styles.modalTitulo}>{propostaSelecionada?.titulo_proposta}</Text>
+              <Text style={styles.modalOrigem}>{propostaSelecionada?.autor}</Text>
+              <Text style={styles.modalDescricao}>
+                {propostaSelecionada?.descricao_proposta}
+              </Text>
             </ScrollView>
             <TouchableOpacity
               style={styles.modalFechar}
@@ -159,6 +163,7 @@ export default function Propostas({ propostas }: { propostas: Proposta[] }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
@@ -166,8 +171,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     backgroundColor: '#fff',
-     marginTop: 20, // <<< ADICIONA AQUI
-
+    marginTop: 20,
   },
   tituloComIcone: {
     flexDirection: 'row',
@@ -254,20 +258,18 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontSize: 13,
   },
-avaliacaoTexto: {
-  fontSize: 12,
-  color: '#000',
-  marginTop: 12,
-  marginBottom: 4,
-  textAlign: 'center', 
-},
-
-botoesAvaliacao: {
-  flexDirection: 'row',
-  gap: 12,
-  justifyContent: 'center',
-},
-
+  avaliacaoTexto: {
+    fontSize: 12,
+    color: '#000',
+    marginTop: 12,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  botoesAvaliacao: {
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+  },
   botaoSim: {
     borderWidth: 1,
     borderColor: '#4CAF50',

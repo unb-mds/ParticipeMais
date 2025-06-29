@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
 type Props = {
-  status: 'Ativa' | 'Encerrada';
+  status: 'Ativa' | 'Inativa';
 };
 
 export default function StatusBadge({ status }: Props) {

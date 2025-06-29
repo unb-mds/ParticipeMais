@@ -1,43 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  LayoutAnimation,
-  UIManager,
-  Platform,
-  TextInput,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Text, View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-// Ativa animação de layout para Android
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental &&
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import Header from '../components/conferencia/header';
+import StatusBadge from '../components/conferencia/statusbagde';
+import EtapasCalendar from '../components/conferencia/etapascalendar';
+import EixosTematicos from '../components/conferencia/eixostematicos';
+import Conferencias from '../components/conferencia/conferencias_gerais';
+import Dados from '../components/conferencia/dados';
+import DadosPizza from '../components/conferencia/dadosPizza';
+import Propostas from '../components/conferencia/propostas_gerais';
 
-interface Conferencias {
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+
+export interface Conferencia {
   id: number;
   titulo: string;
   descricao: string;
   sobre: string;
   status: boolean;
-  data_subconferencia: string;
+  data_subconferencia: string[] | string; // ajustado para array de strings
   qtd_propostas: number;
 }
 
-interface Propostas {
+export interface Proposta {
+  id: number;
   titulo_proposta: string;
   autor: string;
   descricao_proposta: string;
   qtd_votos: number;
+  data_criacao: string; //não tem...
+  total_palavras_chave: number
 }
 
-interface Etapas {
+export interface Etapas {
+  id: number
   titulo_etapa: string;
   descricao_etapa: string;
   status: string;
@@ -53,16 +52,10 @@ export default function ConferenciaDetalhadaScreen() {
   const { id } = useLocalSearchParams();
 
   const [token, setToken] = useState<string>('');
-  const [conferencias, setConferencias] = useState<Conferencias | null>(null);
+  const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [etapas, setEtapas] = useState<Etapas[]>([]);
-  const [propostas, setPropostas] = useState<Propostas[]>([]);
-
-  const [calendarioAberto, setCalendarioAberto] = useState(false);
-  const [dadosConferenciasAberto, setDadosConferenciasAberto] = useState(false);
-  const [dadosPropostasAberto, setDadosPropostasAberto] = useState(false);
-
-  const [mostrarMaisEtapas, setMostrarMaisEtapas] = useState(false);
-  const [mostrarMaisPropostas, setMostrarMaisPropostas] = useState(false);
+  const [propostas, setPropostas] = useState<Proposta[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const obterToken = async () => {
@@ -88,7 +81,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
+      const response = await fetch(`http://192.168.0.15:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -99,9 +92,12 @@ export default function ConferenciaDetalhadaScreen() {
         const json = await response.json();
         const data = json.data;
 
-        setConferencias(data.conferencias);
-        setEtapas(data.etapas);
-        setPropostas(data.propostas);
+        // ajusta se vier um objeto, coloca em array
+        setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
+        setEtapas(data.etapas || []);
+        setPropostas(data.propostas || []);
+        setLoading(false);
+
       } else {
         router.replace('/login');
       }
@@ -110,266 +106,150 @@ export default function ConferenciaDetalhadaScreen() {
     }
   };
 
-  const toggleSection = (
-    setter: React.Dispatch<React.SetStateAction<boolean>>,
-    current: boolean
-  ) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setter(!current);
+  const eixos = [
+    {
+      titulo: 'I – Mitigação',
+      descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.',
+    },
+    {
+      titulo: 'II – Adaptação',
+      descricao: 'Fortalecer a resiliência às mudanças climáticas.',
+    },
+    {
+      titulo: 'III – Financiamento',
+      descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.',
+    },
+    {
+      titulo: 'IV – Governança',
+      descricao: 'Promover uma governança climática participativa.',
+    },
+  ];
+
+  const dadosEstatisticos = {
+    total: conferencias.length,
+    andamento: 57,
+    encerradas: 43,
   };
 
-  if (!conferencias) {
+  const palavrasChave = [
+    'Sustentabilidade',
+    'Clima',
+    'Energia',
+    'Resíduos',
+    'Água',
+    'Educação Ambiental',
+    'Transporte',
+    'Justiça Climática',
+    'Inovação',
+  ];
+
+  if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text>Carregando...</Text>
-      </View>
+      <SafeAreaView style={styles.container_total}>
+        <ActivityIndicator size="large" color="#2670E8" style={{ marginTop: 50 }} />
+      </SafeAreaView>
     );
   }
 
+  const conferencia = conferencias[0];
+  console.log('Acessando conferência:');
+  console.log('Conferências:', conferencias);
+  // console.log('Etapas:', etapas);
+  // console.log('Propostas:', propostas);
+
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Status e título */}
-      <Text style={styles.status}>🟢 {conferencias.status ? 'Ativo' : 'Inativo'}</Text>
-      <Text style={styles.title}>{conferencias.titulo}</Text>
-      <Text style={styles.subinfo}>📅 {etapas.length} conferências   📄 {propostas.length} propostas</Text>
+    
+    <SafeAreaView style={styles.container_total}>
+      <Header router={router} titulo="Conferências" />
 
-      <Text style={styles.description}>
-        {conferencias.descricao && conferencias.descricao.trim().toLowerCase() !== 'nan' ? conferencias.descricao?.trim() : 'Descrição não informada'}
-      </Text>
+      <FlatList
+        data={[]} // conteudo renderizado só no header
+        keyExtractor={(_, index) => `dummy-${index}`}
+        renderItem={null}
+        ListHeaderComponent={
+          <View style={styles.container}>
+            <StatusBadge status={conferencia?.status ? "Ativa" : "Inativa"} />
 
-      {/* Calendário */}
-      <TouchableOpacity onPress={() => toggleSection(setCalendarioAberto, calendarioAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>🗓️ Calendário de Etapas</Text>
-        <Ionicons name={calendarioAberto ? 'chevron-up' : 'chevron-down'} size={20} />
-      </TouchableOpacity>
-      {calendarioAberto && (
-        <View style={styles.card}>
-          {JSON.parse(conferencias.data_subconferencia.replace(/'/g, '"')).map((texto: string, i: number) => (
-            <Text key={i} style={styles.item}>🟢 {texto}</Text>
-          ))}
-        </View>
-      )}
+            <Text style={styles.title}>
+              {conferencia?.titulo || 'Não informado'}
+            </Text>
 
-      {/* Eixos Temáticos */}
-      <Text style={styles.sectionTitle}>📎 Eixos Temáticos</Text>
-      <View style={styles.blueCard}>
-        <Text style={styles.blueCardTitle}>Eixos Temáticos</Text>
-        <Text style={styles.blueCardSubtitle}>– 1. Mitigação:</Text>
-        <Text style={styles.blueCardText}>
-          {`"Exploração de estratégias e políticas para reduzir as emissões de gases de efeito estufa, promovendo práticas sustentáveis e inovadoras em diversos setores."`}
-        </Text>
-      </View>
-
-      
-
-      <Text style={styles.sectionTitle}>📍 Conferências Gerais</Text>
-      {etapas.length > 1 ? (
-        <>
-          <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-          <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Tipo: todos</Text>
-
-          {(mostrarMaisEtapas ? etapas : etapas.slice(0, 3)).map((etapa, i) => (
-            <View key={`etapa-${i}`} style={styles.card}>
-              <Text style={styles.itemTitle}>{etapa.titulo_etapa}</Text>
-              <Text style={styles.itemDesc}>{etapa.descricao_etapa}</Text>
-              <Text style={styles.itemTag}>{etapa.status}</Text>
+            <View style={styles.subinfo}>
+              <Entypo name="location" size={14} />
+              <Text style={styles.subinfoText}>{etapas.length} conferências</Text>
+              <MaterialCommunityIcons name="file-document-outline" size={14} />
+              <Text style={styles.subinfoText}>{propostas.length} propostas</Text>
             </View>
-          ))}
 
-          {etapas.length > 3 && (
-            <TouchableOpacity onPress={() => setMostrarMaisEtapas(!mostrarMaisEtapas)}>
-              <Text style={styles.link}>
-                {mostrarMaisEtapas ? 'Ver menos -' : 'Ver mais +'}
-              </Text>
-            </TouchableOpacity>
-          )}
+            <Text style={styles.description}>
+              {conferencia.descricao && conferencia.descricao.trim().toLowerCase() !== 'nan' ? conferencia.descricao?.trim() : 'Descrição não informada'}
+            </Text>
 
-        {/* Dados Etapas */}
-        <TouchableOpacity onPress={() => toggleSection(setDadosConferenciasAberto, dadosConferenciasAberto)} style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>📊 DADOS - Conferências Gerais</Text>
-          <Ionicons name={dadosConferenciasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
-        </TouchableOpacity>
-        {dadosConferenciasAberto && (
-          <View style={styles.card}>
-            <Text style={styles.item}>✅ 87% Em andamento</Text>
-            <Text style={styles.item}>🟡 23% Encerradas</Text>
+            <EtapasCalendar etapas={etapas} conferencias={conferencias} />
+            <EixosTematicos eixos={eixos} />
+            <Conferencias
+              etapas={etapas}
+              conferencias={conferencias}
+              propostas={propostas}
+            />
+            <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />
+            <Propostas propostas={propostas} />
+            <DadosPizza
+              estatisticas={[
+                { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
+                { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
+                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
+                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
+              ]}
+              total={10794}
+              palavrasChave={[
+                'Sustentabilidade',
+                'Inovação',
+                'Energia',
+                'Clima',
+                'Justiça',
+                'Biodiversidade',
+              ]}
+            />
           </View>
-        )}
-
-        </>
-      ) : (
-        <Text>Não foram encontradas nenhuma conferência ;-;</Text>
-      )}
-
-
-      <Text style={styles.sectionTitle}>📍 Propostas gerais</Text>
-      {propostas.length > 1 ? (
-        <>
-
-      {/* Propostas */}
-      <TextInput placeholder="🔍 Buscar..." style={styles.input} />
-      <Text style={styles.filterText}>Data: todos  |  Região: todos  |  Eixo: todos</Text>
-
-      {(mostrarMaisPropostas ? propostas : propostas.slice(0, 3)).map((proposta, i) => (
-        <View key={`proposta-${i}`} style={styles.card}>
-          <Text style={styles.itemSubtitle}>Publicado em 05/12/2024</Text>
-          <Text style={styles.itemTitle}>{proposta.titulo_proposta}</Text>
-          <Text style={styles.itemDesc}>{proposta.descricao_proposta}</Text>
-          <Text style={styles.itemTag}>Por {proposta.autor}</Text>
-        </View>
-      ))}
-
-      {propostas.length > 3 && (
-        <TouchableOpacity onPress={() => setMostrarMaisPropostas(!mostrarMaisPropostas)}>
-          <Text style={styles.link}>{mostrarMaisPropostas ? 'Ver menos -' : 'Ver mais +'}</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Dados Propostas */}
-      <TouchableOpacity onPress={() => toggleSection(setDadosPropostasAberto, dadosPropostasAberto)} style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>📊 DADOS - Propostas Gerais</Text>
-        <Ionicons name={dadosPropostasAberto ? 'chevron-up' : 'chevron-down'} size={20} />
-      </TouchableOpacity>
-      {dadosPropostasAberto && (
-        <View style={styles.card}>
-          <Text style={styles.item}>🟥 24% Eixo 1</Text>
-          <Text style={styles.item}>🟦 13% Eixo 2</Text>
-          <Text style={styles.item}>🟨 33% Eixo 3</Text>
-          <Text style={styles.item}>🟩 10% Eixo 4</Text>
-          <Text style={styles.item}>🟪 10% Eixo 5</Text>
-          <Text style={styles.itemSubtitle}>Total: {propostas.length} propostas</Text>
-        </View>
-      )}
-        </>
-      ) : (
-        <Text> Não foram encontradas nenhuma propostas ;-;</Text>
-      )}
-
-
-    </ScrollView>
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    paddingTop: 60,
+  container_total: {
+    flex: 1,
     backgroundColor: '#fff',
   },
-  status: {
-    backgroundColor: '#ccf5d4',
-    padding: 4,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
+  container: {
+    marginTop: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 22,
-    fontFamily: 'Raleway_700Bold',
-  },
-  subinfo: {
-    fontSize: 12,
-    color: '#333',
-    marginBottom: 12,
-    fontFamily: 'Raleway_400Regular',
+    fontSize: 30,
+    fontFamily: 'Raleway-Bold',
+    marginBottom: 8,
   },
   description: {
     fontSize: 14,
     color: '#555',
     marginBottom: 16,
-    fontFamily: 'Raleway_400Regular',
+    lineHeight: 20,
+    marginTop: 10,
   },
-  sectionTitle: {
-    fontSize: 18,
-    marginTop: 16,
-    marginBottom: 8,
-    fontFamily: 'Raleway_700Bold',
-  },
-  sectionHeader: {
+  subinfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    gap: 6,
+    marginBottom: 16,
   },
-  card: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  item: {
-    marginBottom: 6,
-    color: '#333',
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemSelected: {
-    marginBottom: 6,
-    color: '#267DFF',
-    fontFamily: 'Raleway_700Bold',
-  },
-  itemTitle: {
-    fontSize: 14,
-    marginBottom: 2,
-    fontFamily: 'Raleway_700Bold',
-  },
-  itemDesc: {
+  subinfoText: {
     fontSize: 12,
     color: '#555',
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemTag: {
-    fontSize: 10,
-    color: '#888',
-    marginTop: 4,
-    fontFamily: 'Raleway_400Regular',
-  },
-  itemSubtitle: {
-    fontSize: 11,
-    color: '#888',
-    marginBottom: 2,
-    fontFamily: 'Raleway_400Regular',
-  },
-  input: {
-    backgroundColor: '#eee',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 8,
-    fontFamily: 'Raleway_400Regular',
-  },
-  filterText: {
-    fontSize: 12,
-    marginBottom: 8,
-    color: '#666',
-    fontFamily: 'Raleway_400Regular',
-  },
-  link: {
-    color: '#267DFF',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontFamily: 'Raleway_400Regular',
-  },
-  blueCard: {
-    backgroundColor: '#267DFF',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
-  },
-  blueCardTitle: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 4,
-    fontFamily: 'Raleway_700Bold',
-  },
-  blueCardSubtitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Raleway_700Bold',
-  },
-  blueCardText: {
-    color: '#fff',
-    fontSize: 12,
-    marginTop: 4,
-    fontFamily: 'Raleway_400Regular',
   },
 });

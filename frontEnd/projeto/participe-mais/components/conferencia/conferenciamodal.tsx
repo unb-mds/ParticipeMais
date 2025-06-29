@@ -4,91 +4,72 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   Pressable,
+  Linking,
+  StyleSheet,
+  TouchableOpacity
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import Propostas from './propostas_gerais';
-
-type Conferencia = {
-  id: number;
-  titulo: string;
-  origem: string;
-  descricao: string;
-  status: string;
-  modalidade: string;
-};
+import { Etapas, Proposta } from '../../app/conferencias';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
-  conferencia: Conferencia | null;
+  etapa: Etapas | null;    // vai receber uma ETAPA selecionada
+  propostas: Proposta[];
 };
 
-export default function ConferenciaModal({ visible, onClose, conferencia }: Props) {
-  if (!conferencia) return null;
-
-  const propostas = [
-    {
-      id: 1,
-      eixo: 'Eixo 3 - Justiça Social: Participação Popular',
-      publicadoEm: '05/12/2024',
-      usuario: 'MONICA',
-      descricao:
-        'Ampliar a participação popular de forma a implantar, consolidar e fortalecer programas de incentivo educacional e técnico em sistemas agroflorestais...',
-    },
-    {
-      id: 2,
-      eixo: 'Eixo 2 - Meio Ambiente e Sustentabilidade',
-      publicadoEm: '10/01/2025',
-      usuario: 'CARLOS',
-      descricao:
-        'Fortalecer ações de proteção ambiental com foco em resíduos sólidos e conservação da biodiversidade...',
-    },
-  ];
+export default function ConferenciaModal({
+  visible,
+  onClose,
+  etapa,
+  propostas,
+}: Props) {
+  if (!etapa) return null;
 
   return (
     <Modal
       animationType="slide"
-      transparent={true}
+      transparent
       visible={visible}
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
-        {/* Overlay que fecha o modal */}
         <Pressable style={styles.modalOverlay} onPress={onClose} />
 
-        {/* Bottom Sheet */}
         <View style={styles.bottomSheet}>
           <View style={styles.modalHeader} />
 
           <ScrollView
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator
             contentContainerStyle={{ paddingBottom: 40 }}
           >
-            {/* Título */}
-            <Text style={styles.modalTitulo}>{conferencia.titulo}</Text>
+            <Text style={styles.modalTitulo}>{etapa.descricao_etapa}</Text>
 
-            {/* Localização e Tags */}
             <View style={styles.modalInfoHeader}>
               <View style={styles.modalInfoLocal}>
-                <MaterialCommunityIcons name="office-building" size={14} color="#2670E8" />
-                <Text style={styles.modalInfoLocalText}>{conferencia.origem}</Text>
+                <MaterialCommunityIcons
+                  name="office-building"
+                  size={14}
+                  color="#2670E8"
+                />
+                <Text style={styles.modalInfoLocalText}>{etapa.id}</Text>
               </View>
 
               <View style={styles.modalTagsContainer}>
                 <View style={styles.modalTagStatus}>
-                  <Text style={styles.modalTagText}>{conferencia.status}</Text>
+                  <Text style={styles.modalTagText}>{etapa.status}</Text>
                 </View>
                 <View style={styles.modalTagModalidade}>
-                  <Text style={styles.modalTagText}>{conferencia.modalidade}</Text>
+                  <Text style={styles.modalTagText}>{etapa.status}</Text>
                 </View>
               </View>
             </View>
 
             <View style={styles.modalLinhaSeparadora} />
 
-            <Text style={styles.modalDescricao}>{conferencia.descricao}</Text>
+            <Text style={styles.modalDescricao}>{etapa.descricao_etapa}</Text>
 
             {/* Visão Geral */}
             <Text style={styles.modalSectionTitleOutside}>
@@ -104,14 +85,18 @@ export default function ConferenciaModal({ visible, onClose, conferencia }: Prop
                 <Text style={styles.modalVisaoNumero}>30</Text>
               </View>
 
-              <MaterialCommunityIcons name="view-dashboard-outline" size={28} color="#aaa" />
+              <MaterialCommunityIcons
+                name="view-dashboard-outline"
+                size={28}
+                color="#aaa"
+              />
 
               <View style={styles.modalVisaoItem}>
                 <View style={styles.modalVisaoLabel}>
                   <Ionicons name="document-text-outline" size={18} color="#000" />
                   <Text style={styles.modalVisaoTexto}>Propostas</Text>
                 </View>
-                <Text style={styles.modalVisaoNumero}>10</Text>
+                <Text style={styles.modalVisaoNumero}>{propostas.length}</Text>
               </View>
             </View>
 
@@ -137,15 +122,14 @@ export default function ConferenciaModal({ visible, onClose, conferencia }: Prop
                 <View style={styles.periodoLinha}>
                   <View style={styles.periodoItem}>
                     <Ionicons name="flag-outline" size={14} color="#fff" />
-                    <Text style={styles.periodoItemText}>Início _ _ _ _ _ _ _ _</Text>
+                    <Text style={styles.periodoItemText}>Início</Text>
                   </View>
 
                   <MaterialCommunityIcons name="walk" size={14} color="#fff" />
 
                   <View style={styles.periodoItem}>
-                    <Text style={styles.periodoItemText}>_ _ _ _ _ _ _ _</Text>
-                    <Ionicons name="flag-outline" size={14} color="#fff" />
                     <Text style={styles.periodoItemText}>Fim</Text>
+                    <Ionicons name="flag-outline" size={14} color="#fff" />
                   </View>
                 </View>
 
@@ -156,49 +140,41 @@ export default function ConferenciaModal({ visible, onClose, conferencia }: Prop
               </View>
             </View>
 
-            {/* Propostas */}
+            {/* Propostas associadas */}
             <Propostas propostas={propostas} />
-                    {/* Link de acesso */}
+
+            {/* Link de acesso */}
             <View style={styles.linkContainer}>
-            <View style={styles.linkHeader}>
+              <View style={styles.linkHeader}>
                 <Ionicons name="link-outline" size={16} color="#000" />
                 <Text style={styles.linkTitle}>Link de acesso</Text>
-            </View>
-
-            <Text style={styles.linkDescricao}>
-                Para mais detalhes e acesso direto às propostas, acesse diretamente do site do Brasil Participativo.
-            </Text>
-
-            <Pressable
+              </View>
+              <Text style={styles.linkDescricao}>
+                Para mais detalhes e acesso direto às propostas, acesse diretamente o site do Brasil Participativo.
+              </Text>
+              <Pressable
                 style={styles.linkButton}
-                onPress={() => {
-                // Substitua pelo link real:
-                // ex: Linking.openURL('https://brasilparticipativo.gov.br')
-                }}
-            >
+                onPress={() => Linking.openURL('https://brasilparticipativo.gov.br')}
+              >
                 <Text style={styles.linkButtonText}>Acesso ao site Brasil Participativo</Text>
-            </Pressable>
+              </Pressable>
             </View>
           </ScrollView>
         </View>
-
-        </View>
+      </View>
     </Modal>
   );
 }
 
 
 const styles = StyleSheet.create({
-      modalContainer: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
   },
-    modalOverlay: {
+  modalOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-    modalOverlayTouchable: {
-    flex: 1,
   },
   bottomSheet: {
     backgroundColor: '#fff',
@@ -359,47 +335,41 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   linkContainer: {
-  borderWidth: 1,
-  borderColor: '#ccc',
-  borderRadius: 12,
-  padding: 16,
-  backgroundColor: '#fff',
-  marginBottom: 24,
-},
-
-linkHeader: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 6,
-  marginBottom: 4,
-},
-
-linkTitle: {
-  fontSize: 14,
-  fontFamily: 'Raleway-Bold',
-  color: '#000',
-},
-
-linkDescricao: {
-  fontSize: 12,
-  color: '#555',
-  marginBottom: 12,
-  lineHeight: 18,
-},
-
-linkButton: {
-  borderWidth: 1,
-  borderColor: '#2670E8',
-  borderRadius: 24,
-  paddingVertical: 8,
-  paddingHorizontal: 16,
-  alignSelf: 'center',
-},
-
-linkButtonText: {
-  color: '#2670E8',
-  fontFamily: 'Raleway-Bold',
-  fontSize: 13,
-},
-
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    padding: 16,
+    backgroundColor: '#fff',
+    marginBottom: 24,
+  },
+  linkHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  linkTitle: {
+    fontSize: 14,
+    fontFamily: 'Raleway-Bold',
+    color: '#000',
+  },
+  linkDescricao: {
+    fontSize: 12,
+    color: '#555',
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  linkButton: {
+    borderWidth: 1,
+    borderColor: '#2670E8',
+    borderRadius: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignSelf: 'center',
+  },
+  linkButtonText: {
+    color: '#2670E8',
+    fontFamily: 'Raleway-Bold',
+    fontSize: 13,
+  },
 });

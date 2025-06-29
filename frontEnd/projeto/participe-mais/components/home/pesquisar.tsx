@@ -47,7 +47,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   const fetchConferenciasLista = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
+      const response = await fetch('http://192.168.0.15:8000/pesquisar/lista', {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -138,7 +138,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         contentContainerStyle={styles.listaConferencias}
         renderItem={({ item }) => (
            <TouchableOpacity onPress={() => router.push({
-            pathname: '/conferencias',
+            pathname: '../conferencias',
             params: { id: item.id.toString() },
           })}>
         <ImageBackground
@@ -165,7 +165,10 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listaConferencias}
         renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '../planos',
+            params: { id: item.id.toString() },
+          })}>
             <ImageBackground
   source={{ uri: item.image_url }}
   style={[styles.cardPlano, { borderWidth: 2, borderColor: corAleatoria() }]}
@@ -189,7 +192,10 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[styles.listaConferencias, {   paddingBottom: 100}]} 
         renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '../consultas',
+            params: { id: item.id.toString() },
+          })}>
             <ImageBackground
   source={{ uri: item.image_url }}
   style={[styles.cardConsulta, { borderWidth: 2, borderColor: corAleatoria() }]}

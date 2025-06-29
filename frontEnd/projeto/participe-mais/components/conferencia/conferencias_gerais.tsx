@@ -9,37 +9,34 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, Octicons,Feather } from '@expo/vector-icons';
 import ConferenciaModal from './conferenciamodal';
+import { Conferencia, Etapas, Proposta } from '../../app/conferencias';
 
-type Conferencia = {
-  id: number;
-  titulo: string;
-  origem: string;
-  descricao: string;
-  status: string;
-  modalidade: string;
-};
+interface ConferenciasProps {
+  etapas: Etapas[];
+  conferencias: Conferencia[];
+  propostas: Proposta[]; 
+}
 
-export default function Conferencias({ conferencias }: { conferencias: Conferencia[] }) {
+export default function Conferencias({ etapas, conferencias, propostas }: ConferenciasProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [conferenciaSelecionada, setConferenciaSelecionada] = useState<Conferencia | null>(null);
+  const [etapaSelecionada, setEtapaSelecionada] = useState<Etapas | null>(null);
   const [search, setSearch] = useState('');
   const [expandido, setExpandido] = useState<number | null>(null);
 
-  const abrirModal = (item: Conferencia) => {
-    setConferenciaSelecionada(item);
+  const abrirModal = (item: Etapas) => {
+    setEtapaSelecionada(item);
     setModalVisible(true);
   };
 
-  const conferenciasFiltradas = conferencias.filter((item) =>
-    item.titulo.toLowerCase().includes(search.toLowerCase()) ||
-    item.origem.toLowerCase().includes(search.toLowerCase())
+  const conferenciasFiltradas = etapas.filter((item) =>
+    item.titulo_etapa.includes(search)
   );
 
   return (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
-    <Octicons name="location" size={24} color="black" />
+        <Octicons name="location" size={24} color="black" />
         <Text style={styles.tituloTexto}>Conferências Gerais</Text>
       </View>
 
@@ -68,78 +65,83 @@ export default function Conferencias({ conferencias }: { conferencias: Conferenc
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
         >
-          {conferenciasFiltradas.map((item) => {
-            const estaExpandido = expandido === item.id;
-            return (
-              <TouchableOpacity
-                key={item.id}
-                activeOpacity={0.9}
-                onPress={() => {
-                  if (estaExpandido) abrirModal(item);
-                }}
-                style={styles.card}
-              >
-                <View style={styles.headerCard}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.tituloCard}>{item.titulo}</Text>
-
-                    <View style={styles.origemContainer}>
-                      <MaterialCommunityIcons
-                        name="office-building"
-                        size={14}
-                        color="#2670E8"
-                      />
-                      <Text style={styles.origemCard}>{item.origem}</Text>
+          {conferenciasFiltradas && conferenciasFiltradas.length > 0 ? (
+            conferenciasFiltradas.map((item) => {
+              const estaExpandido = expandido === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    if (estaExpandido) abrirModal(item);
+                  }}
+                  style={styles.card}
+                >
+                  <View style={styles.headerCard}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tituloCard}>{item.titulo_etapa}</Text>
+                      <View style={styles.origemContainer}>
+                        <MaterialCommunityIcons
+                          name="office-building"
+                          size={14}
+                          color="#2670E8"
+                        />
+                        <Text style={styles.origemCard}>{item.titulo_etapa}</Text>
+                      </View>
                     </View>
+                    <TouchableOpacity
+                      onPress={() => setExpandido(estaExpandido ? null : item.id)}
+                      style={styles.expandButton}
+                    >
+                      <Ionicons
+                        name={estaExpandido ? 'chevron-up' : 'chevron-down'}
+                        size={20}
+                        color="#000"
+                      />
+                    </TouchableOpacity>
                   </View>
 
-                  <TouchableOpacity
-                    onPress={() => setExpandido(estaExpandido ? null : item.id)}
-                    style={styles.expandButton}
-                  >
-                    <Ionicons
-                      name={estaExpandido ? 'chevron-up' : 'chevron-down'}
-                      size={20}
-                      color="#000"
-                    />
-                  </TouchableOpacity>
-                </View>
+                  <View style={styles.linhaDentro} />
 
-                <View style={styles.linhaDentro} />
+                  {estaExpandido && (
+                    <>
+                      <Text style={styles.descricao}>
+                        {item.descricao_etapa.length > 90
+                          ? item.descricao_etapa.slice(0, 90) + '...'
+                          : item.descricao_etapa}
+                      </Text>
 
-                {estaExpandido && (
-                  <>
-                    <Text style={styles.descricao}>
-                      {item.descricao.length > 90
-                        ? item.descricao.slice(0, 90) + '...'
-                        : item.descricao}
-                    </Text>
-
-                    <View style={styles.tags}>
-                      <View style={styles.tagStatus}>
-                        <Text style={styles.tagText}>{item.status}</Text>
+                      <View style={styles.tags}>
+                        <View style={styles.tagStatus}>
+                          <Text style={styles.tagText}>
+                            {item.status ? 'Ativa' : 'Inativa'}
+                          </Text>
+                        </View>
                       </View>
-                      <View style={styles.tagModalidade}>
-                        <Text style={styles.tagText}>{item.modalidade}</Text>
-                      </View>
-                    </View>
-                  </>
-                )}
-              </TouchableOpacity>
-            );
-          })}
+                    </>
+                  )}
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+              Não possui conferências
+            </Text>
+          )}
         </ScrollView>
+
       </View>
-        <ConferenciaModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          conferencia={conferenciaSelecionada}
-        />
 
-
+      <ConferenciaModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        etapa={etapaSelecionada}
+        propostas={propostas}
+      />
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

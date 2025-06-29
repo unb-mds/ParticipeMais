@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { Conferencia, Etapas } from '../../app/conferencias';
 
-// 🔗 Configurando calendário em português
+// 📅 Configurando calendário em português
 LocaleConfig.locales['pt'] = {
   monthNames: [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -34,13 +35,12 @@ LocaleConfig.defaultLocale = 'pt';
 
 const { width } = Dimensions.get('window');
 
-type Etapa = {
-  nome: string;
-  data: string;
-  ativo: boolean;
-};
+interface EtapasCalendarProps {
+  etapas: Etapas[];
+  conferencias: Conferencia[];
+}
 
-export default function EtapasCalendar({ etapas }: { etapas: Etapa[] }) {
+export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarProps) {
   const [etapasAberto, setEtapasAberto] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -54,6 +54,8 @@ export default function EtapasCalendar({ etapas }: { etapas: Etapa[] }) {
     setSelectedDate(date);
     setModalVisible(true);
   };
+
+  const conferencia = conferencias[0];
 
   return (
     <View style={styles.card}>
@@ -70,38 +72,67 @@ export default function EtapasCalendar({ etapas }: { etapas: Etapa[] }) {
             showsVerticalScrollIndicator={etapas.length > 4}
           >
             <View style={styles.etapas}>
-              {etapas.map((etapa, index) => (
-                <TouchableOpacity
-                  key={index}
-                  disabled={!etapa.ativo}
-                  onPress={() => etapa.ativo && handleOpenCalendar(etapa.data)}
-                  style={[
-                    styles.etapaItem,
-                    etapa.ativo && styles.etapaAtiva,
-                  ]}
-                >
-                  <View>
-                    {etapa.ativo ? (
-                      <Ionicons name="checkmark-circle" size={18} color="#2670E8" />
-                    ) : (
-                      <Ionicons name="ellipse-outline" size={18} color="#555" />
-                    )}
-                  </View>
-                  <View>
-                    <Text
-                      style={[
-                        styles.etapaTitulo,
-                        etapa.ativo && { color: '#2670E8' },
-                      ]}
-                    >
-                      {etapa.nome}
-                    </Text>
-                    <Text style={styles.etapaData}>
-                      Até {etapa.data.split('-').reverse().join('/')}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {(() => {
+                try {
+                  const rawData = conferencia?.data_subconferencia;
+                  let datas: string[] = [];
+
+                  if (typeof rawData === 'string') {
+                    datas = JSON.parse(rawData.replace(/'/g, '"'));
+                  } else if (Array.isArray(rawData)) {
+                    datas = rawData;
+                  }
+
+                  if (datas.length === 0) {
+                    return <Text>Nenhuma data informada.</Text>;
+                  }
+
+                  return datas.map((texto, i) => {
+                    const [etapaNomeRaw, etapaDataRaw] = texto.split(/:|-/);
+                    const etapaNome = etapaNomeRaw?.trim() || 'Etapa não informada';
+                    const etapaDataBr = etapaDataRaw?.trim() || '';
+
+                    let etapaDataISO = '';
+                    if (etapaDataBr) {
+                      const partes = etapaDataBr.split('/');
+                      if (partes.length === 3) {
+                        const [dia, mes, ano] = partes;
+                        etapaDataISO = `${ano}-${mes.padStart(2,'0')}-${dia.padStart(2,'0')}`;
+                      }
+                    }
+
+                    return (
+                      <TouchableOpacity
+                        key={i}
+                        onPress={() => etapaDataISO && handleOpenCalendar(etapaDataISO)}
+                        style={[
+                          styles.etapaItem,
+                          { backgroundColor: '#ffffff', padding: 8, borderRadius: 6 },
+                        ]}
+                      >
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={18}
+                          color="#2670E8"
+                          style={{ marginRight: 6 }}
+                        />
+                        <View>
+                          <Text style={{ fontWeight: 'bold', color: '#2670E8' }}>
+                            {etapaNome}
+                          </Text>
+                          <Text style={{ fontSize: 12, color: '#555' }}>
+                            {etapaDataBr || 'Data não definida'}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  });
+                } catch (e) {
+                  console.warn('Erro ao processar datas:', e);
+                  return <Text style={{ color: 'red' }}>Erro ao carregar datas</Text>;
+                }
+              })()}
+
             </View>
           </ScrollView>
         </View>
@@ -110,7 +141,7 @@ export default function EtapasCalendar({ etapas }: { etapas: Etapa[] }) {
       {/* Modal com Calendário */}
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
@@ -126,20 +157,27 @@ export default function EtapasCalendar({ etapas }: { etapas: Etapa[] }) {
                 </TouchableOpacity>
 
                 <Text style={styles.modalTitle}>
-                  {new Date(selectedDate).toLocaleDateString('pt-BR', {
-                    month: 'long',
-                    year: 'numeric',
-                  })}
+                  {selectedDate
+                    ? new Date(selectedDate).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })
+                    : 'Data não definida'}
                 </Text>
 
                 <Calendar
                   current={selectedDate}
-                  markedDates={{
-                    [selectedDate]: {
-                      selected: true,
-                      selectedColor: '#2670E8',
-                    },
-                  }}
+                  markedDates={
+                    selectedDate
+                      ? {
+                          [selectedDate]: {
+                            selected: true,
+                            selectedColor: '#2670E8',
+                          },
+                        }
+                      : undefined
+                  }
                   theme={{
                     selectedDayBackgroundColor: '#2670E8',
                     todayTextColor: '#2670E8',

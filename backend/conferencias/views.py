@@ -22,7 +22,7 @@ class ListaConferencias(APIView):
 
 # Acessa os detalhes de uma conferência específica por ID
 class AcessaConferencia(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
         try:
@@ -33,7 +33,7 @@ class AcessaConferencia(APIView):
         conferencia_serializer = ConferenciaSerializer(conferencia, context={'request': request})
 
         # Supondo que você tem relacionamentos ou filtros para propostas e etapas
-        propostas = Propostas.objects.filter(conferencia=conferencia)[:500]
+        propostas = Propostas.objects.filter(conferencia=conferencia)[:100]
         propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
 
         etapas = Etapas.objects.filter(conferencia=conferencia)
@@ -51,7 +51,7 @@ class AcessaConferencia(APIView):
 
 # Lista propostas de uma conferência específica + percentual por eixo (extraído do título)
 class AcessaPropostas(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)  # Busca conferência pelo ID
@@ -115,7 +115,7 @@ class AcessaPerguntas(APIView):
 
 # Lista todas as etapas (subconferências) de uma conferência
 class AcessaEtapas(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)
@@ -130,7 +130,7 @@ class AcessaEtapas(APIView):
 
 # Acessa uma etapa (subconferência) específica dentro de uma conferência
 class EtapaDireta(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request, pk, jk):
         conferencia = Conferencia.objects.get(pk=pk)

@@ -138,9 +138,3 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 /venv
-
-=======
-venv/
-__pycache__/
-*.pyc
->>>>>>> ada9137b0b65230e15fe5a08093b5632d270dc53
