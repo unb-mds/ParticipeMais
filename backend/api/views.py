@@ -10,8 +10,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 import random
 
 from .serializers import PerguntaSerializer, AgendaSerializer, RespostaSerializer
-from .models import Pergunta
-from conferencias.models import Conferencia, Agenda
+from .models import Pergunta, Agenda
+from conferencias.models import Conferencia
 from conferencias.serializers import ConferenciaSerializer
 from planos.models import Planos
 from planos.serializers import PlanosSerializer
@@ -254,19 +254,37 @@ class AgendaView(APIView):
     
     def get(self, request):
         
-        usuario = request.user
-        
-        agendados = Agenda.objects.filter(usuario=usuario)\
-                                .select_related('conferencia', 'etapa')
-                                
+        usuario = request.user  
+        agendados = Agenda.objects.filter(usuario=usuario)                    
         serializer = AgendaSerializer(agendados, many=True)
-        
         return Response(serializer.data)
     
     
     def post(self, request):
         
-        pass
+        serializer = AgendaSerializer(data=request.data, context={'usuario': request.user})
+        
+        if serializer.is_valid():
+            try:
+                serializer.save(usuario = request.user)
+                return Response(
+                    {
+                        "mensagem": "Compromisso agendado com sucesso.",
+                        "data": serializer.data
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+                
+            except Exception as e:
+                return Response(
+                    {"erro": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+        
+        
         
         
         

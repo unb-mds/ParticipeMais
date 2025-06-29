@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from autenticacao.models import Usuario
+from django.utils import timezone
 
 class Pergunta(models.Model):
     TIPO_CHOICES = [
@@ -47,3 +48,21 @@ class Resposta(models.Model):
     
     class Meta:
         unique_together=['usuario', 'pergunta']
+        
+        
+class Agenda(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='agendas')
+    nome_compromisso = models.CharField("Nome do Compromisso", max_length=255)
+    data_compromisso = models.DateField("Data do Compromisso")
+    agendado = models.BooleanField("Está Agendado?", default=True)
+
+    class Meta:
+        ordering = ['data_compromisso']
+        verbose_name = "Agenda"
+        verbose_name_plural = "Agendas"
+
+    def __str__(self):
+        return f"{self.nome_compromisso} ({self.data_compromisso})"
+
+    def esta_no_passado(self):
+        return self.data_compromisso < timezone.now().date()

@@ -35,8 +35,3 @@ class Etapas(models.Model):
         return self.titulo_etapa
     
     
-class Agenda(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
-    etapa = models.ForeignKey(Etapas, on_delete=models.CASCADE, null=True, blank=True)
-    agendado = models.BooleanField(default=True)

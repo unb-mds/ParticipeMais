@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Conferencia, Etapas, PerguntasParticipativas, Agenda
+from .models import Conferencia, Etapas, PerguntasParticipativas
 from api.serializers import DynamicFieldsModelSerializer
 from propostas.serializers import PropostaSerializer
 
