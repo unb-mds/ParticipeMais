@@ -18,10 +18,10 @@ from consultas.models import Consultas
 from propostas.models import Propostas
 
 # ==================== Conferencias ====================
-df_conferencias = pd.read_csv('../WebScraper/resultados/conferencias/conferenciass.csv')
-df_conferencias2 = pd.read_csv('../WebScraper/resultados/conferencias/perguntas.csv')
+df_conferencias = pd.read_csv('WebScraper/resultados/conferencias/conferenciass.csv')
+df_conferencias2 = pd.read_csv('WebScraper/resultados/conferencias/perguntas.csv')
 df_conferencias3 = pd.read_csv(
-    '../WebScraper/resultados/conferencias/encerradas.csv',
+    'WebScraper/resultados/conferencias/encerradas.csv',
     encoding='utf-8',
     lineterminator='\n'
 )
@@ -61,7 +61,7 @@ for _, row in df_conferencias3.iterrows():
 print('Conferências importadas')
 
 # ==================== Etapas ====================
-df_etapas = pd.read_csv('../WebScraper/resultados/conferencias/etapas.csv')
+df_etapas = pd.read_csv('WebScraper/resultados/conferencias/etapas.csv')
 
 for _, row in df_etapas.iterrows():
     conf = Conferencia.objects.filter(titulo=row['Conferência'].strip()).first()
@@ -90,7 +90,7 @@ for _, row in df_etapas.iterrows():
 print('Etapas importadas')
 
 # ==================== Planos ====================
-df_planos = pd.read_csv('../WebScraper/resultados/planos/planos_dados.csv')
+df_planos = pd.read_csv('WebScraper/resultados/planos/planos_dados.csv')
 
 for _, row in df_planos.iterrows():
     Planos.objects.get_or_create(
@@ -103,9 +103,9 @@ for _, row in df_planos.iterrows():
 print('Planos importados')
 
 # ==================== Consultas ====================
-df_consultas1 = pd.read_csv('../WebScraper/resultados/consultas/dados_consultas.csv')
+df_consultas1 = pd.read_csv('WebScraper/resultados/consultas/dados_consultas.csv')
 df_consultas2 = pd.read_csv(
-    '../WebScraper/resultados/consultas/sobre_consultas.csv',
+    'WebScraper/resultados/consultas/sobre_consultas.csv',
     header=None,
     names=['Título Consulta', 'Sobre Consulta']
 )
@@ -132,11 +132,11 @@ for _, row in df_consultas2.iterrows():
 print('Consultas importadas com sucesso!')
 
 # ==================== Propostas ====================
-df_conf = pd.read_csv('../WebScraper/resultados/conferencias/propostas.csv')
-df_planos1 = pd.read_csv('../WebScraper/resultados/planos/propostas_planos.csv')
-df_planos2 = pd.read_csv('../WebScraper/resultados/planos/planos.csv')
+df_conf = pd.read_csv('WebScraper/resultados/conferencias/propostas.csv')
+df_planos1 = pd.read_csv('WebScraper/resultados/planos/propostas_planos.csv')
+df_planos2 = pd.read_csv('WebScraper/resultados/planos/planos.csv')
 df_consultas = pd.read_csv(
-    '../WebScraper/resultados/consultas/proposta_consultas.csv',
+    'WebScraper/resultados/consultas/proposta_consultas.csv',
     encoding='utf-8',
     lineterminator='\n'
 )
