@@ -10,6 +10,9 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
     favoritada = serializers.SerializerMethodField()
     total_palavras_chave = serializers.SerializerMethodField()
 
+    topicos = serializers.SerializerMethodField()
+    total_topicos = serializers.SerializerMethodField()
+
     class Meta:
         model = Propostas
         fields = "__all__"
@@ -47,3 +50,10 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
         if request and request.user.is_authenticated:
             return request.user.favoritos.filter(id=obj.id).exists()
         return False
+    
+    def get_topicos(self, obj):
+        return list(obj.topicos.values_list('nome', flat=True))
+    
+    def get_total_topicos(self, obj):
+        return obj.topicos.count()
+    

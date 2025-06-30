@@ -3,6 +3,12 @@ from conferencias.models import Conferencia, Etapas
 from planos.models import Planos
 from consultas.models import Consultas
 
+class Topico(models.Model):
+    nome = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nome
+
 class Propostas(models.Model):
     titulo_proposta = models.CharField(max_length=400)
     autor = models.CharField(max_length=100)
@@ -15,6 +21,8 @@ class Propostas(models.Model):
     plano = models.ForeignKey(Planos, on_delete=models.CASCADE, null=True, blank=True)
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)
 
+    topicos = models.ManyToManyField(Topico, blank=True, related_name='propostas')
+
     def __str__(self):
         return self.titulo_proposta
     
@@ -24,3 +32,4 @@ class Palavras_chave(models.Model):
 
     def __str__(self):
         return f"{self.proposta.titulo_proposta[:30]} - {self.palavras}"
+    
