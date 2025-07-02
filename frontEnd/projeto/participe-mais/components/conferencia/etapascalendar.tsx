@@ -151,7 +151,7 @@ export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarP
               <View style={styles.modalContainer}>
                 <TouchableOpacity
                   style={styles.closeButton}
-                  onPress={() => setModalVisible(false)}
+                  onPress={() => setModalVisible(true)}
                 >
                   <Ionicons name="close" size={20} color="#000" />
                 </TouchableOpacity>
@@ -167,7 +167,7 @@ export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarP
                 </Text>
 
                 <Calendar
-                  current={selectedDate}
+                  current='ola'
                   markedDates={
                     selectedDate
                       ? {

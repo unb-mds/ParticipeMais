@@ -34,7 +34,7 @@ export default function Propostas({ propostas }: PropostasProps) {
     setModalVisible(true);
   };
 
-  return (
+  return propostasFiltradas.length > 0 ? (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
@@ -160,6 +160,20 @@ export default function Propostas({ propostas }: PropostasProps) {
         </Pressable>
       </Modal>
     </View>
+  ) : (
+    <View style={styles.container}>
+      <View style={styles.tituloComIcone}>
+        <Octicons name="light-bulb" size={20} color="black" />
+        <Text style={styles.tituloTexto}>Propostas Gerais</Text>
+      </View>
+
+      {/* Linha de separação */}
+      <View style={styles.linha} />
+      
+      <Text style={{ textAlign: 'center', color: '#999' }}>
+        Nenhuma proposta encontrada.
+      </Text>
+    </View>
   );
 }
 
@@ -168,6 +182,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 8,
     padding: 16,
     marginBottom: 20,
     backgroundColor: '#fff',
@@ -223,6 +238,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 16,
+    marginTop: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, 
   },
   headerCard: {
     flexDirection: 'row',

@@ -126,7 +126,7 @@ export default function ConferenciaDetalhadaScreen() {
   ];
 
   const dadosEstatisticos = {
-    total: conferencias.length,
+    total: etapas.length || 0,
     andamento: 57,
     encerradas: 43,
   };
@@ -188,30 +188,54 @@ export default function ConferenciaDetalhadaScreen() {
 
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             <EixosTematicos eixos={eixos} />
-            <Conferencias
-              etapas={etapas}
-              conferencias={conferencias}
-              propostas={propostas}
-            />
-            <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />
-            <Propostas propostas={propostas} />
-            <DadosPizza
-              estatisticas={[
-                { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
-                { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
-                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
-                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
-              ]}
-              total={10794}
-              palavrasChave={[
-                'Sustentabilidade',
-                'Inovação',
-                'Energia',
-                'Clima',
-                'Justiça',
-                'Biodiversidade',
-              ]}
-            />
+
+            {etapas && etapas.length > 0 ? (
+              <View style={{ marginBottom: 20 }}>
+                <Conferencias
+                  etapas={etapas}
+                  conferencias={conferencias}
+                  propostas={propostas}
+                />
+                <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />
+              </View>
+            ) : (
+              
+              <View>
+                <Conferencias
+                  etapas={etapas}
+                  conferencias={conferencias}
+                  propostas={propostas}
+                />  
+              {/* <Text style={{ textAlign: 'center', marginVertical: 20 }}>
+                Não possui conferências
+              </Text> */}
+              </View>
+            )}
+
+            {propostas && propostas.length > 0 ? (
+              <View>
+                <Propostas propostas={propostas} />
+                <DadosPizza
+                  estatisticas={[
+                    { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
+                    { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
+                    { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
+                    { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
+                  ]}
+                  total={10794}
+                  palavrasChave={[
+                    'Sustentabilidade',
+                    'Inovação',
+                    'Energia',
+                    'Clima',
+                    'Justiça',
+                    'Biodiversidade',
+                  ]}
+                />
+              </View>
+            ) : (
+              <Propostas propostas={propostas} />
+            )}
           </View>
         }
       />

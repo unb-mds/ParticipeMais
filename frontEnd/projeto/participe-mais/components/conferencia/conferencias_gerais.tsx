@@ -33,6 +33,8 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
   );
 
   return (
+<>
+  {conferenciasFiltradas.length > 0 ? (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
@@ -65,69 +67,65 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
         >
-          {conferenciasFiltradas && conferenciasFiltradas.length > 0 ? (
-            conferenciasFiltradas.map((item) => {
-              const estaExpandido = expandido === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  activeOpacity={0.9}
-                  onPress={() => {
-                    if (estaExpandido) abrirModal(item);
-                  }}
-                  style={styles.card}
-                >
-                  <View style={styles.headerCard}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.tituloCard}>{item.titulo_etapa}</Text>
-                      <View style={styles.origemContainer}>
-                        <MaterialCommunityIcons
-                          name="office-building"
-                          size={14}
-                          color="#2670E8"
-                        />
-                        <Text style={styles.origemCard}>{item.titulo_etapa}</Text>
-                      </View>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => setExpandido(estaExpandido ? null : item.id)}
-                      style={styles.expandButton}
-                    >
-                      <Ionicons
-                        name={estaExpandido ? 'chevron-up' : 'chevron-down'}
-                        size={20}
-                        color="#000"
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={styles.linhaDentro} />
-
-                  {estaExpandido && (
-                    <>
-                      <Text style={styles.descricao}>
-                        {item.descricao_etapa.length > 90
-                          ? item.descricao_etapa.slice(0, 90) + '...'
-                          : item.descricao_etapa}
-                      </Text>
-
-                      <View style={styles.tags}>
-                        <View style={styles.tagStatus}>
-                          <Text style={styles.tagText}>
-                            {item.status ? 'Ativa' : 'Inativa'}
-                          </Text>
+            <View>
+              {conferenciasFiltradas.map((item) => {
+                const estaExpandido = expandido === item.id;
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      if (estaExpandido) abrirModal(item);
+                    }}
+                    style={styles.card}
+                  >
+                    <View style={styles.headerCard}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.tituloCard}>{item.titulo_etapa}</Text>
+                        <View style={styles.origemContainer}>
+                          <MaterialCommunityIcons
+                            name="office-building"
+                            size={14}
+                            color="#2670E8"
+                          />
+                          <Text style={styles.origemCard}>{item.titulo_etapa}</Text>
                         </View>
                       </View>
-                    </>
-                  )}
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            <Text style={{ textAlign: 'center', marginVertical: 20 }}>
-              Não possui conferências
-            </Text>
-          )}
+                      <TouchableOpacity
+                        onPress={() => setExpandido(estaExpandido ? null : item.id)}
+                        style={styles.expandButton}
+                      >
+                        <Ionicons
+                          name={estaExpandido ? 'chevron-up' : 'chevron-down'}
+                          size={20}
+                          color="#000"
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.linhaDentro} />
+
+                    {estaExpandido && (
+                      <>
+                        <Text style={styles.descricao}>
+                          {item.descricao_etapa.length > 90
+                            ? item.descricao_etapa.slice(0, 90) + '...'
+                            : item.descricao_etapa}
+                        </Text>
+
+                        <View style={styles.tags}>
+                          <View style={styles.tagStatus}>
+                            <Text style={styles.tagText}>
+                              {item.status ? 'Ativa' : 'Inativa'}
+                            </Text>
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
         </ScrollView>
 
       </View>
@@ -139,17 +137,34 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
         propostas={propostas}
       />
     </View>
+  ) : (
+    <View style={styles.container}>
+      {/* Título */}
+      <View style={styles.tituloComIcone}>
+        <Octicons name="location" size={24} color="black" />
+        <Text style={styles.tituloTexto}>Conferências Gerais</Text>
+      </View>
+      
+      <View style={styles.linha} />
+
+      <Text style={{ textAlign: 'center', color: '#999' }}>
+        Não há conferências disponíveis no momento.
+      </Text>
+    </View>
+  )}
+</>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 8,
     padding: 16,
     marginBottom: 20,
     backgroundColor: '#fff',
+    marginTop: 20,
   },
   tituloComIcone: {
     flexDirection: 'row',
@@ -208,6 +223,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 16,
+    marginTop: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, 
   },
   headerCard: {
     flexDirection: 'row',
