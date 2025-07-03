@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import OficinaModal from './oficinamodal';
+import { Propostas } from '@/app/planos';
 
 type Oficina = {
   id: number;
@@ -20,20 +21,20 @@ type Oficina = {
   modalidade: 'Presencial' | 'Online';
 };
 
-type Proposta = {
-  id: number;
-  eixo: string;
-  publicadoEm: string;
-  usuario: string;
-  descricao: string;
-};
+// type Proposta = {
+//   id: number;
+//   eixo: string;
+//   publicadoEm: string;
+//   usuario: string;
+//   descricao: string;
+// };
 
 export default function Oficinas({
   oficinas,
   propostas,
 }: {
   oficinas: Oficina[];
-  propostas: Proposta[];
+  propostas: Propostas[];
 }) {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,10 +45,10 @@ export default function Oficinas({
     setModalVisible(true);
   };
 
-  const oficinasFiltradas = oficinas.filter(
+  const oficinasFiltradas = propostas.filter(
     (item) =>
-      item.cidade.toLowerCase().includes(search.toLowerCase()) ||
-      item.estado.toLowerCase().includes(search.toLowerCase())
+      item.autor.toLowerCase().includes(search.toLowerCase()) ||
+      item.titulo_proposta.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -93,7 +94,7 @@ export default function Oficinas({
               {/* Header com título e seta */}
               <View style={styles.headerCard}>
                 <Text style={styles.tituloCard}>
-                  {item.cidade} - {item.estado}
+                  {item.titulo_proposta}
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color="#000" />
               </View>

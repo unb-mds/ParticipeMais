@@ -37,14 +37,14 @@ export default function TelaCadastro() {
     const verificarLogin = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        if (token) {
-          router.replace('/perfil');
-          return;
-        }
+        // Descomente se quiser redirecionar automaticamente usuários logados
+        // if (token) {
+        //   router.replace('/perfil');
+        // }
       } catch (error) {
         console.error('Erro ao verificar login:', error);
       } finally {
-        setIsVerificandoLogin(false); // só renderiza depois disso
+        setIsVerificandoLogin(false);
       }
     };
 
@@ -71,7 +71,7 @@ export default function TelaCadastro() {
     }
 
     try {
-      const response = await fetch('http://192.168.0.15:8000/auth/cadastro/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/cadastro/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

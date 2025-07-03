@@ -32,7 +32,7 @@ type Props = {
   visible: boolean;
   onClose: () => void;
   oficina: Oficina | null;
-  propostas: Proposta[];
+  propostas: Propostas[];
 };
 
 export default function OficinaModal({ visible, onClose, oficina, propostas }: Props) {

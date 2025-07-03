@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter} from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import Header from '../components/conferencia/header';
 import StatusBadge from '../components/conferencia/statusbagde';
@@ -13,6 +14,7 @@ import Metas from '../components/planos/metas';
 import Oficinas from '../components/planos/oficinas';
 import Dados from '../components/conferencia/dados';
 import Eventos from '../components/planos/eventos';
+import { UrlObject } from 'expo-router/build/global-state/routeInfo';
 
 
 type Oficina = {
@@ -25,6 +27,22 @@ type Oficina = {
   modalidade: 'Presencial' | 'Online';
 };
 
+export interface Planos {
+  id: number;
+  nome: string;
+  descricao: string;
+  sobre: string;
+  status: boolean;
+}
+
+export interface Propostas {
+  id: number;
+  titulo_proposta: string;
+  autor: string;
+  descricao_propostas: string;
+  qtd_votos: number;
+}
+
 type Evento = {
   id: number;
   estado: string;
@@ -32,39 +50,94 @@ type Evento = {
   status: 'Inscrições em breve' | 'Finalizado';
 };
 
-
 export default function PlanoScreen() {
   const router = useRouter();
-  const propostas = [
-    {
-      id: 1,
-      eixo: 'Eixo 1 - Desenvolvimento Sustentável',
-      publicadoEm: '05/06/2025',
-      usuario: 'ANA',
-      descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
-    },
-    {
-      id: 2,
-      eixo: 'Eixo 2 - Justiça Climática',
-      publicadoEm: '15/07/2025',
-      usuario: 'JOÃO',
-      descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
-    },
-        {
-      id: 3,
-      eixo: 'Eixo 1 - Desenvolvimento Sustentável',
-      publicadoEm: '05/06/2025',
-      usuario: 'ANA',
-      descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
-    },
-    {
-      id: 4,
-      eixo: 'Eixo 2 - Justiça Climática',
-      publicadoEm: '15/07/2025',
-      usuario: 'JOÃO',
-      descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
-    },
-  ];
+  const { id } = useLocalSearchParams();
+
+  const [token, setToken] = useState<string>('');
+  const [planos, setPlanos] = useState<Planos[]>([]);
+  const [proposta, setProposta] = useState<Propostas[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(()=> {
+    const obterToken = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        if (tokenSalvo){
+          setToken(tokenSalvo);
+        } else {
+          router.replace('/login');
+        }
+      } catch(error){
+        router.replace('/login');
+      }
+    }
+    obterToken();
+  }, []);
+
+useEffect(()=> {
+  if (token && id){
+    fetchPlanos();
+  }
+}, [token, id]);
+
+  const fetchPlanos = async () => {
+    try {
+      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        console.log('API response:', json);
+
+        setPlanos([json.data.conferencias]);  // ajustado
+        setProposta(json.data.propostas);  // ajustado
+
+        setLoading(false);
+      } else {
+        console.log('erro ao receber dados da API');
+        router.replace('/login');
+      }
+    } catch (error) {
+      router.replace('/login');
+    }
+  };
+
+  
+  // const propostas = [
+  //   {
+  //     id: 1,
+  //     eixo: 'Eixo 1 - Desenvolvimento Sustentável',
+  //     publicadoEm: '05/06/2025',
+  //     usuario: 'ANA',
+  //     descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
+  //   },
+  //   {
+  //     id: 2,
+  //     eixo: 'Eixo 2 - Justiça Climática',
+  //     publicadoEm: '15/07/2025',
+  //     usuario: 'JOÃO',
+  //     descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
+  //   },
+  //       {
+  //     id: 3,
+  //     eixo: 'Eixo 1 - Desenvolvimento Sustentável',
+  //     publicadoEm: '05/06/2025',
+  //     usuario: 'ANA',
+  //     descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
+  //   },
+  //   {
+  //     id: 4,
+  //     eixo: 'Eixo 2 - Justiça Climática',
+  //     publicadoEm: '15/07/2025',
+  //     usuario: 'JOÃO',
+  //     descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
+  //   },
+  // ];
 
 
   const eventos: Evento[] = [
@@ -165,19 +238,34 @@ const palavrasChave = [
   'Inovação',
 ];
 
+  if (loading) {
+      return (
+        <SafeAreaView style={styles.container_total}>
+          <ActivityIndicator size="large" color="#2670E8" style={{ marginTop: 50 }} />
+        </SafeAreaView>
+      );
+    }
+
+  const plano = planos[0];
+  console.log('Acessando planos:');
+  console.log('planos:', planos);
+  console.log('id:', id);
+
   return (
     <SafeAreaView style={styles.container_total}>
       <Header router={router} titulo="Planos" />
 
       <FlatList
         data={[]}
-        keyExtractor={() => 'dummy'}
+        keyExtractor={(_, index) => `dummy-${index}`}
         renderItem={null}
         ListHeaderComponent={
           <View style={styles.container}>
-            <StatusBadge status="Ativa" />
+            <StatusBadge status={plano?.status ? "Ativa" : "Inativa"} />
 
-            <Text style={styles.title}>Plano Nacional de Desenvolvimento</Text>
+            <Text style={styles.title}>
+              {plano?.nome || 'Não informado'}
+            </Text>
 
             {/* Dados pequenos */}
             <View style={styles.dadosContainer}>
@@ -201,15 +289,14 @@ const palavrasChave = [
                 </View>
                 <View style={styles.dadoItem}>
                   <MaterialCommunityIcons name="file-document-outline" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>312</Text>
+                  <Text style={styles.dadoNumero}>{proposta.length}</Text>
                   <Text style={styles.dadoText}>Propostas</Text>
                 </View>
               </View>
             </View>
 
             <Text style={styles.description}>
-              O Plano Nacional de Desenvolvimento visa orientar políticas públicas de longo prazo,
-              definindo metas, ações e estratégias para o desenvolvimento sustentável do Brasil.
+              {plano?.descricao || 'Não informado'}
             </Text>
 
             <LinkAcesso
@@ -219,7 +306,7 @@ const palavrasChave = [
               onPress={() => {}}
             />
 
-            <EtapasCalendar etapas={etapas} />
+            {/* <EtapasCalendar etapas={etapas} /> */}
 
             <Objetivos objetivos={objetivos} />
             <Metas
@@ -232,7 +319,7 @@ const palavrasChave = [
                 { id: 6, titulo: 'Educação ambiental', cidade: 'Manaus', estado: 'AM', votos: 112 },
               ]}
             />
-            <Oficinas oficinas={oficinas} propostas={propostas} />
+            <Oficinas oficinas={oficinas} propostas={proposta} />
                <Dados
                   estatisticas={dadosEstatisticos}
                   palavrasChave={palavrasChave}

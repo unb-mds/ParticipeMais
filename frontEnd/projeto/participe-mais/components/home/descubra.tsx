@@ -145,7 +145,7 @@ export default function DescubraSection() {
       setRefreshing(true);
       setError(null);
       
-      const response = await fetch('http://192.168.0.15:8000/descubra/', {
+      const response = await fetch('http://172.20.10.9:8000/descubra/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

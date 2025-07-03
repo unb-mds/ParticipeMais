@@ -4,7 +4,6 @@ from django.db import models
 
 
 class Planos(models.Model):
-    """Modelo representando um plano disponível para propostas."""
 
     nome = models.CharField(max_length=200)
     descricao = models.TextField()
@@ -13,4 +12,4 @@ class Planos(models.Model):
     qtd_propostas = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.nome)  # Garante que o retorno seja uma string
+        return self.nome  # Garante que o retorno seja uma string

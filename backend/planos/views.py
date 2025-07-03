@@ -42,11 +42,19 @@ class AcessaPlano(APIView):
                 {'error': 'Não existem planos para você ;-;'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+        propostas = Propostas.objects.filter(plano=planos)[:250]
+        propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
 
-        serializer = PlanosSerializer(planos)
+
+
+        plano = PlanosSerializer(planos, context={'request': request})
         return Response({
             'message': 'Planos encontrados!',
-            'data': serializer.data
+            'data': {
+                'conferencias': plano.data,
+                'propostas': propostas_serializer.data,
+            }
         })
 
 

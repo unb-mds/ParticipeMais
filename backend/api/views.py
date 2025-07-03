@@ -142,7 +142,7 @@ class PesquisaGeralView(APIView):
              }, status=status.HTTP_200_OK)
        
 class PesquisaListaTudo(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
         conferencia = list(Conferencia.objects.order_by('?'))
