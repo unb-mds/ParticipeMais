@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Text,
@@ -9,60 +10,40 @@ import {
   Image,
   ScrollView,
   Alert,
-  View,
-  ActivityIndicator
 } from "react-native";
-
-interface LoginResponse {
-  access: string;
-  refresh: string;
-  user: {
-    nome: string;
-    [key: string]: any;
-  };
-  message?: string;
-}
-
-interface ErrorResponse {
-  detail?: string;
-  [key: string]: any;
-}
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
 
   useEffect(() => {
     const verificarLogin = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        // Descomente se quiser redirecionar automaticamente usuários logados
-        // if (token) {
-        //   router.replace('/perfil');
-        // }
+        if (token) {
+          router.replace('/perfil');
+          return;
+        }
       } catch (error) {
         console.error('Erro ao verificar login:', error);
       } finally {
-        setIsVerificandoLogin(false);
+        setIsVerificandoLogin(false); // só renderiza depois disso
       }
     };
 
     verificarLogin();
-  }, []);
+  }, [router]);
+
+  if (isVerificandoLogin) {
+    return null; 
+  }
 
   const handleLogin = async () => {
-    if (!email || !senha) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
-      return;
-    }
-
-    setIsLoading(true);
-    
     try {
-      const response = await fetch('http://172.20.10.9:8000/auth/login/', {
+      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,101 +51,84 @@ export default function Login() {
         body: JSON.stringify({ email, password: senha }),
       });
 
-      const data: LoginResponse | ErrorResponse = await response.json();
-
       if (response.ok) {
-        const successData = data as LoginResponse;
-        
-        // Armazena os tokens e dados do usuário
-        await Promise.all([
-          AsyncStorage.setItem('accessToken', successData.access),
-          AsyncStorage.setItem('refreshToken', successData.refresh),
-          AsyncStorage.setItem('nomeUsuario', successData.user.nome),
-          AsyncStorage.setItem('usuario', JSON.stringify(successData.user)),
-        ]);
+        const data = await response.json();
 
-        Alert.alert('Sucesso', successData.message || 'Login realizado com sucesso');
-        router.replace('/');
+        await AsyncStorage.setItem('accessToken', data.access);
+        await AsyncStorage.setItem('refreshToken', data.refresh);
+        await AsyncStorage.setItem('nomeUsuario', data.user.nome);
+        await AsyncStorage.setItem('usuario', JSON.stringify(data.user));
+
+        const token = await AsyncStorage.getItem('accessToken');
+        console.log("Access token salvo:", token);
+
+        Alert.alert('Sucesso', data.message);
+
+        router.push('/'); 
+
       } else {
-        const errorData = data as ErrorResponse;
-        const mensagemErro = errorData.detail || 'Credenciais inválidas';
+        const errorData = await response.json();
+        const mensagemErro = errorData.detail || JSON.stringify(errorData);
         Alert.alert('Erro', mensagemErro);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
-      Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.');
-    } finally {
-      setIsLoading(false);
+      Alert.alert('Erro', 'Erro na requisição: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
-  if (isVerificandoLogin) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2563eb" />
-      </View>
-    );
-  }
+
+
+
 
   return (
-    <ScrollView 
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Logo */}
       <Image
-        source={require("@/assets/images/icon.png")}
+        source={require("@/assets/images/icon.png")} // caminho da imagem local
         style={styles.logo}
-        resizeMode="contain"
+        resizeMode="contain" // evita cortes na imagem
       />
 
+      {/* Título */}
       <Text style={styles.titulo}>Entre na sua conta</Text>
 
-      <Text style={styles.label}>E-mail:</Text>
+      {/* Input E-mail */}
+      <Text style={styles.label}>Insira seu e-mail por favor:</Text>
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
-        placeholder="Digite seu e-mail"
-        placeholderTextColor="#999"
         keyboardType="email-address"
         autoCapitalize="none"
-        autoCorrect={false}
       />
 
-      <Text style={styles.label}>Senha:</Text>
+      {/* Input Senha */}
+      <Text style={styles.label}>Insira sua senha por favor:</Text>
       <TextInput
         style={styles.input}
         value={senha}
         onChangeText={setSenha}
-        placeholder="Digite sua senha"
-        placeholderTextColor="#999"
         secureTextEntry
-        autoCapitalize="none"
       />
 
-      <Text style={styles.termos}>Ao continuar, você concorda com nossos Termos de Serviço</Text>
+      {/* Termos */}
+      <Text style={styles.termos}>Aceito termos e serviços de uso</Text>
 
-      <TouchableOpacity 
-        style={styles.botao} 
-        onPress={handleLogin}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.botaoTexto}>Entrar</Text>
-        )}
+      {/* Links */}
+      <TouchableOpacity>
+        <Text style={styles.link}>Esqueceu sua senha?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.link_semlogin}>Continuar sem login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.link}>Ainda não possui uma conta?</Text>
       </TouchableOpacity>
 
-      <View style={styles.linksContainer}>
-        <TouchableOpacity onPress={() => router.push('/esqueci')}>
-          <Text style={styles.link}>Esqueceu sua senha?</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={() => router.push('/cadastro')}>
-          <Text style={styles.link}>Criar uma conta</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Botão Entrar */}
+      <TouchableOpacity style={styles.botao} onPress={handleLogin}>
+        <Text style={styles.botaoTexto}>Entrar</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -173,81 +137,69 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: "center",
-    justifyContent: "center",
     padding: 24,
     backgroundColor: "#fff",
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
   logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 32,
+    width: 100,
+    height: 100,
+    marginBottom: 24,
+    resizeMode: "contain",
   },
   titulo: {
-    fontSize: 22,
+    fontSize: 20,
     marginBottom: 24,
-    fontFamily: "Raleway_700Bold",
-    color: "#1a1a1a",
+    fontFamily: "Raleway_700Bold", // título em negrito
   },
   label: {
     alignSelf: "flex-start",
     fontSize: 14,
-    marginBottom: 8,
-    fontFamily: "Raleway_600SemiBold",
-    color: "#333",
+    marginBottom: 6,
+    fontFamily: "Raleway_400Regular", // rótulo padrão
   },
   input: {
     width: "100%",
-    height: 50,
-    backgroundColor: "#f5f5f5",
+    height: 44,
+    backgroundColor: "#eee",
     borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    fontFamily: "Raleway_400Regular",
-    fontSize: 15,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    fontFamily: "Raleway_400Regular", // entrada de texto
   },
   termos: {
     fontSize: 12,
     color: "#666",
-    marginVertical: 16,
+    marginVertical: 12,
     textAlign: "center",
-    fontFamily: "Raleway_400Regular",
-    maxWidth: '80%',
-  },
-  linksContainer: {
-    marginTop: 20,
-    alignItems: "center",
-    width: "100%",
+    fontFamily: "Raleway_400Regular", // texto de termos
   },
   link: {
-    color: "#2563eb",
+    color: "#1a73e8",
     textAlign: "center",
-    marginVertical: 8,
+    marginVertical: 4,
     fontSize: 14,
-    fontFamily: "Raleway_600SemiBold",
+    fontFamily: "Raleway_400Regular", // link normal
+  },
+    link_semlogin: {
+    color: "#FF0000",
+    textAlign: "center",
+    marginVertical: 4,
+    fontSize: 14,
+    fontFamily: "Raleway_400Regular", // link normal
   },
   botao: {
     backgroundColor: "#2563eb",
-    paddingVertical: 15,
+    paddingVertical: 14,
     paddingHorizontal: 32,
-    borderRadius: 8,
-    marginTop: 16,
+    borderRadius: 100,
+    marginTop: 24,
     width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 50,
   },
   botaoTexto: {
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
-    fontFamily: "Raleway_700Bold",
+    fontFamily: "Raleway_700Bold", // texto do botão com destaque
   },
 });
+
