@@ -9,46 +9,28 @@ import {
 } from 'react-native';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import OficinaModal from './oficinamodal';
-import { Propostas } from '@/app/planos';
+import { Oficinas, Propostas } from '../../app/planos';
 
-type Oficina = {
-  id: number;
-  cidade: string;
-  estado: string;
-  dataInicio: string;
-  dataTermino: string;
-  status: 'Ativa' | 'Encerrada';
-  modalidade: 'Presencial' | 'Online';
-};
-
-// type Proposta = {
-//   id: number;
-//   eixo: string;
-//   publicadoEm: string;
-//   usuario: string;
-//   descricao: string;
-// };
-
-export default function Oficinas({
+export default function Oficina({
   oficinas,
   propostas,
 }: {
-  oficinas: Oficina[];
+  oficinas: Oficinas[];
   propostas: Propostas[];
 }) {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [oficinaSelecionada, setOficinaSelecionada] = useState<Oficina | null>(null);
+  const [oficinaSelecionada, setOficinaSelecionada] = useState<Oficinas | null>(null);
 
-  const abrirModal = (item: Oficina) => {
+  const abrirModal = (item: Oficinas) => {
     setOficinaSelecionada(item);
     setModalVisible(true);
   };
 
-  const oficinasFiltradas = propostas.filter(
+  const oficinasFiltradas = oficinas.filter(
     (item) =>
-      item.autor.toLowerCase().includes(search.toLowerCase()) ||
-      item.titulo_proposta.toLowerCase().includes(search.toLowerCase())
+      item.cidade.toLowerCase().includes(search.toLowerCase()) ||
+      item.estado.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -94,7 +76,7 @@ export default function Oficinas({
               {/* Header com título e seta */}
               <View style={styles.headerCard}>
                 <Text style={styles.tituloCard}>
-                  {item.titulo_proposta}
+                  {item.titulo || 'Oficina sem título'}
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color="#000" />
               </View>

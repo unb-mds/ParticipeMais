@@ -40,15 +40,37 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
   const [conferencias, setConferencias] = useState<Conferencias[]>([])
   const [planos, setPlanos] = useState<Planos[]>([])
   const [consultas, setConsultas] = useState<Consultas[]>([])
+  const [token, setToken] = useState<string>('');
 
   useEffect(() => {
-    fetchConferenciasLista();
+    const obterToken = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        if (tokenSalvo) {
+          setToken(tokenSalvo);
+        } else {
+          router.replace('/login');
+        }
+      } catch (error) {
+        router.replace('/login');
+      }
+    };
+    obterToken();
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchConferenciasLista();
+    }
+  }, [token]);
+
+
 
   const fetchConferenciasLista = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
+      const response = await fetch('http://localhost:8000/pesquisar/lista', {
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -64,7 +86,8 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         console.log(data.planos)
 
       } else if (response.status === 401 || response.status === 403) {
-        router.replace('/login');
+        console.log('Usuário não autorizado. Redirecionando para login.');
+        // router.replace('/login');
       } else {
         console.error('Erro ao buscar conferências:', response.status);
       }
@@ -108,9 +131,6 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
       {/* Carrossel de bolinhas com ícones */}
       <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Acesse as temáticas</Text>
-        <TouchableOpacity onPress={() => console.log('Veja mais clicado')}>
-            <Text style={styles.vejaMais}>Veja mais</Text>
-        </TouchableOpacity>
         </View>
       <FlatList
         data={filtros}
@@ -127,9 +147,6 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 {/*  conferencias */}
       <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Conferências</Text>
-        <TouchableOpacity onPress={() => router.push('../conferencias')}>
-            <Text style={styles.vejaMais}>Veja mais</Text>
-        </TouchableOpacity>
         </View>
 
         <FlatList
@@ -155,9 +172,6 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         {/* planos */}
         <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Planos</Text>
-        <TouchableOpacity onPress={() => router.push('../planos')}>
-            <Text style={styles.vejaMais}>Veja mais</Text>
-        </TouchableOpacity>
         </View>
 
         <FlatList
@@ -182,9 +196,6 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 {/* consultas */}
         <View style={styles.headerTematicas}>
         <Text style={styles.textoTematicas}>Consultas</Text>
-        <TouchableOpacity onPress={() => router.push('../consultas')}>
-            <Text style={styles.vejaMais}>Veja mais</Text>
-        </TouchableOpacity>
         </View>
 
         <FlatList

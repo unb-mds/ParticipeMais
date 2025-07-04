@@ -33,7 +33,8 @@ class AcessaConferencia(APIView):
         conferencia_serializer = ConferenciaSerializer(conferencia, context={'request': request})
 
         # Supondo que você tem relacionamentos ou filtros para propostas e etapas
-        propostas = Propostas.objects.filter(conferencia=conferencia)[:100]
+        propostas = Propostas.objects.filter(conferencia_id=pk)
+        print(propostas.count())
         propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
 
         etapas = Etapas.objects.filter(conferencia=conferencia)
@@ -51,11 +52,11 @@ class AcessaConferencia(APIView):
 
 # Lista propostas de uma conferência específica + percentual por eixo (extraído do título)
 class AcessaPropostas(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
+    permission_classes = [permissions.AllowAny]  # Permite acesso público
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)  # Busca conferência pelo ID
-        propostas = Propostas.objects.filter(conferencia=conferencia)[:1000]  # Limita a 1000 propostas para testes
+        propostas = Propostas.objects.filter(conferencia=conferencia) # Limita a 1000 propostas para testes
         serializer = PropostaSerializer(propostas, many=True)  # Serializa as propostas
 
         total = propostas.count()
@@ -83,7 +84,7 @@ class AcessaPropostas(APIView):
             'eixos': percentuais_eixos,  # Mostra o percentual por eixo
             'propostas': serializer.data  # Lista as propostas
         })
-
+            
 # Acessa uma proposta específica dentro de uma conferência
 class PropostaDireta(APIView):
     permission_classes = [permissions.AllowAny]  # Permite acesso público
@@ -135,9 +136,13 @@ class EtapaDireta(APIView):
     def get(self, request, pk, jk):
         conferencia = Conferencia.objects.get(pk=pk)
         etapas = Etapas.objects.filter(pk=jk, conferencia=conferencia)  # Busca etapa específica pela pk
+        
+        propostas = Propostas.objects.filter(url_proposta__in=etapas.propostas_relacionadas)
+        propostasSerializer = PropostaSerializer(propostas, many=True)
         serializer = EtapaSerializer(etapas, many=True)
 
         return Response({
             'conferencia': conferencia.titulo,
-            'sub-conferencias': serializer.data
+            'sub-conferencias': serializer.data,
+            'propostas_relacionadas': propostasSerializer.data
         })

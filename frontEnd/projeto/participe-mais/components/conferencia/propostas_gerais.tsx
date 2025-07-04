@@ -85,7 +85,18 @@ export default function Propostas({ propostas }: PropostasProps) {
                     </Text>
                     <Text style={styles.tituloCard}>{item.titulo_proposta}</Text>
                     <Text style={styles.por}>
-                      <Text style={{ color: '#2670E8' }}>Por</Text> {item.autor}
+                      
+                      {item.autor && item.autor.length > 0 ? (
+                        <>
+                          <Text style={{ color: '#2670E8' }}>Por </Text>
+                          {item.autor}
+                        </>
+                      ) : (
+                        <>
+                          <Text style={{ color: '#2670E8' }}>Por </Text>
+                          Não informado
+                        </>
+                      )}
                     </Text>
                   </View>
                   <TouchableOpacity
@@ -146,6 +157,7 @@ export default function Propostas({ propostas }: PropostasProps) {
             <ScrollView>
               <Text style={styles.modalTitulo}>{propostaSelecionada?.titulo_proposta}</Text>
               <Text style={styles.modalOrigem}>{propostaSelecionada?.autor}</Text>
+              <Text style={styles.modalOrigem}>{propostaSelecionada?.url_proposta}</Text>
               <Text style={styles.modalDescricao}>
                 {propostaSelecionada?.descricao_proposta}
               </Text>

@@ -140,12 +140,13 @@ export default function DescubraSection() {
   }, [conferencias, planos, consultas, propostas]);
 
   // Buscar dados da API
+
   const fetchDescubra = useCallback(async () => {
     try {
       setRefreshing(true);
       setError(null);
       
-      const response = await fetch('http://172.20.10.9:8000/descubra/', {
+      const response = await fetch('http://localhost:8000/descubra/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -299,13 +300,40 @@ export default function DescubraSection() {
         );
 
       case 'plano':
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              if (idNumerico) {
+                router.push({ pathname: '../planos', params: { id: idNumerico } });
+              } else {
+                console.warn('ID numérico inválido:', item.id);
+              }
+            }}
+          >
+            <ImageBackground
+              source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
+              style={styles.quadrado}
+              imageStyle={{ borderRadius: 12 }}
+            />
+          </TouchableOpacity>
+        );
       case 'consulta':
         return (
-          <ImageBackground
-            source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
-            style={styles.quadrado}
-            imageStyle={{ borderRadius: 12 }}
-          />
+          <TouchableOpacity
+            onPress={() => {
+              if (idNumerico) {
+                router.push({ pathname: '../consultas', params: { id: idNumerico } });
+              } else {
+                console.warn('ID numérico inválido:', item.id);
+              }
+            }}
+          >
+            <ImageBackground
+              source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
+              style={styles.quadrado}
+              imageStyle={{ borderRadius: 12 }}
+            />
+          </TouchableOpacity>
         );
 
       default:

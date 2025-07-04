@@ -24,7 +24,7 @@ export default function HomeScreen() {
 
         if (!tokenSalvo) {
           console.error("Token não encontrado");
-          router.push('/login');
+          router.push('/boas_vindas');
           return;
         }
 
@@ -38,7 +38,7 @@ export default function HomeScreen() {
         setLoading(false);
       } catch (error) {
         console.error("Erro ao recuperar token ou usuário:", error);
-        router.replace('/login');
+        router.replace('/boas_vindas');
       }
     };
 

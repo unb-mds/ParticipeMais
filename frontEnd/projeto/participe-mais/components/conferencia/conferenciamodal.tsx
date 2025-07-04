@@ -28,6 +28,13 @@ export default function ConferenciaModal({
 }: Props) {
   if (!etapa) return null;
 
+const propostasFiltradas = propostas.filter(
+  (proposta) =>
+    proposta.url_proposta &&
+    etapa.propostas_relacionadas.includes(proposta.url_proposta)
+);
+
+
   return (
     <Modal
       animationType="slide"
@@ -96,7 +103,7 @@ export default function ConferenciaModal({
                   <Ionicons name="document-text-outline" size={18} color="#000" />
                   <Text style={styles.modalVisaoTexto}>Propostas</Text>
                 </View>
-                <Text style={styles.modalVisaoNumero}>{propostas.length}</Text>
+                <Text style={styles.modalVisaoNumero}>{propostasFiltradas.length}</Text>
               </View>
             </View>
 
@@ -140,8 +147,9 @@ export default function ConferenciaModal({
               </View>
             </View>
 
-            {/* Propostas associadas */}
-            <Propostas propostas={propostas} />
+
+            {/* Propostas associadas */}  
+            <Propostas propostas={propostasFiltradas} />
 
             {/* Link de acesso */}
             <View style={styles.linkContainer}>

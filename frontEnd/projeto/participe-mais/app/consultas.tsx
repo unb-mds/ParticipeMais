@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, FlatList, Pressable, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import Header from '../components/conferencia/header';
 import StatusBadge from '../components/conferencia/statusbagde';
@@ -12,16 +13,110 @@ import VisaoGeral from '../components/consultas/visaogeral';
 import DadosPizza from '../components/conferencia/dadosPizza';
 
 import { Entypo, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { UrlObject } from 'expo-router/build/global-state/routeInfo';
+
+export interface Consultas {
+  id: number;
+  nome: string;
+  descricao: string;
+  sobre: string;
+  status: boolean;
+  link: UrlObject;
+  etapas: Etapas[];
+}
+
+export interface Etapas {
+  id: number
+  titulo_etapa: string;
+  descricao_etapa: string;
+  status: string;
+  regiao_etapa: string;
+  duracao_etapa: string;
+  qtd_propostas_etapa: number;
+  qtd_inscritos_etapa: number;
+  propostas_relacionadas: string; // ajustado para array de strings
+}  
+
+export interface Proposta {
+  id: number;
+  titulo_proposta: string;
+  autor: string;
+  descricao_proposta: string;
+  qtd_votos: number;
+  data_criacao: string; //não tem...
+  total_palavras_chave: number
+  url_proposta: string; // URL da proposta
+}
 
 export default function ConsultaScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
 
-  const etapas = [
-    { nome: 'Etapa Digital', data: '2025-05-07', ativo: true },
-    { nome: 'Audiências Públicas', data: '2025-06-01', ativo: true },
-    { nome: 'Análise Técnica', data: '2025-06-15', ativo: false },
-    { nome: 'Encerramento', data: '2025-07-01', ativo: false },
-  ];
+  const [token, setToken] = React.useState<string>('');
+  const [consultas, setConsultas] = React.useState<Consultas[]>([]);
+  const [etapas, setEtapas] = useState<Etapas[]>([]);
+  const [propostas, setPropostas] = useState<Proposta[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+ useEffect(() => {
+    const obterToken = async () => {
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        if (tokenSalvo) {
+          setToken(tokenSalvo);
+        } else {
+          router.replace('/login');
+        }
+      } catch (error) {
+        router.replace('/login');
+      }
+    };
+    obterToken();
+  }, []);
+  
+  useEffect(() => {
+    if (token && id) {
+      fetchConsultas();
+    }
+  }, [token, id]);
+  
+  const fetchConsultas = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/consultas/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+      },
+      });
+      
+      if (response.ok) {
+        const json = await response.json();
+        const data = json.data;
+
+        // ajusta se vier um objeto, coloca em array
+        setConsultas(Array.isArray(data.consultas) ? data.consultas : [data.consultas]);
+        setEtapas(data.etapas || []);
+        setPropostas(data.propostas || []);
+        setLoading(false);
+
+        console.log('Consultas:', data.consultas);
+        console.log('Propostas:', data.propostas);
+        
+      } else {
+        console.log('error');
+        router.replace('/login');
+      }
+    } catch (error) {
+      router.replace('/login');
+    }
+  };
+
+  // const etapas = [
+  //   { nome: 'Etapa Digital', data: '2025-05-07', ativo: true },
+  //   { nome: 'Audiências Públicas', data: '2025-06-01', ativo: true },
+  //   { nome: 'Análise Técnica', data: '2025-06-15', ativo: false },
+  //   { nome: 'Encerramento', data: '2025-07-01', ativo: false },
+  // ];
 
   const eixos = [
     { titulo: 'Eixo 1 – Saúde', descricao: 'Ações voltadas à saúde pública.' },
@@ -35,24 +130,18 @@ export default function ConsultaScreen() {
     encerradas: 35,
   };
 
-  const propostas = [
-    {
-      id: 1,
-      eixo: 'Eixo 1 – Saúde',
-      publicadoEm: '05/12/2024',
-      usuario: 'MONICA',
-      descricao:
-        'Ampliar a cobertura do SUS para regiões isoladas, com mais unidades móveis e atendimento digital...',
-    },
-    {
-      id: 2,
-      eixo: 'Eixo 2 – Educação',
-      publicadoEm: '10/01/2025',
-      usuario: 'CARLOS',
-      descricao:
-        'Fortalecer o ensino técnico e profissionalizante em comunidades periféricas...',
-    },
-  ];
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container_total}>
+        <Header router={router} titulo="Consultas Públicas" />
+        <View style={styles.container}>
+          <Text>Carregando...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const consulta = consultas[0];
 
   return (
     <SafeAreaView style={styles.container_total}>
@@ -60,23 +149,20 @@ export default function ConsultaScreen() {
 
       <FlatList
         data={[]} // vazio, pois todo conteúdo está no HeaderComponent
-        keyExtractor={() => 'dummy'}
+        keyExtractor={(_, index) => `dummy-${index}`}
         renderItem={null}
         ListHeaderComponent={
           <View style={styles.container}>
-            <StatusBadge status="Encerrada" />
+            {/* <StatusBadge status={consultas} /> */}
 
-            <Text style={styles.title}>Consulta Pública Nacional sobre Saúde</Text>
+            <Text style={styles.title}>{consulta.nome}</Text>
 
             <Text style={styles.description}>
-              A consulta pública tem como objetivo ouvir a população sobre as prioridades na área da saúde. Sua
-              participação é fundamental para definir políticas públicas mais eficientes e inclusivas.
+              {consulta.descricao}
             </Text>
            <VisaoGeral
-                participantes={1254}
-                respostas={854}
-                comentarios={321}
-                propostas={487}
+                oficinas={etapas.length}
+                propostas={propostas.length}
                 />
 
             {/* 🔗 Link de Acesso */}
@@ -92,7 +178,8 @@ export default function ConsultaScreen() {
 
               <Pressable
                 style={styles.linkButton}
-                onPress={() => Linking.openURL('https://brasilparticipativo.gov.br')}
+                onPress={() => Linking.openURL(`${consulta.link}`)}
+                android_ripple={{ color: '#2670E8' }}
               >
                 <Text style={styles.linkButtonText}>Acesso ao site Brasil Participativo</Text>
               </Pressable>
@@ -100,24 +187,42 @@ export default function ConsultaScreen() {
 
 
             {/* 📅 Etapas */}
-            <EtapasCalendar etapas={etapas} />
+            <EtapasCalendar etapas={etapas} conferencias={null}/>
 
             {/* 🎯 Eixos Temáticos */}
             <EixosTematicos eixos={eixos} />
 
-            {/* 📄 Propostas */}
-            <Propostas propostas={propostas} />
+            { consulta.sobre && (
+              <View style={styles.linkContainer}>
+                <View style={styles.linkHeader}>
+                  <Ionicons name="link-outline" size={16} color="#000" />
+                  <Text style={styles.linkTitle}>Sobre a consulta</Text>
+                </View>
+                <Text style={styles.description}> 
+                  {consulta.sobre}
+                </Text>
+              </View>
+            )}
 
-            {/* 📈 Dados */}
-            <DadosPizza
-              estatisticas={[
-                { eixo: 'Eixo 1', percentual: 50, cor: '#2670E8' },
-                { eixo: 'Eixo 2', percentual: 30, cor: '#4CAF50' },
-                { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
-              ]}
-              total={1527}
-              palavrasChave={['Saúde', 'Educação', 'Meio Ambiente', 'Justiça']}
-            />
+            {/* 📄 Propostas */}
+            { propostas && propostas.length > 0 ? (<> 
+              
+              <Propostas propostas={propostas} />
+            
+              {/* 📈 Dados */}
+              <DadosPizza
+                estatisticas={[
+                  { eixo: 'Eixo 1', percentual: 50, cor: '#2670E8' },
+                  { eixo: 'Eixo 2', percentual: 30, cor: '#4CAF50' },
+                  { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
+                ]}
+                total={1527}
+                palavrasChave={['Saúde', 'Educação', 'Meio Ambiente', 'Justiça']}
+              />
+            
+            </>) : (<>
+              <Propostas propostas={propostas} />
+            </>)}
           </View>
         }
       />

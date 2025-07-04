@@ -33,6 +33,7 @@ export interface Proposta {
   qtd_votos: number;
   data_criacao: string; //não tem...
   total_palavras_chave: number
+  url_proposta: string; // URL da proposta
 }
 
 export interface Etapas {
@@ -44,7 +45,7 @@ export interface Etapas {
   duracao_etapa: string;
   qtd_propostas_etapa: number;
   qtd_inscritos_etapa: number;
-  propostas_relacionadas: string;
+  propostas_relacionadas: string; // ajustado para array de strings
 }
 
 export default function ConferenciaDetalhadaScreen() {
@@ -81,7 +82,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
+      const response = await fetch(`http://localhost:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -105,6 +106,7 @@ export default function ConferenciaDetalhadaScreen() {
       router.replace('/login');
     }
   };
+
 
   const eixos = [
     {
@@ -189,6 +191,9 @@ export default function ConferenciaDetalhadaScreen() {
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             <EixosTematicos eixos={eixos} />
 
+
+          
+
             {etapas && etapas.length > 0 ? (
               <View style={{ marginBottom: 20 }}>
                 <Conferencias
@@ -211,6 +216,17 @@ export default function ConferenciaDetalhadaScreen() {
               </Text> */}
               </View>
             )}
+
+
+
+
+
+
+
+
+
+
+
 
             {propostas && propostas.length > 0 ? (
               <View>

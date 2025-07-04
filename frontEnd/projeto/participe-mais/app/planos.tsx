@@ -11,21 +11,10 @@ import EtapasCalendar from '../components/conferencia/etapascalendar';
 import LinkAcesso from '../components/planos/linkacesso';
 import Objetivos from '../components/planos/objetivos';
 import Metas from '../components/planos/metas';
-import Oficinas from '../components/planos/oficinas';
+import Oficina from '../components/planos/oficinas';
 import Dados from '../components/conferencia/dados';
 import Eventos from '../components/planos/eventos';
 import { UrlObject } from 'expo-router/build/global-state/routeInfo';
-
-
-type Oficina = {
-  id: number;
-  cidade: string;
-  estado: string;
-  dataInicio: string;
-  dataTermino: string;
-  status: 'Ativa' | 'Encerrada';
-  modalidade: 'Presencial' | 'Online';
-};
 
 export interface Planos {
   id: number;
@@ -43,11 +32,16 @@ export interface Propostas {
   qtd_votos: number;
 }
 
-type Evento = {
+export type Oficinas = {
   id: number;
+  titulo: string;
+  descricao: string;
+  cidade: string;
   estado: string;
-  data?: string;
-  status: 'Inscrições em breve' | 'Finalizado';
+  dataInicio: string;
+  dataTermino: string;
+  status: 'Ativa' | 'Encerrada';
+  modalidade: 'Presencial' | 'Online';
 };
 
 export default function PlanoScreen() {
@@ -57,6 +51,7 @@ export default function PlanoScreen() {
   const [token, setToken] = useState<string>('');
   const [planos, setPlanos] = useState<Planos[]>([]);
   const [proposta, setProposta] = useState<Propostas[]>([]);
+  const [oficinas, setOficinas] = useState<Oficinas[]>([])
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(()=> {
@@ -83,7 +78,7 @@ useEffect(()=> {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
+      const response = await fetch(`http://localhost:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -96,6 +91,7 @@ useEffect(()=> {
 
         setPlanos([json.data.conferencias]);  // ajustado
         setProposta(json.data.propostas);  // ajustado
+        setOficinas(json.data.oficinas || null);  // ajustado
 
         setLoading(false);
       } else {
@@ -107,105 +103,6 @@ useEffect(()=> {
     }
   };
 
-  
-  // const propostas = [
-  //   {
-  //     id: 1,
-  //     eixo: 'Eixo 1 - Desenvolvimento Sustentável',
-  //     publicadoEm: '05/06/2025',
-  //     usuario: 'ANA',
-  //     descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
-  //   },
-  //   {
-  //     id: 2,
-  //     eixo: 'Eixo 2 - Justiça Climática',
-  //     publicadoEm: '15/07/2025',
-  //     usuario: 'JOÃO',
-  //     descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
-  //   },
-  //       {
-  //     id: 3,
-  //     eixo: 'Eixo 1 - Desenvolvimento Sustentável',
-  //     publicadoEm: '05/06/2025',
-  //     usuario: 'ANA',
-  //     descricao: 'Fomentar ações de desenvolvimento sustentável nas regiões Norte e Nordeste...',
-  //   },
-  //   {
-  //     id: 4,
-  //     eixo: 'Eixo 2 - Justiça Climática',
-  //     publicadoEm: '15/07/2025',
-  //     usuario: 'JOÃO',
-  //     descricao: 'Fortalecer políticas de justiça climática através de programas de educação ambiental...',
-  //   },
-  // ];
-
-
-  const eventos: Evento[] = [
-    {
-      id: 1,
-      estado: 'Distrito Federal',
-      data: '15/06/2025',
-      status: 'Inscrições em breve', // ou 'Finalizado' se desejar
-    },
-    {
-      id: 2,
-      estado: 'São Paulo',
-      status: 'Inscrições em breve', // Sem data, aparece "Inscrições em breve"
-    },
-    {
-      id: 3,
-      estado: 'Bahia',
-      status: 'Finalizado', // Sem data, aparece "Finalizado"
-    },
-        {
-      id: 4,
-      estado: 'Distrito Federal',
-      data: '15/06/2025',
-      status: 'Inscrições em breve', // ou 'Finalizado' se desejar
-    },
-    {
-      id: 5,
-      estado: 'São Paulo',
-      status: 'Inscrições em breve', // Sem data, aparece "Inscrições em breve"
-    },
-    {
-      id: 6,
-      estado: 'Bahia',
-      status: 'Finalizado', // Sem data, aparece "Finalizado"
-    },
-  ];
-
-
-const oficinas: Oficina[] = [
-  {
-    id: 1,
-    cidade: 'Brasília',
-    estado: 'DIstritoF',
-    dataInicio: '15/06/2025',
-    dataTermino: '17/06/2025',
-    status: 'Ativa',
-    modalidade: 'Presencial',
-  },
-  {
-    id: 2,
-    cidade: 'São Paulo',
-    estado: 'SP',
-    dataInicio: '20/07/2025',
-    dataTermino: '22/07/2025',
-    status: 'Encerrada',
-    modalidade: 'Online',
-  },
-  {
-    id: 3,
-    cidade: 'Salvador',
-    estado: 'BA',
-    dataInicio: '10/08/2025',
-    dataTermino: '12/08/2025',
-    status: 'Ativa',
-    modalidade: 'Presencial',
-  },
-];
-
   const objetivos = [
     'Reduzir desigualdades sociais e regionais',
     'Enfrentar as mudanças climáticas',
@@ -214,12 +111,6 @@ const oficinas: Oficina[] = [
     'Promover sustentabilidade macroeconômica',
   ];
 
-  const etapas = [
-    { nome: 'Elaboração', data: '2025-01-15', ativo: true },
-    { nome: 'Consulta Pública', data: '2025-02-10', ativo: true },
-    { nome: 'Oficinas Regionais', data: '2025-03-05', ativo: false },
-    { nome: 'Finalização', data: '2025-04-20', ativo: true },
-  ];
   const dadosEstatisticos = {
     total: 1527,
     andamento: 57, // percentual
@@ -271,20 +162,8 @@ const palavrasChave = [
             <View style={styles.dadosContainer}>
               <View style={styles.dadosLinha}>
                 <View style={styles.dadoItem}>
-                  <Entypo name="calendar" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>12</Text>
-                  <Text style={styles.dadoText}>Eventos</Text>
-                </View>
-                <View style={styles.dadoItem}>
-                  <MaterialCommunityIcons name="target" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>25</Text>
-                  <Text style={styles.dadoText}>Metas</Text>
-                </View>
-              </View>
-              <View style={styles.dadosLinha}>
-                <View style={styles.dadoItem}>
                   <MaterialCommunityIcons name="account-group-outline" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>5</Text>
+                  <Text style={styles.dadoNumero}>sla</Text>
                   <Text style={styles.dadoText}>Oficinas</Text>
                 </View>
                 <View style={styles.dadoItem}>
@@ -309,22 +188,21 @@ const palavrasChave = [
             {/* <EtapasCalendar etapas={etapas} /> */}
 
             <Objetivos objetivos={objetivos} />
-            <Metas
-              metas={[
-                { id: 1, titulo: 'Reduzir emissão de carbono', cidade: 'São Paulo', estado: 'SP', votos: 150 },
-                { id: 2, titulo: 'Aumentar áreas verdes', cidade: 'Salvador', estado: 'BA', votos: 89 },
-                { id: 3, titulo: 'Educação ambiental', cidade: 'Manaus', estado: 'AM', votos: 112 },
-                 { id: 4, titulo: 'Reduzir emissão de carbono', cidade: 'São Paulo', estado: 'SP', votos: 150 },
-                { id: 5, titulo: 'Aumentar áreas verdes', cidade: 'Salvador', estado: 'BA', votos: 89 },
-                { id: 6, titulo: 'Educação ambiental', cidade: 'Manaus', estado: 'AM', votos: 112 },
-              ]}
+
+            { oficinas && oficinas.length > 0 ? (
+              <Oficina oficinas={oficinas} propostas={proposta} />
+            ) : (
+              <View>
+                <Text style={styles.description}>
+                  Não há oficinas disponíveis no momento.
+                </Text>
+              </View>
+            )}
+
+            <Dados
+              estatisticas={dadosEstatisticos}
+              palavrasChave={palavrasChave}
             />
-            <Oficinas oficinas={oficinas} propostas={proposta} />
-               <Dados
-                  estatisticas={dadosEstatisticos}
-                  palavrasChave={palavrasChave}
-                />
-                <Eventos eventos={eventos} />
 
           </View>
         }

@@ -3,16 +3,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Props = {
-  participantes: number;
-  respostas: number;
-  comentarios: number;
+  oficinas: number;
   propostas: number;
 };
 
 export default function VisaoGeral({
-  participantes,
-  respostas,
-  comentarios,
+  oficinas,
   propostas,
 }: Props) {
   return (
@@ -22,32 +18,15 @@ export default function VisaoGeral({
     </Text>
     
     <View style={styles.container}>
-      {/* Participantes */}
-      <View style={styles.item}>
-        <View style={styles.containerinterno}>
-        <Ionicons name="people-outline" size={20} color="#000" />
-        <Text style={styles.label}>Participantes</Text>
-        </View>
-        <Text style={styles.numero}>{participantes}</Text>
-      </View>
-
-      {/* Respostas */}
+      {/* Oficinas */}
       <View style={styles.item}>
         <View style={styles.containerinterno}>
         <Ionicons name="document-text-outline" size={20} color="#000" />
-        <Text style={styles.label}>Respostas</Text>
+        <Text style={styles.label}>Oficinas</Text>
         </View>
-        <Text style={styles.numero}>{respostas}</Text>
+        <Text style={styles.numero}>{oficinas}</Text>
       </View>
 
-      {/* Comentários */}
-      <View style={styles.item}>
-        <View style={styles.containerinterno}>
-        <Ionicons name="chatbubble-ellipses-outline" size={20} color="#000" />
-        <Text style={styles.label}>Comentários</Text>
-        </View>
-        <Text style={styles.numero}>{comentarios}</Text>
-      </View>
 
       {/* Propostas */}
       <View style={styles.item}>

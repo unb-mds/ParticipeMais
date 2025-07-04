@@ -36,8 +36,8 @@ LocaleConfig.defaultLocale = 'pt';
 const { width } = Dimensions.get('window');
 
 interface EtapasCalendarProps {
-  etapas: Etapas[];
-  conferencias: Conferencia[];
+  etapas: Etapas[] | null;
+  conferencias: Conferencia[] | null;
 }
 
 export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarProps) {
@@ -55,7 +55,7 @@ export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarP
     setModalVisible(true);
   };
 
-  const conferencia = conferencias[0];
+  const conferencia = conferencias?.[0];
 
   return (
     <View style={styles.card}>
@@ -66,10 +66,10 @@ export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarP
       </TouchableOpacity>
 
       {etapasAberto && (
-        <View style={{ maxHeight: etapas.length > 4 ? 320 : 'auto' }}>
+        <View style={{ maxHeight: (etapas?.length ?? 0) > 4 ? 320 : 'auto' }}>
           <ScrollView
             nestedScrollEnabled
-            showsVerticalScrollIndicator={etapas.length > 4}
+            showsVerticalScrollIndicator={(etapas?.length ?? 0) > 4}
           >
             <View style={styles.etapas}>
               {(() => {
@@ -78,7 +78,7 @@ export default function EtapasCalendar({ etapas, conferencias }: EtapasCalendarP
                   let datas: string[] = [];
 
                   if (typeof rawData === 'string') {
-                    datas = JSON.parse(rawData.replace(/'/g, '"'));
+                    datas = JSON.parse(rawData.replace(/'/g, '"').replace(/[-:]/g, '-'));
                   } else if (Array.isArray(rawData)) {
                     datas = rawData;
                   }

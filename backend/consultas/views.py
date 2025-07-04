@@ -33,10 +33,19 @@ class AcessaConsulta(APIView):
         except Consultas.DoesNotExist:
             return Response({'error': 'Não encontramos nenhuma consulta'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ConsultasSerializer(consultas)  # Serializa a consulta encontrada
+        consultasSerializer = ConsultasSerializer(consultas)  # Serializa a consulta encontrada
+
+        propostas = Propostas.objects.filter(consulta_id=pk)  # Filtra as propostas relacionadas à consulta
+        propostasSerializer = PropostaSerializer(propostas, many=True)  # Serializa as propostas encontradas
+
+        data = {
+            'consultas': consultasSerializer.data,  # Dados da consulta
+            'propostas': propostasSerializer.data,  # Dados das propostas
+        }
+
         return Response({
             'message': 'Consulta encontrada!',
-            'data': serializer.data  # Dados da consulta
+            'data': data  # Dados da consulta
         })
 
 # Rota pública para acessar todas as propostas associadas a uma consulta específica

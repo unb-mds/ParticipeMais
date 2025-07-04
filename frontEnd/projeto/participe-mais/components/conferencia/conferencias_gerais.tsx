@@ -28,13 +28,14 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
     setModalVisible(true);
   };
 
-  const conferenciasFiltradas = etapas.filter((item) =>
+  // Filtra as etapas com base no texto de busca
+  const etapasFiltradas = etapas.filter((item) =>
     item.titulo_etapa.includes(search)
   );
 
   return (
 <>
-  {conferenciasFiltradas.length > 0 ? (
+  {etapasFiltradas.length > 0 ? (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
@@ -68,7 +69,7 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
           contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
         >
             <View>
-              {conferenciasFiltradas.map((item) => {
+              {etapasFiltradas.map((item) => {
                 const estaExpandido = expandido === item.id;
                 return (
                   <TouchableOpacity
@@ -81,7 +82,7 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
                   >
                     <View style={styles.headerCard}>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.tituloCard}>{item.titulo_etapa}</Text>
+                        <Text style={styles.tituloCard}> {item.titulo_etapa}</Text>
                         <View style={styles.origemContainer}>
                           <MaterialCommunityIcons
                             name="office-building"
