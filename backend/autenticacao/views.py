@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, permissions, generics
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Usuario, Notification
 from .serializers import (
@@ -120,21 +122,41 @@ class RequestEmail(APIView):
         serializer = RequestEmailforResetPassword(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data['email']
-            user = Usuario.objects.get(email=email)
+            try: 
+                user = Usuario.objects.get(email=email)
+            except Usuario.DoesNotExist:
+                return Response({'message': 'Usuário não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+            
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             token = PasswordResetTokenGenerator().make_token(user)
-            print(
-                f"Olá este é o seu token de acesso para recuperar sua senha:\n\n"
-                f"Link: http://127.0.0.1:8000/api/forgotpassword/confirmtoken/{uidb64}/{token}"
+            
+            reset_url = f"http://127.0.0.1:8000/auth/forgotpassword/confirmtoken/{uidb64}/{token}"
+            
+            subject = "Redefinição de senha"
+            message = (
+                f"Olá {user.nome},\n\n"
+                f"Você solicitou a redefinição de sua senha. Clique no link abaixo para continuar:\n\n"
+                f"{reset_url}\n\n"
+                f"Se você não solicitou isso, ignore este e-mail.\n\n"
+                f"Atenciosamente,\nEquipe Participe+"
             )
-            return Response({'message': 'Email confirmado. Veja o terminal para acessar o token!'}, status=status.HTTP_200_OK)
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [email]
+            
+            try:
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                return Response({'message': 'E-mail enviado com sucesso! Verifique sua caixa de entrada.'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'message': f'Erro ao enviar o e-mail: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response({'message': 'Email inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CheckToken(APIView):
     """
     View para checar validade do token de redefinição de senha.
     """
-    def get(self, uidb64, token):
+    def get(self, request, uidb64, token):
         """
         Verifica se o token de redefinição é válido.
         """
