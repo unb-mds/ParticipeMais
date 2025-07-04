@@ -1,0 +1,41 @@
+site_name: Participe+
+nav:
+  - Home: index.md
+  - Contribuidores: contrib.md
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - toc.integrate
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - content.code.copy
+  navigation:
+    tabs: false
+  logo: img/logo.png
+
+
+extra:
+  generator: false
+  favicon: img/favicon.ico
+
+extra_javascript:
+  - https://cdn.tailwindcss.com?plugins=forms,container-queries
+  - https://cdn.tailwindcss.com?plugins=forms,container-queries
+
+extra_css:
+  - https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&display=swap
+  - https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap
+  - https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap
+  - https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap
+  - https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap
+  - stylesheets/style.css
+
+
+plugins: []
+
+
+

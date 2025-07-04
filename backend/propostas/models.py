@@ -17,3 +17,10 @@ class Propostas(models.Model):
 
     def __str__(self):
         return self.titulo_proposta
+    
+class Palavras_chave(models.Model):
+    proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE, related_name='palavras_chave')
+    palavras = models.CharField(max_length=500)
+
+    def __str__(self):
+        return f"{self.proposta.titulo_proposta[:30]} - {self.palavras}"
