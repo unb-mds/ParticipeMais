@@ -12,7 +12,7 @@ def adicionar_pontuacao_comentario(sender, instance, created, **kwargs):
     Adiciona pontos ao autor ao criar um comentário.
     """
     if created:
-        atualizar_pontuacao(instance.autor, 5)
+        atualizar_pontuacao(instance.autor, 10)
 
 @receiver(post_save, sender=Curtidas)
 def adicionar_pontuacao_curtida(sender, instance, created, **kwargs):

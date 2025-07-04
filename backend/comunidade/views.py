@@ -107,7 +107,7 @@ class CurtidaView(APIView):
         usuario = request.user
         
         try:
-            comentario = Comentarios.objects.get(pk=comentario_pk)
+            comentario = Comentarios.objects.get(pk=comentario_pk, chat_id = chat_pk)
         except Comentarios.DoesNotExist:
             return Response({"error": "Comentário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 

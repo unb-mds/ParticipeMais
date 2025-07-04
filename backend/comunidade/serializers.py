@@ -42,7 +42,7 @@ class ComentariosSerializer(serializers.ModelSerializer):
 
     def get_quantidade_curtidas(self, obj):
         """Retorna a quantidade de curtidas no comentário."""
-        return Curtidas.objects.filter(comentario=obj).count()
+        return Curtidas.objects.filter(comentario=obj, curtido = True).count()
 
     def validate(self, attrs):
         """Valida o conteúdo do comentário."""
