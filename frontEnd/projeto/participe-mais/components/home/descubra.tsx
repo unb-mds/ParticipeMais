@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, FlatList, Dimensions, TouchableOpacity, StyleSheet, Text, ImageBackground } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Feather } from '@expo/vector-icons'; 
 
 
 // Obtém a largura da tela para cálculo dos tamanhos dos quadrados
@@ -23,7 +24,8 @@ type Item = {
   imagemUrl?: string;
   pergunta?: string;
   autor?: string;
-  comentario_usuario?: string; // nome do ícone (ex: 'chat', 'help-circle', etc)
+  comentario_usuario?: string;
+  alternativas?: string[]; // ✅ adicionado aqui!
 };
 
 // Quadrado com cor aleatória de fundo representando uma proposta
@@ -41,14 +43,42 @@ const QuadradoProposta = () => {
 };
 
 // Quadrado especial com três botões de resposta
-const QuadradoBotao = () => (
-  <View style={[styles.quadradoBotao]}>
-    <Text style={styles.textoQuadrado}> Qual tema você se interessa mais?</Text>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-    <TouchableOpacity style={styles.botao_retangular}></TouchableOpacity>
-  </View>
-);
+const QuadradoBotao = ({ alternativas, pergunta }: { alternativas: string[], pergunta: string }) => {
+  const [respostaSelecionada, setRespostaSelecionada] = useState<number | null>(null);
+  const [corSelecionada, setCorSelecionada] = useState<string>('');
+
+  const coresAleatorias = ['#2670E8', '#4CAF50', '#FF9800', '#F44336', '#ce93d8'];
+
+  const votar = (index: number) => {
+    setRespostaSelecionada(index);
+    setCorSelecionada(coresAleatorias[Math.floor(Math.random() * coresAleatorias.length)]);
+  };
+
+  return (
+    <View style={styles.quadradoBotao}>
+      <Text style={styles.textoQuadrado}>{pergunta}</Text>
+      {alternativas.map((alt, i) => {
+        const selecionado = respostaSelecionada === i;
+        return (
+          <TouchableOpacity
+            key={i}
+            style={[
+              styles.botao_retangular,
+              selecionado && { backgroundColor: corSelecionada },
+            ]}
+            onPress={() => votar(i)}
+            disabled={respostaSelecionada !== null}
+          >
+            <Text style={[styles.textoQuadradoForum, { color: selecionado ? '#fff' : '#000' }]}>
+              {alt}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};
+
 
 // Quadrado com rótulo de "Comentário"}
 const QuadradoComentario = ({comentario, autor} : { comentario: string; autor: string}) => {
@@ -72,14 +102,41 @@ const QuadradoComentario = ({comentario, autor} : { comentario: string; autor: s
 
 
 // Quadrado com rótulo de "Enquete"
-const QuadradoEnquete = () => (
-  <TouchableOpacity>
-    
-    <View style={[styles.quadrado, { backgroundColor: '#ffd' }]}>
-      <Text style={styles.textoQuadrado}>Enquete</Text>
+const QuadradoEnquete = ({ pergunta }: { pergunta: string }) => {
+  const [resposta, setResposta] = useState<'sim' | 'nao' | null>(null);
+
+  return (
+    <View style={[styles.quadrado, { backgroundColor: '#ffd', padding: 10 }]}>
+      <Text style={[styles.textoQuadrado, { marginBottom: 10 }]}>{pergunta}</Text>
+
+      <View style={styles.botoesAvaliacao}>
+        {resposta !== 'nao' && (
+          <TouchableOpacity
+            style={[
+              styles.botaoSim,
+              resposta === 'sim' && { paddingHorizontal: 30, paddingVertical: 12 },
+            ]}
+            onPress={() => setResposta('sim')}
+          >
+            <Text style={[styles.textoSim, resposta === 'sim' && { fontSize: 16 }]}>Sim</Text>
+          </TouchableOpacity>
+        )}
+
+        {resposta !== 'sim' && (
+          <TouchableOpacity
+            style={[
+              styles.botaoNao,
+              resposta === 'nao' && { paddingHorizontal: 30, paddingVertical: 12 },
+            ]}
+            onPress={() => setResposta('nao')}
+          >
+            <Text style={[styles.textoNao, resposta === 'nao' && { fontSize: 16 }]}>Não</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
-  </TouchableOpacity>
-);
+  );
+};
 
 // Quadrado com imagem de fundo vinda de uma URL
 const QuadradoConferencia = ({ imagemUrl }: { imagemUrl: string }) => (
@@ -133,11 +190,12 @@ function shuffle(array: any[]) {
 
 // Componente principal que renderiza a grade de quadrados
 export default function DescubraSection() {
+  
   // quantidade de cada tipo de item
   const propostas = 1;
   const botoes = 1;
   const comentarios = 5;
-  const enquetes = 2;
+  const enquetes = 1;
   const conferencias = 3;
   const foruns = 1;
 
@@ -156,7 +214,16 @@ export default function DescubraSection() {
     ];
 
     const arrShuffle = shuffle(arr); // embaralha
-    const dataComBotao = [{ id: `botao-${botoes}`, tipo: 'botao' }, ...arrShuffle]; // insere botão no topo
+    const dataComBotao = [
+        {
+          id: `botao-${botoes}`,
+          tipo: 'botao',
+          pergunta: 'Qual tema você se interessa mais?',
+          alternativas: ['Meio Ambiente', 'Educação', 'Saúde'],
+        },
+        ...arrShuffle,
+      ];
+
 
     return dataComBotao;
   }, []);
@@ -164,13 +231,16 @@ export default function DescubraSection() {
   // Função que escolhe qual quadrado renderizar com base no tipo
   const renderItem = ({ item }: { item: Item }) => {
     if (item.tipo === 'proposta') return <QuadradoProposta />;
-    if (item.tipo === 'botao') return <QuadradoBotao />;
+    if (item.tipo === 'botao')
+      return <QuadradoBotao alternativas={item.alternativas ?? []} pergunta={item.pergunta ?? ''} />;
+
     if (item.tipo === 'comentario') return (
           <QuadradoComentario
           comentario={item.comentario_usuario ?? 'Gostaria de ver mais oficinas extracurriculares nas escolas “Gostaria de ver mais oficinas e como música e programação.”públicas, como música e programação. fo ?'}
           autor={item.autor ?? 'Joao'}/>);
 
-    if (item.tipo === 'enquete') return <QuadradoEnquete />;
+    if (item.tipo === 'enquete')
+      return <QuadradoEnquete pergunta={item.pergunta ?? 'Voce se interessa por infra'} />;
     if (item.tipo === 'conferencia') return <QuadradoConferencia imagemUrl={item.imagemUrl!} />;
     if (item.tipo === 'forum') {
           return (
@@ -274,7 +344,7 @@ quadradoBotao: {
   shadowRadius: 2,
 },
 textoQuadradoForum: {
-  fontSize: 16,
+  fontSize: 12,
   fontWeight: '600',
   color: '#fff',              // branco para contraste com o fundo colorido
   textAlign: 'center',
@@ -304,6 +374,43 @@ Comentario: {
   textAlign: 'center',
   fontFamily: 'Raleway_400Bold',
   padding: 6,
+},
+botoesAvaliacao: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  gap: 10,
+},
+
+botaoSim: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#8BC34A',
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 8,
+},
+
+botaoNao: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#FF5722',
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 8,
+},
+
+textoSim: {
+  color: '#000',
+  fontSize: 12,
+  fontFamily: 'Raleway_700Bold',
+
+},
+
+textoNao: {
+  color: '#000',
+  fontSize: 12,
+  fontFamily: 'Raleway_700Bold',
+
 },
 });
 

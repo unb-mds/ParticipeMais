@@ -8,13 +8,20 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Ionicons,FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import CategoriaDescricao from '../components/categoria/categoriadescricao';
+import CategoriaIcone from '../components/categoria/categoriaIcon'; // ajuste o caminho se necessário
+import NuvemDePalavras from '../components/categoria/nuvem'; // ajuste o caminho se necessário
 
 export default function Categoria() {
   const router = useRouter();
+const dados = [
+  { categoria: 'Meio Ambiente', comentario: 'Devíamos ter mais árvores nas cidades!', autor: 'João Silva' },
+  { categoria: 'Meio Ambiente', comentario: 'Postos de saúde precisam de mais médicos.', autor: 'Maria Souza' },
+  { categoria: 'Meio Ambiente', comentario: 'A escola do bairro precisa de reforma.', autor: 'Carlos Lima' },
+];
 
    const imagensConferencias = [
     { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png'},
@@ -40,6 +47,25 @@ const imagensPlanos = [
     { categoria: 'Meio Ambiente', enquete: 'Uso de energia renovável em espaços públicos', curtidas: 30, numeroComentario: 12 },
     { categoria: 'Meio Ambiente', enquete: 'Redução do consumo de plásticos nas cidades', curtidas: 28, numeroComentario: 10 },
   ];
+
+  const listaPalavras = [
+  'sustentabilidade',
+  'ambiental',
+  'universidade',
+  'campus',
+  'questão',
+  'resíduo',
+  'diversão',
+  'ação',
+  'preservação',
+  'pesquisa',
+  'área',
+  'ambiente',
+    'ambiente',
+      'ambiente',
+        'ambiente',
+          'ambiente',
+];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -119,20 +145,54 @@ const imagensPlanos = [
             {enquetes.map((item, index) => (
               <TouchableOpacity key={`${item.categoria}-${index}`}>
                 <View style={styles.cardEnquete}>
-                  <View style={styles.linha}>
-                    <Text style={styles.textoEnquete}>{item.enquete}</Text>
-                  </View>
-                  <View style={styles.linha}>
-                    <MaterialCommunityIcons name="cards-heart-outline" size={14} color="#000" />
-                    <Text style={styles.infoEnquete}>{item.curtidas} curtidas</Text>
-                    <MaterialIcons name="chat-bubble-outline" size={12} color="#000" style={{ marginLeft: 12 }} />
-                    <Text style={styles.infoEnquete}>{item.numeroComentario} comentários</Text>
-                  </View>
+                <View style={styles.linha_icon}>
+                  <CategoriaIcone categoria={item.categoria} tamanho={35} />
+                  <Text style={styles.textoEnquete}>{item.enquete}</Text>
                 </View>
+                <View style={styles.linha}>
+                  
+                  <MaterialCommunityIcons name="cards-heart-outline" size={14} color="#000" />
+                  <Text style={styles.infoEnquete}>{item.curtidas} curtidas</Text>
+                  <MaterialIcons name="chat-bubble-outline" size={12} color="#000" style={{ marginLeft: 12 }} />
+                  <Text style={styles.infoEnquete}>{item.numeroComentario} comentários</Text>
+                </View>
+              </View>
+
               </TouchableOpacity>
             ))}
           </ScrollView>
+          </View>
+      <View style={styles.viewAlinhador}>
+        <Text style={styles.titulo_enquete}>Acesse as enquetes pelos comentários!</Text>
         </View>
+
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.carrossel}
+          keyExtractor={(item, index) => `${item.categoria}-${index}`}
+          data={dados} // <- você precisa ter `const dados = [...]` no mesmo arquivo
+          renderItem={({ item }) => (
+            <TouchableOpacity>
+              <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(item.categoria) }]}>
+                <View style={styles.dados_comentarios}>
+                  {/* Ícone + nome do autor alinhados à esquerda */}
+                  <View style={styles.autorHeader}>
+                    <FontAwesome5 name="user-circle" size={14} color="#fff" style={{ marginRight: 6 }} />
+                    <Text style={styles.autorComentario}>{item.autor}</Text>
+                  </View>
+
+                  {/* Comentário */}
+                  <Text style={styles.comentarioTexto}>
+                    {`"${item.comentario}"`}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+        <NuvemDePalavras palavras={listaPalavras} />
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -145,6 +205,16 @@ function corAleatoria(): string {
   return cores[Math.floor(Math.random() * cores.length)];
 }
 
+function corDaCategoria(categoria: string): string {
+  const mapaCores: Record<string, string> = {
+    'meio ambiente': '#4CAF50',
+    'infraestrutura': '#FF9800',
+    'saúde': '#2670E8',
+    'educação': '#ce93d8',
+    'cultura': '#F44336',
+  };
+  return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
+}
 
 // 🎨 Styles
 const styles = StyleSheet.create({
@@ -208,6 +278,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 4,
+    marginLeft:10
   },
   textoEnquete: {
     fontSize: 14,
@@ -218,5 +289,66 @@ const styles = StyleSheet.create({
   infoEnquete: {
     fontSize: 12,
     color: '#555',
+    
+  },
+   linha_icon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
+    
+  }, 
+    viewAlinhador: {
+    width: '100%',
+    alignSelf: 'stretch',
+    marginTop:20,
+  },
+  titulo_enquete: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    fontFamily: 'Raleway_700Bold',
+  },
+  carrossel: {
+    marginTop:20,
+    paddingHorizontal: 16,
+    gap: 6,
+  },
+  bloco_comentarios: {
+    borderRadius: 5,
+    padding: 12,
+    elevation: 2,
+    minWidth: 200,
+    maxWidth: 240,
+    minHeight: 120,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    marginRight: 5,
+  },
+  dados_comentarios: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  autorHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    width: '100%',
+    marginBottom: 6,
+  },
+  autorComentario: {
+    fontSize: 14,
+    color: '#fff',
+    fontFamily: 'Raleway_400Regular',
+  },
+  comentarioTexto: {
+    fontSize: 14,
+    color: '#fff',
+    fontFamily: 'Raleway_400Regular',
+    width: '100%',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
 });
