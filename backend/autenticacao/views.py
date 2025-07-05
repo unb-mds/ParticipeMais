@@ -11,6 +11,7 @@ from rest_framework import status, permissions, generics
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Usuario, Notification
+
 from .serializers import (
     UsuarioSerializer,
     LoginSerializer,
@@ -261,3 +262,4 @@ class AlterarSenhaView(APIView):
         usuario.set_password(nova_senha)
         usuario.save()
         return Response({'message': 'Senha alterada com sucesso!'}, status=status.HTTP_200_OK)
+    

@@ -57,6 +57,7 @@ export default function ConferenciaDetalhadaScreen() {
   const [etapas, setEtapas] = useState<Etapas[]>([]);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [favorito, setFavorito] = useState<boolean>(false);
 
   useEffect(() => {
     const obterToken = async () => {
@@ -98,6 +99,7 @@ export default function ConferenciaDetalhadaScreen() {
         setEtapas(data.etapas || []);
         setPropostas(data.propostas || []);
         setLoading(false);
+        setFavorito(data.conferencias.favoritado);
 
       } else {
         router.replace('/login');
@@ -106,7 +108,45 @@ export default function ConferenciaDetalhadaScreen() {
       router.replace('/login');
     }
   };
+//--------------------------------FAVORITO
+    const verificarFavorito = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      const idsFavoritos = data.favoritos; // deve ser lista de IDs
+      setFavorito(idsFavoritos.includes(Number(id)));
+    } catch (error) {
+      console.error('Erro ao verificar favorito', error);
+    }
+  };
+  useEffect(() => {
+  if (token && id) {
+    fetchConferencias();
+  }
+}, [token, id]);
 
+  const toggleFavorito = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      setFavorito((prev) => !prev); // inverte localmente
+    } else {
+      console.warn('Não foi possível atualizar favorito');
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar favorito', error);
+  }
+};
 
   const eixos = [
     {
@@ -158,12 +198,23 @@ export default function ConferenciaDetalhadaScreen() {
   console.log('Conferências:', conferencias);
   // console.log('Etapas:', etapas);
   // console.log('Propostas:', propostas);
+//-------------------------------------- FAVORITO
 
 
   return (
     
     <SafeAreaView style={styles.container_total}>
-      <Header router={router} titulo="Conferências" />
+
+    <Header
+      router={router}
+      titulo="Conferências"
+      favorito={favorito}
+      onToggleFavorito={toggleFavorito}
+    />
+
+
+
+
 
       <FlatList
         data={[]} // conteudo renderizado só no header

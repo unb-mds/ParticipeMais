@@ -6,6 +6,8 @@ from propostas.models import Propostas
 from .serializers import *
 from collections import Counter     
 import re
+from autenticacao.models import Usuario  
+from .models import Conferencia      
 
 # Lista todas as conferências cadastradas
 class ListaConferencias(APIView):
@@ -39,6 +41,7 @@ class AcessaConferencia(APIView):
 
         etapas = Etapas.objects.filter(conferencia=conferencia)
         etapas_serializer = EtapaSerializer(etapas, many=True, context={'request': request})
+        favoritado = conferencia in request.user.conferencias.all()
 
         return Response({
             'message': 'Conferência encontrada!',
@@ -146,3 +149,23 @@ class EtapaDireta(APIView):
             'sub-conferencias': serializer.data,
             'propostas_relacionadas': propostasSerializer.data
         })
+
+
+class ToggleConferenciaView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, conferencia_id):
+        try:
+            conferencia = Conferencia.objects.get(id=conferencia_id)
+        except Conferencia.DoesNotExist:
+            return Response({'message': 'Conferência não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if conferencia in user.conferencias.all():
+            user.conferencias.remove(conferencia)
+            return Response({'message': 'Conferência removida dos favoritos.'})
+        else:
+            user.conferencias.add(conferencia)
+            return Response({'message': 'Conferência adicionada aos favoritos.'})

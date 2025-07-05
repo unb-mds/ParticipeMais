@@ -6,10 +6,12 @@ import { useRouter } from 'expo-router';
 type Props = {
   router: ReturnType<typeof useRouter>;
   titulo: string;
+  favorito: boolean;
+  onToggleFavorito: () => void;
 };
 
-export default function Header({ router, titulo }: Props) {
-  const [favorito, setFavorito] = useState(false);
+export default function Header({ router, titulo, favorito, onToggleFavorito }: Props) {
+    console.log('Renderizando Header - Favorito:', favorito); // ✅ TESTE AQUI
 
   return (
     <View style={styles.header}>
@@ -19,7 +21,7 @@ export default function Header({ router, titulo }: Props) {
 
       <Text style={styles.headerTitle}>{titulo}</Text>
 
-      <TouchableOpacity onPress={() => setFavorito(!favorito)}>
+      <TouchableOpacity onPress={onToggleFavorito}>
         <Ionicons
           name={favorito ? 'heart' : 'heart-outline'}
           size={28}
@@ -29,6 +31,7 @@ export default function Header({ router, titulo }: Props) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   header: {

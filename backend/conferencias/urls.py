@@ -14,4 +14,6 @@ urlpatterns = [
     path('<int:pk>/perguntas', AcessaPerguntas.as_view(), name='perguntas'),
     path('<int:pk>/etapas', AcessaEtapas.as_view(), name='etapas'),
     path('<int:pk>/etapas/<int:jk>/', EtapaDireta.as_view(), name='essa_etapa'),
+    path('toggle/<int:conferencia_id>/', ToggleConferenciaView.as_view(), name='toggle_conferencia'),
+
 ]

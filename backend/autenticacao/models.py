@@ -42,6 +42,10 @@ class Usuario(AbstractBaseUser):
     data_nascimento = models.DateField()
     favoritos = models.ManyToManyField('propostas.Propostas', blank=True, related_name='favoritas')
     status = models.BooleanField(default=True)
+
+    conferencias = models.ManyToManyField('conferencias.Conferencia', blank=True, related_name='usuarios_conferencias')
+    planos = models.ManyToManyField('planos.Planos', blank=True, related_name='usuarios_planos')
+    consultas = models.ManyToManyField('consultas.Consultas', blank=True, related_name='usuarios_consultas')
     idPerfilUser = models.OneToOneField('Perfil', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -59,7 +63,7 @@ class Perfil(models.Model):
     qtd_propostas = models.IntegerField(default=0)
     qtd_comentarios = models.IntegerField(default=0)
     qtd_likes = models.IntegerField(default=0)
-
+    
     def __str__(self):
         """
         Retorna representação textual do perfil.

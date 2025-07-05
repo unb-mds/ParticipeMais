@@ -5,7 +5,9 @@ Serializers para autenticação do ParticipeMais.
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import Usuario, Notification
-
+from conferencias.models import Conferencia
+from planos.models import Planos
+from consultas.models import Consultas
 
 class PerfilSerializer(serializers.ModelSerializer):
     """
@@ -20,31 +22,57 @@ class UsuarioSerializer(serializers.ModelSerializer):
     Serializer para o modelo Usuario.
     Serializa os campos básicos e trata a criação com senha criptografada.
     """
-    
+    conferencias = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Conferencia.objects.all(), required=False
+    )
+    planos = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Planos.objects.all(), required=False
+    )
+    consultas = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Consultas.objects.all(), required=False
+    )
     idPerfilUser = PerfilSerializer(read_only=True)
     class Meta:
         model = Usuario
-        fields = ['id', 'nome', 'email', 'data_nascimento', 'password', 'idPerfilUser']
+        fields = ['id', 'nome', 'email', 'data_nascimento', 'password', 'idPerfilUser','conferencias','planos','consultas']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         """
         Cria um novo usuário com senha criptografada.
         """
+        conferencias = validated_data.pop('conferencias', [])
+        planos = validated_data.pop('planos', [])
+        consultas = validated_data.pop('consultas', [])
         password = validated_data.pop('password', None)
         usuario = Usuario(**validated_data)
         if password is not None:
             usuario.set_password(password)
             usuario.save()
+
+        usuario.conferencias.set(conferencias)
+        usuario.planos.set(planos)
+        usuario.consultas.set(consultas)
+
         return usuario
     
     
     def update(self, instance, validated_data):
-        
+        conferencias = validated_data.pop('conferencias', None)
+        planos = validated_data.pop('planos', None)
+        consultas = validated_data.pop('consultas', None)
         password = validated_data.pop('password', None)
         if password is not None:
             instance.set_password(password)
             instance.save()
+
+        if conferencias is not None:
+            instance.conferencias.set(conferencias)
+        if planos is not None:
+            instance.planos.set(planos)
+        if consultas is not None:
+            instance.consultas.set(consultas)
+            
         return super().update(instance, validated_data)
 
 

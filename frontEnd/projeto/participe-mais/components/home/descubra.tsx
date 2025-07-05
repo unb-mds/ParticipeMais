@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View,
   FlatList,
@@ -27,6 +27,7 @@ interface Proposta { id: number; titulo_proposta: string; autor: string; }
 
 type ItemType = 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' | 'forum' | 'plano' | 'consulta';
 
+
 const CORES_QUADRADOS = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
 const gerarCorAleatoria = () => CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
 
@@ -39,7 +40,83 @@ interface Item {
   autor?: string;
   comentario_usuario?: string;
   cor?: string;
+  alternativas?: string[];
 }
+
+const QuadradoEnquete = ({ pergunta }: { pergunta: string }) => {
+  const [resposta, setResposta] = useState<'sim' | 'nao' | null>(null);
+
+  return (
+    <View style={[styles.quadrado, { backgroundColor: '#ffd', padding: 10 }]}>
+      <Text style={[styles.textoQuadrado, { marginBottom: 10 }]}>{pergunta}</Text>
+
+      <View style={styles.botoesAvaliacao}>
+        {resposta !== 'nao' && (
+          <TouchableOpacity
+            style={[
+              styles.botaoSim,
+              resposta === 'sim' && { paddingHorizontal: 30, paddingVertical: 12 },
+            ]}
+            onPress={() => setResposta('sim')}
+          >
+            <Text style={[styles.textoSim, resposta === 'sim' && { fontSize: 16 }]}>Sim</Text>
+          </TouchableOpacity>
+        )}
+
+        {resposta !== 'sim' && (
+          <TouchableOpacity
+            style={[
+              styles.botaoNao,
+              resposta === 'nao' && { paddingHorizontal: 30, paddingVertical: 12 },
+            ]}
+            onPress={() => setResposta('nao')}
+          >
+            <Text style={[styles.textoNao, resposta === 'nao' && { fontSize: 16 }]}>Não</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+};
+
+// Quadrado especial com três botões de resposta
+const QuadradoBotao = ({ alternativas, pergunta }: { alternativas: string[], pergunta: string }) => {
+  const [respostaSelecionada, setRespostaSelecionada] = useState<number | null>(null);
+  const [corSelecionada, setCorSelecionada] = useState<string>('');
+
+  const coresAleatorias = ['#2670E8', '#4CAF50', '#FF9800', '#F44336', '#ce93d8'];
+
+  const votar = (index: number) => {
+    setRespostaSelecionada(index);
+    setCorSelecionada(coresAleatorias[Math.floor(Math.random() * coresAleatorias.length)]);
+  };
+
+  return (
+    <View style={styles.quadradoBotao}>
+      <Text style={styles.textoQuadrado}>{pergunta}</Text>
+      {alternativas.map((alt, i) => {
+        const selecionado = respostaSelecionada === i;
+        return (
+          <TouchableOpacity
+            key={i}
+            style={[
+              styles.botaoRetangular,
+              selecionado && { backgroundColor: corSelecionada },
+            ]}
+            onPress={() => votar(i)}
+            disabled={respostaSelecionada !== null}
+          >
+            <Text style={[styles.textoQuadradoForum, { color: selecionado ? '#fff' : '#000' }]}>
+              {alt}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};
+
+
 
 const QuadradoProposta = ({ titulo_proposta, autor, cor }: { titulo_proposta: string, autor: string, cor: string }) => (
   <TouchableOpacity activeOpacity={0.7}>
@@ -532,4 +609,56 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_400Regular',
     padding: 6,
   },
+  conteiner_quadrado: {
+  backgroundColor: 'white',
+  margin: 10,
+  minHeight: QUADRADO_GRANDE_SIZE,
+  width: QUADRADO_GRANDE_SIZE,
+  alignSelf: 'center',
+  overflow: 'hidden',
+},
+
+Comentario: {
+  fontSize: 12,
+  color: '#fff',
+  textAlign: 'center',
+  fontFamily: 'Raleway_400Bold',
+  padding: 6,
+},
+
+botoesAvaliacao: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  gap: 10,
+},
+
+botaoSim: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#8BC34A',
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 8,
+},
+
+botaoNao: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#FF5722',
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 8,
+},
+
+textoSim: {
+  color: '#000',
+  fontSize: 12,
+  fontFamily: 'Raleway_700Bold',
+},
+
+textoNao: {
+  color: '#000',
+  fontSize: 12,
+  fontFamily: 'Raleway_700Bold',
+},
 });

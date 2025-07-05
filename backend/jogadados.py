@@ -18,49 +18,6 @@ from consultas.models import Consultas
 from propostas.models import Propostas
 
 
-
-
-
-# ==================== Oficinas ====================
-
-df_oficinass = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv')
-
-colunas = ["Plano", "Título Oficina", "Descricao Oficina", "Inscritos Oficina", "Regiao Oficina", "Status Oficina", "Data Oficina", "Propostas Oficina", "Quantidade Propostas Oficina",]  # Substitua pelos nomes reais que você espera
-df_oficinas = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv', header=None, names=colunas)
-
-
-for _, row in df_oficinas.iterrows():
-        nome = row.get('Plano')
-        if nome == 'Conheça como foi o processo participativo do Novo Plano Nacional de Cultura':
-            nome = 'Novo Plano Nacional de Cultura'
-
-
-        plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
-        raw_inscritos = row.get('Inscritos Oficina', '0')
-        if raw_inscritos == "Não informado" or pd.isna(raw_inscritos):
-            inscritos = -1
-        else:
-            try:
-                inscritos = int(raw_inscritos)
-            except ValueError:
-                inscritos = -1
-
-        Oficinas.objects.get_or_create(
-            titulo_oficina=row['Título Oficina'],
-            descricao_oficina=row['Descricao Oficina'],
-            status=row['Status Oficina'],
-            regiao_oficina=row.get('Regiao Oficina', ''),
-            duracao_oficina=row.get('Data Oficina', ''),
-            qtd_propostas_oficina=row.get("Quantidade Propostas Oficina", 0),
-            qtd_inscritos_oficina=inscritos,
-            propostas_relacionadas=row.get('Propostas Oficina', ''),
-            plano=plano,
-        )
-
-print('Oficinas importadas')
-
-
-
 # ==================== Conferencias ====================
 df_conferencias = pd.read_csv('../WebScraper/resultados/conferencias/conferenciass.csv')
 df_conferencias2 = pd.read_csv('../WebScraper/resultados/conferencias/perguntas.csv')
@@ -175,6 +132,49 @@ for _, row in df_consultas2.iterrows():
 
 print('Consultas importadas com sucesso!')
 
+
+
+
+# ==================== Oficinas ====================
+
+df_oficinass = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv')
+
+colunas = ["Plano", "Título Oficina", "Descricao Oficina", "Inscritos Oficina", "Regiao Oficina", "Status Oficina", "Data Oficina", "Propostas Oficina", "Quantidade Propostas Oficina",]  # Substitua pelos nomes reais que você espera
+df_oficinas = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv', header=None, names=colunas)
+
+
+for _, row in df_oficinas.iterrows():
+        nome = row.get('Plano')
+        if nome == 'Conheça como foi o processo participativo do Novo Plano Nacional de Cultura':
+            nome = 'Novo Plano Nacional de Cultura'
+
+
+        plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
+        raw_inscritos = row.get('Inscritos Oficina', '0')
+        if raw_inscritos == "Não informado" or pd.isna(raw_inscritos):
+            inscritos = -1
+        else:
+            try:
+                inscritos = int(raw_inscritos)
+            except ValueError:
+                inscritos = -1
+
+        Oficinas.objects.get_or_create(
+            titulo_oficina=row['Título Oficina'],
+            descricao_oficina=row['Descricao Oficina'],
+            status=row['Status Oficina'],
+            regiao_oficina=row.get('Regiao Oficina', ''),
+            duracao_oficina=row.get('Data Oficina', ''),
+            qtd_propostas_oficina=row.get("Quantidade Propostas Oficina", 0),
+            qtd_inscritos_oficina=inscritos,
+            propostas_relacionadas=row.get('Propostas Oficina', ''),
+            plano=plano,
+        )
+
+print('Oficinas importadas')
+
+
+
 # ==================== Propostas ====================
 df_conf = pd.read_csv('../WebScraper/resultados/conferencias/propostas.csv')
 df_planos1 = pd.read_csv('../WebScraper/resultados/planos/propostas_planos.csv')
@@ -184,6 +184,24 @@ df_consultas = pd.read_csv(
     encoding='utf-8',
     lineterminator='\n'
 )
+
+
+def extrair_urls_brutas(texto):
+    """
+    Extrai todas as URLs válidas da string, ignorando aspas e colchetes mal formatados.
+    """
+    if not texto:
+        return []
+    
+    # Remove colchetes, aspas extras e espaços
+    texto_limpo = texto.replace('[', '').replace(']', '').replace("'", '').replace('"', '')
+    
+    # Expressão regular para capturar URLs
+    urls = re.findall(r'https?://[^\s,]+', texto_limpo)
+    
+    return urls
+
+
 
 for _, row in df_conf.iterrows():
     conf = Conferencia.objects.filter(titulo=row.get('Conferência')).first() if pd.notna(row.get('Conferência')) else None
@@ -197,6 +215,32 @@ for _, row in df_conf.iterrows():
         url_proposta=row.get('Link', ''),
         conferencia=conf,
     )
+
+for _, row in df_etapas.iterrows():
+    titulo_etapa = str(row.get('Título Etapa')).strip()
+    urls_str = str(row.get('Propostas Etapa')).strip()
+
+    if not titulo_etapa or not urls_str:
+        continue
+
+    # Divide as URLs relacionadas por vírgula
+    urls = extrair_urls_brutas(urls_str)
+
+    # Busca a etapa no banco
+    etapa = Etapas.objects.filter(titulo_etapa=titulo_etapa).first()
+    if not etapa:
+        print(f"[!] Etapa não encontrada: {titulo_etapa}")
+        continue
+
+    # Para cada URL, encontra a proposta e associa a etapa
+    for url in urls:
+        proposta = Propostas.objects.filter(url_proposta=url).first()
+        if proposta:
+            proposta.etapa = etapa
+            proposta.save()
+            print(f"[✓] Proposta '{proposta.titulo_proposta}' associada à etapa '{etapa.titulo_etapa}'")
+        else:
+            print(f"[X] Proposta com URL '{url}' não encontrada no banco")
 
 for df in [df_planos1, df_planos2]:
     for _, row in df.iterrows():
