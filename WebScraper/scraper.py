@@ -3,6 +3,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 options = Options()
@@ -31,24 +32,24 @@ for card in cards:
         if titulo in secoes_desejadas:
             cards_filtrados.append(card)
             titulos_filtrados.append(titulo)
-    except:
+    except NoSuchElementException:
         continue
 
 
 # aqui clica nas secoes filtradas
-for i in range(len(cards_filtrados)):
+for i, card in enumerate(cards_filtrados):
     driver.get("https://brasilparticipativo.presidencia.gov.br/")
     wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "section-card")))
     time.sleep(1)
 
     cards = driver.find_elements(By.CLASS_NAME, "section-card")
     cards_filtrados = []
-    for card in cards:
+    for card_inner in cards:
         try:
-            titulo = card.find_element(By.CLASS_NAME, "section-card-title").text.strip()
+            titulo = card_inner.find_element(By.CLASS_NAME, "section-card-title").text.strip()
             if titulo in secoes_desejadas:
-                cards_filtrados.append(card)
-        except:
+                cards_filtrados.append(card_inner)
+        except NoSuchElementException:
             continue
 
     card = cards_filtrados[i]
@@ -102,7 +103,7 @@ for i in range(len(cards_filtrados)):
 
                     # algumas "propostas" levava para uma noticia ou abria um docs
                     if "/posts/" in proposta_url or "docs.google.com" in proposta_url:
-                        print(f"ignorando URL de notícia ou docs")
+                        print("ignorando URL de notícia ou docs")
                         continue
 
                     # evita abrir pagina de propostas que ja foram abertas
@@ -169,7 +170,7 @@ for i in range(len(cards_filtrados)):
 
                                             break  # sai do for assim que encontrar e entrar na próxima página
 
-                                        except Exception as e:
+                                        except Exception:
                                             # print(f"li[{x}] não encontrado, tentando próximo...")
                                             continue
                                     else:
@@ -191,8 +192,8 @@ for i in range(len(cards_filtrados)):
             except Exception as e:
                 print(f"erro ao buscar proposta: {e}")
 
-            driver.close() # fecha a aba
-            driver.switch_to.window(driver.window_handles[0]) # volta pra aba anterior
+            driver.close()  # fecha a aba
+            driver.switch_to.window(driver.window_handles[0])  # volta pra aba anterior
             time.sleep(1)
 
     except Exception as e:
@@ -200,8 +201,3 @@ for i in range(len(cards_filtrados)):
 
 driver.quit()
 print("acabouuu")
-
-
-# PROBLEMAS A RESOLVER
-
-# VER SE PRECISA PEGAR METAS e PROPOSTA-BASE

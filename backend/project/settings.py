@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,9 @@ SECRET_KEY = 'django-insecure-+@gdz3wj=z+y93nic@(e67k*s8lm8zz!(2psqs)z)mnmb@89#g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.0.10", 'localhost']
+
+ALLOWED_HOSTS = ['127.0.0.1', '172.20.10.9', '192.168.0.16', 'localhost'] # se quiser adicionar o ipv4 do seu computador
+
 
 AUTH_USER_MODEL = 'autenticacao.Usuario'
 
@@ -99,24 +103,48 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'ALGORITHM': 'HS256'
 }
 
+#========================EMAIL===================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+
+
+#=================================================================
+
 WSGI_APPLICATION = 'project.wsgi.application'
+
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'participemais',
-        'USER': 'postgres',
-        'PASSWORD': 'yuri',
-        'HOST': 'localhost',  
-        'PORT': '5432',       
+
+if 'test' in sys.argv or os.getenv("USE_SQLITE", "false").lower() == "true":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',  # banco em memória
+        }
     }
-}
+else:
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'participemais'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'unbook'),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        }
+    }
 
 
 # Password validation
@@ -137,6 +165,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 
