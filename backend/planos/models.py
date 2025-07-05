@@ -13,3 +13,16 @@ class Planos(models.Model):
 
     def __str__(self):
         return self.nome  # Garante que o retorno seja uma string
+    
+class Oficinas(models.Model):
+    titulo_oficina = models.CharField(max_length=500)
+    descricao_oficina = models.TextField()
+    status = models.CharField(max_length=50)
+    regiao_oficina = models.CharField(default="não informado", max_length=250)
+    duracao_oficina = models.CharField(max_length=100, default="não informado", null=False, blank=False)
+    qtd_propostas_oficina = models.IntegerField(default=0, null=True)
+    qtd_inscritos_oficina = models.IntegerField(default=0, null=True)
+    propostas_relacionadas = models.TextField(blank=True, null=True)
+    plano = models.ForeignKey(Planos, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.titulo_etapa

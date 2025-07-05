@@ -13,9 +13,53 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
 from conferencias.models import Conferencia, Etapas, PerguntasParticipativas
-from planos.models import Planos
+from planos.models import Planos, Oficinas
 from consultas.models import Consultas
 from propostas.models import Propostas
+
+
+
+
+
+# ==================== Oficinas ====================
+
+df_oficinass = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv')
+
+colunas = ["Plano", "Título Oficina", "Descricao Oficina", "Inscritos Oficina", "Regiao Oficina", "Status Oficina", "Data Oficina", "Propostas Oficina", "Quantidade Propostas Oficina",]  # Substitua pelos nomes reais que você espera
+df_oficinas = pd.read_csv('../WebScraper/resultados/planos/oficinas.csv', header=None, names=colunas)
+
+
+for _, row in df_oficinas.iterrows():
+        nome = row.get('Plano')
+        if nome == 'Conheça como foi o processo participativo do Novo Plano Nacional de Cultura':
+            nome = 'Novo Plano Nacional de Cultura'
+
+
+        plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
+        raw_inscritos = row.get('Inscritos Oficina', '0')
+        if raw_inscritos == "Não informado" or pd.isna(raw_inscritos):
+            inscritos = -1
+        else:
+            try:
+                inscritos = int(raw_inscritos)
+            except ValueError:
+                inscritos = -1
+
+        Oficinas.objects.get_or_create(
+            titulo_oficina=row['Título Oficina'],
+            descricao_oficina=row['Descricao Oficina'],
+            status=row['Status Oficina'],
+            regiao_oficina=row.get('Regiao Oficina', ''),
+            duracao_oficina=row.get('Data Oficina', ''),
+            qtd_propostas_oficina=row.get("Quantidade Propostas Oficina", 0),
+            qtd_inscritos_oficina=inscritos,
+            propostas_relacionadas=row.get('Propostas Oficina', ''),
+            plano=plano,
+        )
+
+print('Oficinas importadas')
+
+
 
 # ==================== Conferencias ====================
 df_conferencias = pd.read_csv('../WebScraper/resultados/conferencias/conferenciass.csv')
@@ -159,6 +203,8 @@ for df in [df_planos1, df_planos2]:
         nome = row.get('Plano')
         if nome == 'Não tem o titulo na página':
             nome = 'Plano Clima Participativo'
+        if nome == 'Conheça como foi o processo participativo do Novo Plano Nacional de Cultura':
+            nome = 'Novo Plano Nacional de Cultura'
 
         plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
         votos = int(re.sub(r'\D', '', str(row.get('Votos', '0')))) if re.sub(r'\D', '', str(row.get('Votos', '0'))) else 0
