@@ -18,9 +18,27 @@ type Props = {
   setAbaAtiva: React.Dispatch<React.SetStateAction<'comunidade' | 'descubra' | 'pesquisar'>>;
 };
 
+const niveis = [
+  { nome: "Iniciante Cívico", minimo: 0 },
+  { nome: "Votante Iniciante", minimo: 50 },
+  { nome: "Ativador de Temas", minimo: 100 },
+  { nome: "Cidadão Participativo", minimo: 150 },
+  { nome: "Explorador de Temas", minimo: 250 },
+  { nome: "Construtor de Vozes", minimo: 350 },
+  { nome: "Guardião do Debate", minimo: 450 },
+  { nome: "Conselheiro Político", minimo: 550 },
+  { nome: "Líder Comunitário", minimo: 650 },
+  { nome: "Mestre Cívico", minimo: 800 },
+];
+
 export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
   const router = useRouter();
   const [score, setScore] = useState<{ xp: number; nivel: number } | null>(null);
+
+  const nivelAtualIndex = niveis.findLastIndex(n => (score?.xp ?? 0) >= n.minimo);
+  const nivelNome = niveis[nivelAtualIndex]?.nome || 'Desconhecido';
+  const proximoMinimo = niveis[nivelAtualIndex + 1]?.minimo || (score?.xp ?? 0) + 1;
+  const progressoXP = Math.min(100, ((score?.xp ?? 0) / proximoMinimo) * 100);
 
   useEffect(() => {
     const fetchScore = async () => {
@@ -97,7 +115,7 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
               </View>
 
               <Text style={styles.textoAbaixo}>
-                Você está no nível {score?.nivel ?? 1}
+                Nível {nivelAtualIndex + 1} - {nivelNome}
               </Text>
 
               <View style={styles.linhaBarra}>
@@ -105,11 +123,13 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
                   <View
                     style={[
                       styles.barraXp,
-                      { width: `${((score?.xp ?? 0) / 500) * 100}%` },
+                      { width: `${progressoXP}%` }
                     ]}
                   />
                 </View>
-                <Text style={styles.texto_barra}>{score?.xp ?? 0} / 500 xp</Text>
+                <Text style={styles.texto_barra}>
+                  {score?.xp ?? 0} / {proximoMinimo} xp
+                </Text>
               </View>
             </View>
           </TouchableOpacity>

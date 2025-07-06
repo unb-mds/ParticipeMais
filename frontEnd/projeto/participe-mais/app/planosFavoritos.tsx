@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, ImageBackground, TouchableOpacity, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Ícones de seta
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -13,33 +15,79 @@ function corAleatoria(): string {
   return cores[Math.floor(Math.random() * cores.length)];
 }
 
-
-const imagensPlanos = [
-  { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
-  { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-  { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-  { id: '4', imagem: 'https://ns-dtp-prd-df.s3-df-govcloud.dataprev.gov.br/gcc-decidim/gcc-decidim/s8z5gafv6jveenp7mtgozp290jwd?response-content-disposition=inline%3B%20filename%3D"Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%20%25281%2529.png"%3B%20filename%2A%3DUTF-8%27%27Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%2520%25281%2529.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=user_dec_prd_df%2F20250610%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250610T003330Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=d96fe11a81ff2624b90ee0bdb38ecbe97883f3e07f84e119d3a6a4adb665cd9e' },
-  ];
-
 export default function PlanosFavoritos({ navigation }: any) {
-    const router = useRouter();
-  const handlePress = (item: any) => {
-    console.log('Clicou em:', item);
-  };
+  const router = useRouter();
 
-    const renderItem = ({ item }: any) => {
-    const borderColor = corAleatoria();
-
-    return (
-        <TouchableOpacity style={[styles.item, { borderColor }]} onPress={() => handlePress(item)}>
-        <ImageBackground
-            source={{ uri: item.imagem }}
-            style={styles.image}
-            imageStyle={styles.imageBorder}
-        />
-        </TouchableOpacity>
-    );
+    const handlePress = (item: any) => {
+      router.push(`/planos/?id=${item.id}` as any);
     };
+
+      const renderItem = ({ item }: any) => {
+      const borderColor = corAleatoria();
+
+      return (
+      <TouchableOpacity style={[styles.item, { borderColor }]} onPress={() => handlePress(item)}>
+            <ImageBackground
+              source={{ uri: item.image_url }}
+              style={styles.image}
+              imageStyle={styles.imageBorder}
+            />
+          </TouchableOpacity>
+      );
+      };
+
+      const [favoritos, setFavoritos] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const buscarFavoritos = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+            console.log('Token recuperado:', token);
+
+        if (!token) return;
+
+        const resFavoritos = await fetch('http://localhost:8000/planos/favoritas/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const dataFavoritos = await resFavoritos.json();
+        const idsFavoritos = Array.isArray(dataFavoritos.favoritos) ? dataFavoritos.favoritos : [];
+        
+        console.log('Resposta /favoritas status:', resFavoritos.status);
+        console.log('DATA FAVORITOS:', dataFavoritos);
+
+        const resPlanos = await fetch('http://localhost:8000/planos/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const todasResponse = await resPlanos.json();
+        const todas = todasResponse.planos;
+
+
+      console.log('TODOS PLANOS:', todas);
+
+
+        const filtradas = todas.filter((c: any) => idsFavoritos.includes(c.id));
+        setFavoritos(filtradas);
+
+
+
+        setFavoritos(filtradas);
+      } catch (error) {
+        console.error('Erro ao buscar favoritos:', error);
+        setFavoritos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    useEffect(() => {
+      buscarFavoritos();
+    }, []);
 
 
   return (
@@ -59,12 +107,14 @@ export default function PlanosFavoritos({ navigation }: any) {
       </View>
 
       {/* Lista */}
-      {imagensPlanos.length === 0 ? (
+      {loading ? (
+        <Text style={styles.emptyText}>Carregando...</Text>
+      ) : !Array.isArray(favoritos) || favoritos.length === 0 ? (
         <Text style={styles.emptyText}>Você não tem itens salvos.</Text>
       ) : (
         <FlatList
-          data={imagensPlanos}
-          keyExtractor={(item) => item.id}
+          data={favoritos}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

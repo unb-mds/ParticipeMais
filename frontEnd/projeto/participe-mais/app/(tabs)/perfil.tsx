@@ -126,10 +126,9 @@ export default function PerfilScreen() {
   //   );
   // }
 
-  const nivelAtualIndex = niveis.findIndex((n, i) => {
-    const proximo = niveis[i + 1];
-    return !proximo || (score && score.xp < proximo.minimo);
-  });
+  const nivelAtualIndex = niveis.findLastIndex(n => (score?.xp ?? 0) >= n.minimo);
+
+
 
   const nivelNome = niveis[nivelAtualIndex]?.nome || 'Desconhecido';
   const proximoMinimo = niveis[nivelAtualIndex + 1]?.minimo || (score?.xp || 0);
@@ -142,10 +141,7 @@ export default function PerfilScreen() {
 
         <View style={styles.profileSection}>
           <View style={styles.avatarWrapper}>
-            <Image source={{ uri: 'https://i.imgur.com/0y8Ftya.png' }} style={styles.avatar} />
-            <TouchableOpacity style={styles.editIcon} onPress={() => console.log('Editar foto')}>
-              <Feather name="edit-2" size={14} color="#fff" />
-            </TouchableOpacity>
+            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png' }} style={styles.avatar} />
           </View>
 
           <View style={styles.userInfo}>
@@ -155,7 +151,7 @@ export default function PerfilScreen() {
         </View>
 
         <View style={styles.xpCard}>
-          <Text style={styles.textoAbaixo}>Nível {score?.nivel} - {nivelNome}</Text>
+          <Text style={styles.textoAbaixo}>Nível {nivelAtualIndex + 1} - {nivelNome}</Text>
           <View style={styles.linhaXp}>
             <View style={styles.barraFundo}>
               <View style={[styles.barraXp, { width: `${((score?.xp ?? 0) / proximoMinimo) * 100}%` }]} />

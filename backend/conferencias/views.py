@@ -178,4 +178,5 @@ class ConferenciasFavoritasView(APIView):
     def get(self, request):
         user = request.user
         favoritos = user.conferencias.values_list('id', flat=True)
+        print(favoritos)
         return Response({'favoritos': list(favoritos)})

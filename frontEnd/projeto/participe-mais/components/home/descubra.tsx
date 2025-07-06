@@ -261,10 +261,6 @@ export default function DescubraSection() {
       cor: gerarCorAleatoria(),
     }));
 
-    const enquetesMock: Item[] = Array.from({ length: 2 }, (_, i) => ({
-      id: `enquete-${i}`,
-      tipo: 'enquete',
-    }));
 
     const forunsMock: Item[] = Array.from({ length: 1 }, (_, i) => ({
       id: `forum-${i}`,
@@ -310,7 +306,6 @@ export default function DescubraSection() {
       { id: 'botao-0', tipo: 'botao' },
       ...propostasData,
       ...comentariosMock,
-      ...enquetesMock,
       ...forunsMock,
       ...imagensData,
     ]);

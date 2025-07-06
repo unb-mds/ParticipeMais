@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from autenticacao.models import Usuario
+from 
 
 class Pergunta(models.Model):
     TIPO_CHOICES = [
@@ -47,3 +48,9 @@ class Resposta(models.Model):
     
     class Meta:
         unique_together=['usuario', 'pergunta']
+        
+class Agenda(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
+    etapa = models.ForeignKey(Etapas, on_delete=models.CASCADE, null=True, blank=True)
+    agendado = models.BooleanField(default=True)

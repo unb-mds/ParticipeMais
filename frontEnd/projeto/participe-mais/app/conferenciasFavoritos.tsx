@@ -23,15 +23,19 @@ export default function ConferenciasFavoritos({ navigation }: any) {
 
     const renderItem = ({ item }: any) => {
     const borderColor = corAleatoria();
+    const handlePress = (item: any) => {
+      router.push(`/conferencias/?id=${item.id}` as any);
+    };
 
     return (
-        <TouchableOpacity style={[styles.item, { borderColor }]} onPress={() => handlePress(item)}>
-        <ImageBackground
-            source={{ uri: item.imagem }}
-            style={styles.image}
-            imageStyle={styles.imageBorder}
-        />
-        </TouchableOpacity>
+    <TouchableOpacity style={[styles.item, { borderColor }]} onPress={() => handlePress(item)}>
+      <ImageBackground
+        source={{ uri: item.image_url }}
+        style={styles.image}
+        imageStyle={styles.imageBorder}
+      />
+    </TouchableOpacity>
+
     );
     };
 
@@ -40,7 +44,9 @@ export default function ConferenciasFavoritos({ navigation }: any) {
 
   const buscarFavoritos = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('accessToken');
+          console.log('Token recuperado:', token);
+
       if (!token) return;
 
       const resFavoritos = await fetch('http://localhost:8000/conferencias/favoritas/', {
@@ -51,6 +57,9 @@ export default function ConferenciasFavoritos({ navigation }: any) {
 
       const dataFavoritos = await resFavoritos.json();
       const idsFavoritos = Array.isArray(dataFavoritos.favoritos) ? dataFavoritos.favoritos : [];
+      
+      console.log('Resposta /favoritas status:', resFavoritos.status);
+      console.log('DATA FAVORITOS:', dataFavoritos);
 
       const resConferencias = await fetch('http://localhost:8000/conferencias/', {
         headers: {
@@ -58,8 +67,12 @@ export default function ConferenciasFavoritos({ navigation }: any) {
         },
       });
 
-      const todas = await resConferencias.json();
+      const todasResponse = await resConferencias.json();
+      const todas = todasResponse.data; // PEGA SOMENTE O ARRAY
+
       const filtradas = todas.filter((c: any) => idsFavoritos.includes(c.id));
+      setFavoritos(filtradas);
+
 
 
       setFavoritos(filtradas);
