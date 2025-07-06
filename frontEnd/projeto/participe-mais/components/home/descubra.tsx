@@ -342,15 +342,7 @@ export default function DescubraSection() {
           </TouchableOpacity>
         );
 
-      case 'botao': 
-        return (
-          <View style={styles.quadradoBotao}>
-            <Text style={styles.textoQuadrado}>Qual tema você se interessa mais?</Text>
-            {[...Array(3)].map((_, i) => (
-              <TouchableOpacity key={i} style={styles.botaoRetangular} />
-            ))}
-          </View>
-        );
+
 
       case 'conferencia':
         return (
