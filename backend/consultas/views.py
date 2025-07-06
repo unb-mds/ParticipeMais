@@ -8,6 +8,7 @@ from .serializers import ConsultasSerializer
 
 from propostas.models import Propostas
 from propostas.serializers import PropostaSerializer
+from autenticacao.models import Usuario  
 
 # Rota protegida para listar todas as consultas existentes
 class ListaConsultas(APIView):
@@ -76,3 +77,30 @@ class PropostaDiretaC(APIView):
             'Consultas': consultas.nome,  # Nome da consulta
             'proposta': serializer.data  # Dados da proposta
         })
+class ToggleConsultasView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, consultas_id ):
+        try:
+            consulta = Consultas.objects.get(id=consultas_id)
+        except Consultas.DoesNotExist:
+            return Response({'message': 'Consulta não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if consulta in user.consultas.all():
+            user.consultas.remove(consulta)  # ✅ corrigido
+            return Response({'message': 'Consultas removido dos favoritos.'})
+        else:
+            user.consultas.add(consulta)  # ✅ corrigido
+            return Response({'message': 'Consulta adicionado aos favoritos.'})
+
+
+
+class ConsultasFavoritasView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        favoritos = user.consultas.values_list('id', flat=True)
+        return Response({'favoritos': list(favoritos)})

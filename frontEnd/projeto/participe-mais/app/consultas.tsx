@@ -57,6 +57,8 @@ export default function ConsultaScreen() {
   const [etapas, setEtapas] = useState<Etapas[]>([]);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [favorito, setFavorito] = useState(false);
+
 
  useEffect(() => {
     const obterToken = async () => {
@@ -130,10 +132,57 @@ export default function ConsultaScreen() {
     encerradas: 35,
   };
 
+
+  const verificarFavorito = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/consultas/favoritas/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    const idsFavoritos = data.favoritos; // deve ser lista de IDs
+    setFavorito(idsFavoritos.includes(Number(id)));
+  } catch (error) {
+    console.error('Erro ao verificar favorito:', error);
+  }
+};
+const toggleFavorito = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/consultas/toggle/${id}/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      setFavorito((prev: boolean) => !prev);
+    } else {
+      console.warn('Não foi possível atualizar favorito');
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar favorito', error);
+  }
+};
+useEffect(() => {
+  if (token && id) {
+    fetchConsultas();
+    verificarFavorito();
+  }
+}, [token, id]);
+
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container_total}>
-        <Header router={router} titulo="Consultas Públicas" />
+        <Header
+          router={router}
+          titulo="Consultas Públicas"
+          favorito={favorito}
+          onToggleFavorito={toggleFavorito}
+        />
+
         <View style={styles.container}>
           <Text>Carregando...</Text>
         </View>
@@ -145,7 +194,12 @@ export default function ConsultaScreen() {
 
   return (
     <SafeAreaView style={styles.container_total}>
-      <Header router={router} titulo="Consultas Públicas" />
+      <Header
+        router={router}
+        titulo="Consultas Públicas"
+        favorito={favorito}
+        onToggleFavorito={toggleFavorito}
+      />
 
       <FlatList
         data={[]} // vazio, pois todo conteúdo está no HeaderComponent

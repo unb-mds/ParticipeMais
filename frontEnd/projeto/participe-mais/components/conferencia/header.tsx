@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -21,7 +21,8 @@ export default function Header({ router, titulo, favorito, onToggleFavorito }: P
 
       <Text style={styles.headerTitle}>{titulo}</Text>
 
-      <TouchableOpacity onPress={onToggleFavorito}>
+      <TouchableOpacity onPress={onToggleFavorito} >
+
         <Ionicons
           name={favorito ? 'heart' : 'heart-outline'}
           size={28}

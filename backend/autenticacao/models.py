@@ -46,6 +46,7 @@ class Usuario(AbstractBaseUser):
     conferencias = models.ManyToManyField('conferencias.Conferencia', blank=True, related_name='usuarios_conferencias')
     planos = models.ManyToManyField('planos.Planos', blank=True, related_name='usuarios_planos')
     consultas = models.ManyToManyField('consultas.Consultas', blank=True, related_name='usuarios_consultas')
+    
     idPerfilUser = models.OneToOneField('Perfil', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

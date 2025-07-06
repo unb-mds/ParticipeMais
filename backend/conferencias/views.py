@@ -49,6 +49,7 @@ class AcessaConferencia(APIView):
                 'conferencias': conferencia_serializer.data,
                 'propostas': propostas_serializer.data,
                 'etapas': etapas_serializer.data,
+                'favoritado': favoritado,     
             }
         })
 
@@ -169,3 +170,12 @@ class ToggleConferenciaView(APIView):
         else:
             user.conferencias.add(conferencia)
             return Response({'message': 'Conferência adicionada aos favoritos.'})
+
+
+class ConferenciasFavoritasView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        favoritos = user.conferencias.values_list('id', flat=True)
+        return Response({'favoritos': list(favoritos)})

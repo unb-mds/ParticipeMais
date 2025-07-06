@@ -53,6 +53,7 @@ export default function PlanoScreen() {
   const [proposta, setProposta] = useState<Propostas[]>([]);
   const [oficinas, setOficinas] = useState<Oficinas[]>([])
   const [loading, setLoading] = useState<boolean>(true);
+  const [favorito, setFavorito] = useState<boolean>(false);
 
   useEffect(()=> {
     const obterToken = async () => {
@@ -102,6 +103,44 @@ useEffect(()=> {
       router.replace('/login');
     }
   };
+  const verificarFavorito = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/planos/favoritas/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      const idsFavoritos = data.favoritos ?? []; // fallback defensivo
+      setFavorito(idsFavoritos.includes(Number(id)));
+    } catch (error) {
+      console.error('Erro ao verificar favorito:', error);
+    }
+  };
+const toggleFavorito = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/planos/toggle/${id}/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      setFavorito((prev) => !prev);
+    } else {
+      console.warn('Não foi possível atualizar favorito');
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar favorito:', error);
+  }
+};
+useEffect(() => {
+  if (token && id) {
+    fetchPlanos();
+    verificarFavorito(); // 👈 adicionar aqui
+  }
+}, [token, id]);
 
   const objetivos = [
     'Reduzir desigualdades sociais e regionais',
@@ -144,7 +183,13 @@ const palavrasChave = [
 
   return (
     <SafeAreaView style={styles.container_total}>
-      <Header router={router} titulo="Planos" />
+      <Header
+      router={router}
+      titulo="Planos"
+      favorito={favorito}
+      onToggleFavorito={toggleFavorito}
+    />
+
 
       <FlatList
         data={[]}

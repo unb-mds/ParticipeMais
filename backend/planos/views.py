@@ -9,7 +9,7 @@ from propostas.serializers import PropostaSerializer
 
 from .models import Planos
 from .serializers import PlanosSerializer
-
+from autenticacao.models import Usuario  
 
 # Rota para listar todos os planos existentes
 class ListaPlanos(APIView):
@@ -91,3 +91,32 @@ class PropostaDiretaPlanos(APIView):
             'planos': planos.nome,
             'proposta': serializer.data
         })
+
+
+class TogglePlanosView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, planos_id):
+        try:
+            plano = Planos.objects.get(id=planos_id)
+        except Planos.DoesNotExist:
+            return Response({'message': 'Plano não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if plano in user.planos.all():
+            user.planos.remove(plano)  # ✅ corrigido
+            return Response({'message': 'Plano removido dos favoritos.'})
+        else:
+            user.planos.add(plano)  # ✅ corrigido
+            return Response({'message': 'Plano adicionado aos favoritos.'})
+
+
+
+class PlanosFavoritasView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        favoritos = user.planos.values_list('id', flat=True)
+        return Response({'favoritos': list(favoritos)})

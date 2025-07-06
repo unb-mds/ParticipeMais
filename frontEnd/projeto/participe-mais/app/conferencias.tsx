@@ -75,12 +75,6 @@ export default function ConferenciaDetalhadaScreen() {
     obterToken();
   }, []);
 
-  useEffect(() => {
-    if (token && id) {
-      fetchConferencias();
-    }
-  }, [token, id]);
-
   const fetchConferencias = async () => {
     try {
       const response = await fetch(`http://localhost:8000/conferencias/${id}/`, {
@@ -99,7 +93,6 @@ export default function ConferenciaDetalhadaScreen() {
         setEtapas(data.etapas || []);
         setPropostas(data.propostas || []);
         setLoading(false);
-        setFavorito(data.conferencias.favoritado);
 
       } else {
         router.replace('/login');
@@ -110,43 +103,51 @@ export default function ConferenciaDetalhadaScreen() {
   };
 //--------------------------------FAVORITO
     const verificarFavorito = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        console.log('Resposta da API /conferencias/favoritas:', data); // 👈 veja aqui o que está vindo
+
+        const idsFavoritos = data.favoritos; // deve ser lista de IDs
+        setFavorito(idsFavoritos.includes(Number(id)));
+      } catch (error) {
+        console.error('Erro ao verificar favorito', error);
+      }
+    };
+
+  useEffect(() => {
+    if (token && id) {
+      fetchConferencias();
+      verificarFavorito();
+    }
+  }, [token, id]);
+
+    const toggleFavorito = async () => {
+    console.log('Função toggleFavorito foi chamada');
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await res.json();
-      const idsFavoritos = data.favoritos; // deve ser lista de IDs
-      setFavorito(idsFavoritos.includes(Number(id)));
+
+      console.log('Resposta da API:', res);
+
+      if (res.ok) {
+        setFavorito((prev: boolean) => !prev);
+      } else {
+        console.warn('Não foi possível atualizar favorito');
+      }
     } catch (error) {
-      console.error('Erro ao verificar favorito', error);
+      console.error('Erro ao atualizar favorito', error);
     }
   };
-  useEffect(() => {
-  if (token && id) {
-    fetchConferencias();
-  }
-}, [token, id]);
 
-  const toggleFavorito = async () => {
-  try {
-    const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (res.ok) {
-      setFavorito((prev) => !prev); // inverte localmente
-    } else {
-      console.warn('Não foi possível atualizar favorito');
-    }
-  } catch (error) {
-    console.error('Erro ao atualizar favorito', error);
-  }
-};
 
   const eixos = [
     {
@@ -204,16 +205,12 @@ export default function ConferenciaDetalhadaScreen() {
   return (
     
     <SafeAreaView style={styles.container_total}>
-
-    <Header
-      router={router}
-      titulo="Conferências"
-      favorito={favorito}
-      onToggleFavorito={toggleFavorito}
-    />
-
-
-
+      <Header
+        router={router}
+        titulo="Conferências"
+        favorito={favorito}
+        onToggleFavorito={toggleFavorito}
+      />
 
 
       <FlatList

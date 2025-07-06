@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, ImageBackground, TouchableOpacity, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Ícones de seta
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -12,14 +14,6 @@ function corAleatoria(): string {
   const cores = ['#2670E8', '#4CAF50', '#FF9800', '#ce93d8', '#F44336']; // azul, verde, laranja, roxo, vermelho
   return cores[Math.floor(Math.random() * cores.length)];
 }
-
-
-const imagensConferencias = [
- { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png'},
-    { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-    { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-    { id: '4', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
-];
 
 export default function ConferenciasFavoritos({ navigation }: any) {
     const router = useRouter();
@@ -41,6 +35,45 @@ export default function ConferenciasFavoritos({ navigation }: any) {
     );
     };
 
+    const [favoritos, setFavoritos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const buscarFavoritos = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) return;
+
+      const resFavoritos = await fetch('http://localhost:8000/conferencias/favoritas/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const dataFavoritos = await resFavoritos.json();
+      const idsFavoritos = Array.isArray(dataFavoritos.favoritos) ? dataFavoritos.favoritos : [];
+
+      const resConferencias = await fetch('http://localhost:8000/conferencias/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const todas = await resConferencias.json();
+      const filtradas = todas.filter((c: any) => idsFavoritos.includes(c.id));
+
+
+      setFavoritos(filtradas);
+    } catch (error) {
+      console.error('Erro ao buscar favoritos:', error);
+      setFavoritos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    buscarFavoritos();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -59,17 +92,20 @@ export default function ConferenciasFavoritos({ navigation }: any) {
       </View>
 
       {/* Lista */}
-      {imagensConferencias.length === 0 ? (
+      {loading ? (
+        <Text style={styles.emptyText}>Carregando...</Text>
+      ) : !Array.isArray(favoritos) || favoritos.length === 0 ? (
         <Text style={styles.emptyText}>Você não tem itens salvos.</Text>
       ) : (
         <FlatList
-          data={imagensConferencias}
-          keyExtractor={(item) => item.id}
+          data={favoritos}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
       )}
+
     </View>
   );
 }
