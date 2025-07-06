@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Alternativa, PerguntaSimNao, PerguntaMultipla, Pergunta, Resposta
-from conferencias.models import Agenda
+from .models import Alternativa, PerguntaSimNao, PerguntaMultipla, Pergunta, Resposta, Agenda
+from django.utils import timezone
 
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -63,19 +63,20 @@ class RespostaSerializer(serializers.ModelSerializer):
         return Resposta.objects.create(usuario=usuario, **validated_data)
         
 class AgendaSerializer(serializers.ModelSerializer):
-    conferencia_nome = serializers.CharField(source='conferencia.titulo', read_only=True)
-    conferencia_data = serializers.CharField(source='conferencia.data_subconferencia', read_only=True)
     
-    etapa_nome = serializers.CharField(source='etapas.titulo', read_only=True)
-    etapa_data = serializers.CharField(source='etapas.duracao_etapa', read_only=True)
+    esta_no_passado = serializers.SerializerMethodField()
     class Meta:
         model = Agenda
         fields = [
             'id',
             'usuario',
+            'nome_compromisso',
+            'data_compromisso',
             'agendado',
-            'conferencia_nome',
-            'conferencia_data',
-            'etapa_nome',
-            'etapa_data',
+            'esta_no_passado',
         ]
+        
+        read_only_fields = ['id', 'usuario','esta_no_passado']
+
+    def get_esta_no_passado(self, obj):
+        return obj.data_compromisso < timezone.now().date()
