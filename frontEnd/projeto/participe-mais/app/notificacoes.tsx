@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Notificacao {
   id: number;
@@ -110,7 +111,13 @@ export default function Notificacoes() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Notificações' }} />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={28} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Notificações</Text>
+        <View style={{ width: 28 }} /> {/* Espaço vazio para alinhar */}
+      </View>
 
       <FlatList
         data={notificacoes}
@@ -164,4 +171,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  header: {
+  width: '100%',
+  paddingHorizontal: 16,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 15,
+  marginBottom: 10,
+},
+headerTitle: {
+  fontSize: 22,
+  fontWeight: 'bold',
+},
+
 });
