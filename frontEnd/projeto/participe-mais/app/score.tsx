@@ -4,7 +4,8 @@ import { Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { SafeAreaView, StatusBar } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ScoreScreen() {
   const router = useRouter();
@@ -117,14 +118,19 @@ const getProximoNivel = (pontos: number) => {
 
 
   return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="#267DFF" barStyle="light-content" />
+
     <View style={styles.container_maior}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Stack.Screen
-          options={{
-            title: "Score",
-            headerBackTitle: "Voltar",
-          }}
-        />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={28} color="#fff" />
+        </TouchableOpacity>
+         <Text style={styles.headerTitle}>Score</Text>
+        <View style={{ width: 28 }} />
+      </View>
+
 
         <View style={styles.welcomeBox}>
           <Text style={styles.welcomeText}>
@@ -204,8 +210,7 @@ const getProximoNivel = (pontos: number) => {
           </View>
       </ScrollView>
     </View>
-
-    
+</SafeAreaView>
   );
 }
 
@@ -362,5 +367,23 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontFamily: 'Raleway_400Regular',
   },
+  safeArea: {
+  flex: 1,
+  backgroundColor: '#267DFF',
+},
+header: {
+  width: '100%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 5,
+  marginBottom: 10,
+},
+headerTitle: {
+  fontSize: 22,
+  fontWeight: 'bold',
+  color: '#fff',
+},
+
 });
 
