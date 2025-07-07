@@ -134,19 +134,20 @@ class CategoriaView(APIView):
         categoria = Categoria.objects.get(pk=id)
        
 
-        # conferencias = Conferencia.objects.filter(categoria=id)
-        # planos = Planos.objects.filter(categoria=id)
-        # consultas = Consultas.objects.filter(categoria=id)
+        conferencias = Conferencia.objects.filter(categorias=id)
+        planos = Planos.objects.filter(categorias=id)
+        consultas = Consultas.objects.filter(categorias=id)
 
         chats = Chat.objects.filter(categoria=id)
         comentarios = Comentarios.objects.filter(chat__categoria=id)[:10]
-        lista_nuvem = Categoria.nuvem_palavras.split(', ')[:12]  # Assume string separada por vírgula
+        lista_nuvem = categoria.nuvem_palavras.split(', ')[:12]
 
         return Response({
             "mensagem": "Categoria carregada com sucesso.",
-            # "conferencias": ConferenciaSerializer(conferencias, many=True).data,
-            # "planos": PlanoSerializer(planos, many=True).data,
-            # "consultas": ConsultaSerializer(consultas, many=True).data,
+            "titulo": categoria.nome,
+            "conferencias": ConferenciaSerializer(conferencias, many=True).data,
+            "planos": PlanoSerializer(planos, many=True).data,
+            "consultas": ConsultaSerializer(consultas, many=True).data,
             "chats": [chat.id for chat in chats],
             "comentarios": ComentariosSerializer(comentarios, many=True).data,
             "lista_nuvem": lista_nuvem

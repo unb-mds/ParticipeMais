@@ -1,3 +1,9 @@
+
+import os
+import django
+# Configurações do Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+django.setup()
 import pandas as pd
 import re
 import unicodedata
@@ -6,7 +12,6 @@ from propostas.models import Propostas, Categoria
 from conferencias.models import Conferencia
 from planos.models import Planos
 from consultas.models import Consultas
-
 
 def normalize_text(text):
     """
@@ -163,8 +168,8 @@ def linkar_categorias_a_propostas():
 
 
 # Executar processos
-criar_categorias()
-linkar_categorias_a_propostas()
-categorizar_documentos(Conferencia, 'conferencias', 'conferências')
-categorizar_documentos(Planos, 'planos', 'planos')
-categorizar_documentos(Consultas, 'consultas', 'consultas')
+# criar_categorias()
+# linkar_categorias_a_propostas()
+# categorizar_documentos(Conferencia, 'conferencia', 'conferências')
+categorizar_documentos(Planos, 'plano', 'planos')
+categorizar_documentos(Consultas, 'consulta', 'consultas')

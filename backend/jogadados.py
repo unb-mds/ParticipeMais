@@ -22,179 +22,179 @@ from propostas.models import Propostas, Categoria
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# # ==================== Conferências ====================
-# df_conferencias = pd.read_csv(BASE_DIR / '../WebScraper/resultados/conferencias/conferenciass.csv')
-# df_conferencias2 = pd.read_csv(BASE_DIR / '../WebScraper/resultados/conferencias/perguntas.csv')
-# df_conferencias3 = pd.read_csv(
-#     BASE_DIR / '../WebScraper/resultados/conferencias/encerradas.csv',
-#     encoding='utf-8',
-#     lineterminator='\n'
-# )
+# ==================== Conferências ====================
+df_conferencias = pd.read_csv(BASE_DIR / '../WebScraper/resultados/conferencias/conferenciass.csv')
+df_conferencias2 = pd.read_csv(BASE_DIR / '../WebScraper/resultados/conferencias/perguntas.csv')
+df_conferencias3 = pd.read_csv(
+    BASE_DIR / '../WebScraper/resultados/conferencias/encerradas.csv',
+    encoding='utf-8',
+    lineterminator='\n'
+)
 
-# for _, row in df_conferencias.iterrows():
-#     Conferencia.objects.get_or_create(
-#         titulo=row['Conferência'],
-#         descricao=row['Descrição Conferência'],
-#         image_url=row.get('Imagem Conferência', ''),
-#         sobre=row.get('Sobre Conferência', ''),
-#         data_subconferencia=row.get('Etapas') or None,
-#     )
+for _, row in df_conferencias.iterrows():
+    Conferencia.objects.get_or_create(
+        titulo=row['Conferência'],
+        descricao=row['Descrição Conferência'],
+        image_url=row.get('Imagem Conferência', ''),
+        sobre=row.get('Sobre Conferência', ''),
+        data_subconferencia=row.get('Etapas') or None,
+    )
 
-# for _, row in df_conferencias2.iterrows():
-#     conf = Conferencia.objects.filter(titulo=row.iloc[0]).first() if pd.notna(row.iloc[0]) else None
-#     PerguntasParticipativas.objects.get_or_create(
-#         perguntas=row.iloc[1],
-#         respostas=row.iloc[2] if len(row) > 2 else '',
-#         conferencia=conf,
-#     )
+for _, row in df_conferencias2.iterrows():
+    conf = Conferencia.objects.filter(titulo=row.iloc[0]).first() if pd.notna(row.iloc[0]) else None
+    PerguntasParticipativas.objects.get_or_create(
+        perguntas=row.iloc[1],
+        respostas=row.iloc[2] if len(row) > 2 else '',
+        conferencia=conf,
+    )
 
-# df_conferencias3.fillna('', inplace=True)
+df_conferencias3.fillna('', inplace=True)
 
-# for _, row in df_conferencias3.iterrows():
-#     titulo = str(row['Conferência']).strip()
-#     descricao = str(row['Descrição Conferência']).strip().replace('\n', ' ').replace('\r', ' ')
-#     imagem = str(row.get('Imagem Conferência', '')).strip()
+for _, row in df_conferencias3.iterrows():
+    titulo = str(row['Conferência']).strip()
+    descricao = str(row['Descrição Conferência']).strip().replace('\n', ' ').replace('\r', ' ')
+    imagem = str(row.get('Imagem Conferência', '')).strip()
 
-#     Conferencia.objects.get_or_create(
-#         titulo=titulo,
-#         defaults={
-#             'descricao': descricao,
-#             'image_url': imagem,
-#         }
-#     )
+    Conferencia.objects.get_or_create(
+        titulo=titulo,
+        defaults={
+            'descricao': descricao,
+            'image_url': imagem,
+        }
+    )
 
-# print('Conferências importadas')
+print('Conferências importadas')
 
-# # ==================== Etapas ====================
-# df_etapas = pd.read_csv(BASE_DIR/'../WebScraper/resultados/conferencias/etapas.csv')
+# ==================== Etapas ====================
+df_etapas = pd.read_csv(BASE_DIR/'../WebScraper/resultados/conferencias/etapas.csv')
 
-# for _, row in df_etapas.iterrows():
-#     conf = Conferencia.objects.filter(titulo=row['Conferência'].strip()).first()
-#     raw_inscritos = row.get('Inscritos Etapa', '0')
-#     if raw_inscritos == "Não informado" or pd.isna(raw_inscritos):
-#         inscritos = -1
-#     else:
-#         try:
-#             inscritos = int(raw_inscritos)
-#         except ValueError:
-#             inscritos = -1
+for _, row in df_etapas.iterrows():
+    conf = Conferencia.objects.filter(titulo=row['Conferência'].strip()).first()
+    raw_inscritos = row.get('Inscritos Etapa', '0')
+    if raw_inscritos == "Não informado" or pd.isna(raw_inscritos):
+        inscritos = -1
+    else:
+        try:
+            inscritos = int(raw_inscritos)
+        except ValueError:
+            inscritos = -1
 
-#     Etapas.objects.get_or_create(
-#         titulo_etapa=row['Título Etapa'],
-#         descricao_etapa=row['Descricao Etapa'],
-#         status=row['Status Etapa'],
-#         regiao_etapa=row.get('Regiao Etapa', ''),
-#         duracao_etapa=row.get('Data Etapa', ''),
-#         qtd_propostas_etapa=row.get("Quantidade Propostas Etapa", 0),
-#         qtd_inscritos_etapa=inscritos,
-#         propostas_relacionadas=row.get('Propostas Etapa', ''),
-#         url_etapa=row["Url Etapa"],
-#         conferencia=conf,
-#     )
+    Etapas.objects.get_or_create(
+        titulo_etapa=row['Título Etapa'],
+        descricao_etapa=row['Descricao Etapa'],
+        status=row['Status Etapa'],
+        regiao_etapa=row.get('Regiao Etapa', ''),
+        duracao_etapa=row.get('Data Etapa', ''),
+        qtd_propostas_etapa=row.get("Quantidade Propostas Etapa", 0),
+        qtd_inscritos_etapa=inscritos,
+        propostas_relacionadas=row.get('Propostas Etapa', ''),
+        url_etapa=row["Url Etapa"],
+        conferencia=conf,
+    )
 
-# print('Etapas importadas')
+print('Etapas importadas')
 
-# # ==================== Planos ====================
-# df_planos = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/planos_dados.csv')
+# ==================== Planos ====================
+df_planos = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/planos_dados.csv')
 
-# for _, row in df_planos.iterrows():
-#     Planos.objects.get_or_create(
-#         nome=row.iloc[0],
-#         descricao=row.iloc[1],
-#         image_url=row.iloc[2] if len(row) > 2 else '',
-#         sobre=row.iloc[3] if len(row) > 3 else '',
-#     )
+for _, row in df_planos.iterrows():
+    Planos.objects.get_or_create(
+        nome=row.iloc[0],
+        descricao=row.iloc[1],
+        image_url=row.iloc[2] if len(row) > 2 else '',
+        sobre=row.iloc[3] if len(row) > 3 else '',
+    )
 
-# print('Planos importados')
+print('Planos importados')
 
-# # ==================== Consultas ====================
-# df_consultas1 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/consultas/dados_consultas.csv')
-# df_consultas2 = pd.read_csv(
-#    BASE_DIR/'../WebScraper/resultados/consultas/sobre_consultas.csv',
-#     header=None,
-#     names=['Título Consulta', 'Sobre Consulta']
-# )
+# ==================== Consultas ====================
+df_consultas1 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/consultas/dados_consultas.csv')
+df_consultas2 = pd.read_csv(
+   BASE_DIR/'../WebScraper/resultados/consultas/sobre_consultas.csv',
+    header=None,
+    names=['Título Consulta', 'Sobre Consulta']
+)
 
-# for _, row in df_consultas1.iterrows():
-#     Consultas.objects.get_or_create(
-#         nome=row["Título Consulta"],
-#         descricao=row["Descrição Consulta"],
-#         image_url=row["URL da Imagem"],
-#         link=row["Link da Consulta"],
-#     )
+for _, row in df_consultas1.iterrows():
+    Consultas.objects.get_or_create(
+        nome=row["Título Consulta"],
+        descricao=row["Descrição Consulta"],
+        image_url=row["URL da Imagem"],
+        link=row["Link da Consulta"],
+    )
 
-# for _, row in df_consultas2.iterrows():
-#     nome = row.iloc[0]
-#     sobre = row.iloc[1] if len(row) > 1 else ''
+for _, row in df_consultas2.iterrows():
+    nome = row.iloc[0]
+    sobre = row.iloc[1] if len(row) > 1 else ''
 
-#     try:
-#         consulta = Consultas.objects.get(nome=nome.strip())
-#         consulta.sobre = sobre
-#         consulta.save()
-#     except Consultas.DoesNotExist:
-#         print(f'')
+    try:
+        consulta = Consultas.objects.get(nome=nome.strip())
+        consulta.sobre = sobre
+        consulta.save()
+    except Consultas.DoesNotExist:
+        print(f'')
 
-# print('Consultas importadas com sucesso!')
+print('Consultas importadas com sucesso!')
 
-# # ==================== Propostas ====================
-# df_conf = pd.read_csv(BASE_DIR/'../WebScraper/resultados/conferencias/propostas.csv')
-# df_planos1 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/propostas_planos.csv')
-# df_planos2 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/planos.csv')
-# df_consultas = pd.read_csv(
-#     BASE_DIR/'../WebScraper/resultados/consultas/proposta_consultas.csv',
-#     encoding='utf-8',
-#     lineterminator='\n'
-# )
+# ==================== Propostas ====================
+df_conf = pd.read_csv(BASE_DIR/'../WebScraper/resultados/conferencias/propostas.csv')
+df_planos1 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/propostas_planos.csv')
+df_planos2 = pd.read_csv(BASE_DIR/'../WebScraper/resultados/planos/planos.csv')
+df_consultas = pd.read_csv(
+    BASE_DIR/'../WebScraper/resultados/consultas/proposta_consultas.csv',
+    encoding='utf-8',
+    lineterminator='\n'
+)
 
-# for _, row in df_conf.iterrows():
-#     conf = Conferencia.objects.filter(titulo=row.get('Conferência')).first() if pd.notna(row.get('Conferência')) else None
-#     votos = int(re.sub(r'\D', '', str(row.get('Votos', '0')))) if re.sub(r'\D', '', str(row.get('Votos', '0'))) else 0
+for _, row in df_conf.iterrows():
+    conf = Conferencia.objects.filter(titulo=row.get('Conferência')).first() if pd.notna(row.get('Conferência')) else None
+    votos = int(re.sub(r'\D', '', str(row.get('Votos', '0')))) if re.sub(r'\D', '', str(row.get('Votos', '0'))) else 0
 
-#     Propostas.objects.get_or_create(
-#         titulo_proposta=row['Título Proposta'],
-#         autor=row['Autor'],
-#         descricao_proposta=row['Descrição Proposta'],
-#         qtd_votos=votos,
-#         url_proposta=row.get('Link', ''),
-#         conferencia=conf,
-#     )
+    Propostas.objects.get_or_create(
+        titulo_proposta=row['Título Proposta'],
+        autor=row['Autor'],
+        descricao_proposta=row['Descrição Proposta'],
+        qtd_votos=votos,
+        url_proposta=row.get('Link', ''),
+        conferencia=conf,
+    )
 
-# for df in [df_planos1, df_planos2]:
-#     for _, row in df.iterrows():
-#         nome = row.get('Plano')
-#         if nome == 'Não tem o titulo na página':
-#             nome = 'Plano Clima Participativo'
+for df in [df_planos1, df_planos2]:
+    for _, row in df.iterrows():
+        nome = row.get('Plano')
+        if nome == 'Não tem o titulo na página':
+            nome = 'Plano Clima Participativo'
 
-#         plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
-#         votos = int(re.sub(r'\D', '', str(row.get('Votos', '0')))) if re.sub(r'\D', '', str(row.get('Votos', '0'))) else 0
+        plano = Planos.objects.filter(nome=nome).first() if pd.notna(nome) else None
+        votos = int(re.sub(r'\D', '', str(row.get('Votos', '0')))) if re.sub(r'\D', '', str(row.get('Votos', '0'))) else 0
 
-#         Propostas.objects.get_or_create(
-#             titulo_proposta=row['Título Proposta'],
-#             autor=row['Autor'],
-#             descricao_proposta=row['Descrição Proposta'],
-#             qtd_votos=votos,
-#             url_proposta=row.get('Link', ''),
-#             plano=plano
-#         )
+        Propostas.objects.get_or_create(
+            titulo_proposta=row['Título Proposta'],
+            autor=row['Autor'],
+            descricao_proposta=row['Descrição Proposta'],
+            qtd_votos=votos,
+            url_proposta=row.get('Link', ''),
+            plano=plano
+        )
 
-# df_consultas.fillna('', inplace=True)
+df_consultas.fillna('', inplace=True)
 
-# for _, row in df_consultas.iterrows():
-#     nome = str(row.get('Título Consulta')).strip()
-#     consulta = Consultas.objects.filter(nome=nome).first() if nome else None
-#     votos = int(re.sub(r'\D', '', str(row.get('qtd_votos', '0')))) if re.sub(r'\D', '', str(row.get('qtd_votos', '0'))) else 0
+for _, row in df_consultas.iterrows():
+    nome = str(row.get('Título Consulta')).strip()
+    consulta = Consultas.objects.filter(nome=nome).first() if nome else None
+    votos = int(re.sub(r'\D', '', str(row.get('qtd_votos', '0')))) if re.sub(r'\D', '', str(row.get('qtd_votos', '0'))) else 0
 
-#     titulo = str(row.get('Título de Cada Proposta', '')).strip()
-#     autor = str(row.get('Autor da Proposta', '')).strip()
-#     desc = str(row.get('Descrição da Proposta', '')).strip().replace('\n', ' ').replace('\r', ' ')
+    titulo = str(row.get('Título de Cada Proposta', '')).strip()
+    autor = str(row.get('Autor da Proposta', '')).strip()
+    desc = str(row.get('Descrição da Proposta', '')).strip().replace('\n', ' ').replace('\r', ' ')
 
-#     Propostas.objects.get_or_create(
-#         titulo_proposta=titulo,
-#         autor=autor,
-#         descricao_proposta=desc,
-#         qtd_votos=votos,
-#         consulta=consulta,
-#     )
+    Propostas.objects.get_or_create(
+        titulo_proposta=titulo,
+        autor=autor,
+        descricao_proposta=desc,
+        qtd_votos=votos,
+        consulta=consulta,
+    )
 
 categorias = {
      "Direito das Mulheres": [
