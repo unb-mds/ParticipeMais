@@ -1,10 +1,15 @@
 from django.db import models
-from conferencias.models import Conferencia, Etapas
-from planos.models import Planos
-from consultas.models import Consultas
+
 
 class Topico(models.Model):
     nome = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nome
+    
+class Categoria(models.Model):
+    nome = models.CharField(max_length=100, unique=True)
+    nuvem_palavras = models.CharField(max_length=1000, default="", blank=True)
 
     def __str__(self):
         return self.nome
@@ -16,12 +21,12 @@ class Propostas(models.Model):
     qtd_votos = models.IntegerField(default=0)
     url_proposta = models.URLField(max_length=500, blank=True, null=True)
 
-    conferencia = models.ForeignKey(Conferencia, on_delete=models.CASCADE, null=True, blank=True)
-    etapa = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True)
-    plano = models.ForeignKey(Planos, on_delete=models.CASCADE, null=True, blank=True)
-    consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, null=True, blank=True)
+    conferencia = models.ForeignKey('conferencias.Conferencia', on_delete=models.CASCADE, null=True, blank=True)
+    etapa = models.ForeignKey('conferencias.Etapas', on_delete=models.SET_NULL, null=True, blank=True)
+    plano = models.ForeignKey('planos.Planos', on_delete=models.CASCADE, null=True, blank=True)
+    consulta = models.ForeignKey('consultas.Consultas', on_delete=models.CASCADE, null=True, blank=True)
+    categorias = models.ManyToManyField(Categoria, related_name='propostas', blank=True)
 
-    topicos = models.ManyToManyField(Topico, blank=True, related_name='propostas')
 
     def __str__(self):
         return self.titulo_proposta
@@ -32,4 +37,3 @@ class Palavras_chave(models.Model):
 
     def __str__(self):
         return f"{self.proposta.titulo_proposta[:30]} - {self.palavras}"
-    

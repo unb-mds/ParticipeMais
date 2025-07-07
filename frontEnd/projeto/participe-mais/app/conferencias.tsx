@@ -265,17 +265,6 @@ export default function ConferenciaDetalhadaScreen() {
               </View>
             )}
 
-
-
-
-
-
-
-
-
-
-
-
             {propostas && propostas.length > 0 ? (
               <View>
                 <Propostas propostas={propostas} />

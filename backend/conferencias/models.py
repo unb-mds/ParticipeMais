@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from autenticacao.models import Usuario
+from propostas.models import Categoria
 
 
 class Conferencia(models.Model):
@@ -12,6 +13,9 @@ class Conferencia(models.Model):
     data_subconferencia = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
+    categorias = models.ManyToManyField(Categoria, blank=True, related_name='conferencias')
+    palavras_chaves = models.CharField(max_length=1000,default="", blank=True)
+
     def __str__(self):
         return self.titulo
 

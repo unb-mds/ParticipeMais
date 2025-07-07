@@ -2,6 +2,10 @@
 
 from rest_framework import serializers
 from .models import Chat, Comentarios, Curtidas
+from rest_framework import serializers
+from conferencias.models import Conferencia
+from planos.models import Planos
+from consultas.models import Consultas
 
 palavras_proibidas = ["palavrão1", "palavrão2"]
 
@@ -42,7 +46,7 @@ class ComentariosSerializer(serializers.ModelSerializer):
 
     def get_quantidade_curtidas(self, obj):
         """Retorna a quantidade de curtidas no comentário."""
-        return Curtidas.objects.filter(comentario=obj).count()
+        return Curtidas.objects.filter(comentario=obj, curtido = True).count()
 
     def validate(self, attrs):
         """Valida o conteúdo do comentário."""
@@ -96,3 +100,20 @@ class ChatSerializer(serializers.ModelSerializer):
         """Associa o autor antes de criar a pergunta."""
         validated_data['autor'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class ConferenciaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Conferencia
+        fields = ['id', 'image_url']  # adicione campos conforme necessário
+
+class PlanoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Planos
+        fields = ['id', 'image_url']  # adicione campos conforme necessário
+
+class ConsultaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Consultas
+        fields = ['id', 'image_url']  # adicione campos conforme necessário
+

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions
 from .models import *
 from .serializers import *
+from propostas.models import Categoria
 
 class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -107,7 +108,7 @@ class CurtidaView(APIView):
         usuario = request.user
         
         try:
-            comentario = Comentarios.objects.get(pk=comentario_pk)
+            comentario = Comentarios.objects.get(pk=comentario_pk, chat_id = chat_pk)
         except Comentarios.DoesNotExist:
             return Response({"error": "Comentário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -124,3 +125,32 @@ class CurtidaView(APIView):
             "curtido": curtida.curtido,
             "quantidade_curtidas": quantidade_curtidas
         }, status=status.HTTP_200_OK)
+
+class CategoriaView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, id):
+  
+        categoria = Categoria.objects.get(pk=id)
+       
+
+        conferencias = Conferencia.objects.filter(categorias=id)
+        planos = Planos.objects.filter(categorias=id)
+        consultas = Consultas.objects.filter(categorias=id)
+
+        chats = Chat.objects.filter(categoria=id)
+        comentarios = Comentarios.objects.filter(chat__categoria=id)[:10]
+        lista_nuvem = categoria.nuvem_palavras.split(', ')[:12]
+
+        return Response({
+            "mensagem": "Categoria carregada com sucesso.",
+            "titulo": categoria.nome,
+            "conferencias": ConferenciaSerializer(conferencias, many=True).data,
+            "planos": PlanoSerializer(planos, many=True).data,
+            "consultas": ConsultaSerializer(consultas, many=True).data,
+            "chats": [chat.id for chat in chats],
+            "comentarios": ComentariosSerializer(comentarios, many=True).data,
+            "lista_nuvem": lista_nuvem
+        }, status=status.HTTP_200_OK)
+
+

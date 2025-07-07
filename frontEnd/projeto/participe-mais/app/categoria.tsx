@@ -1,71 +1,106 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
+  View, Text, FlatList, TouchableOpacity, ImageBackground, ScrollView,
+  StyleSheet, ActivityIndicator
 } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons, Ionicons,FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import CategoriaDescricao from '../components/categoria/categoriadescricao';
-import CategoriaIcone from '../components/categoria/categoriaIcon'; // ajuste o caminho se necessário
-import NuvemDePalavras from '../components/categoria/nuvem'; // ajuste o caminho se necessário
+import CategoriaIcone from '../components/categoria/categoriaIcon';
+import NuvemDePalavras from '../components/categoria/nuvem';
 
 export default function Categoria() {
   const router = useRouter();
-const dados = [
-  { categoria: 'Meio Ambiente', comentario: 'Devíamos ter mais árvores nas cidades!', autor: 'João Silva' },
-  { categoria: 'Meio Ambiente', comentario: 'Postos de saúde precisam de mais médicos.', autor: 'Maria Souza' },
-  { categoria: 'Meio Ambiente', comentario: 'A escola do bairro precisa de reforma.', autor: 'Carlos Lima' },
-];
+  const { id } = useLocalSearchParams(); // obtém o id da categoria via rota
+  const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [conferencias, setConferencias] = useState<ItemComImagem[]>([]);
+  const [planos, setPlanos] = useState<ItemComImagem[]>([]);
+  const [consultas, setConsultas] = useState<ItemComImagem[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
+  const [comentarios, setComentarios] = useState<any[]>([]);
+const [nomeCategoria, setNomeCategoria] = useState('Categoria');
+  const [listaNuvem, setListaNuvem] = useState<string[]>([]);
 
-   const imagensConferencias = [
-    { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png'},
-    { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-    { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-    { id: '4', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
 
-];
-const imagensPlanos = [
-  { id: '1', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMFVKQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--53067aa5dd91b310913546e76d89bc83b53ef872/Banner%20-%20Brasil%20Participativo%20(ConCidades).png' },
-  { id: '2', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOVFZQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--bae2ac5eb7b598677a07a7cfb586471c82e45e30/BANNER%20-%201480%20X%20220%20PX.png' },
-  { id: '3', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaVdoIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5575efef3e0c5439e6dbdad64ad59069e23a17ab/banner_5_cnma_1480x220px_fcolor.png' },
-  { id: '4', imagem: 'https://ns-dtp-prd-df.s3-df-govcloud.dataprev.gov.br/gcc-decidim/gcc-decidim/s8z5gafv6jveenp7mtgozp290jwd?response-content-disposition=inline%3B%20filename%3D"Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%20%25281%2529.png"%3B%20filename%2A%3DUTF-8%27%27Banner_Plano_Clima_Participativo_DESKTOP_%25281480-px-720-px%2529%2520%25281%2529.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=user_dec_prd_df%2F20250610%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250610T003330Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=d96fe11a81ff2624b90ee0bdb38ecbe97883f3e07f84e119d3a6a4adb665cd9e' },
-  { id: '5', imagem: 'https://brasilparticipativo.presidencia.gov.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeWNUQVE9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--0d4ae56b4559862a8cceaccc2fd05e246d014f27/Banner_1480x220_v2.png' },
-];
-  const imagensConsultas = [
-    { id: '1', imagem: 'https://via.placeholder.com/250x120.png?text=Consulta+1' },
-  ];
+  type ItemComImagem = {
+  id: number;
+  image_url: string;
+};
 
-  const enquetes = [
-    { categoria: 'Meio Ambiente', enquete: 'Arborização nas cidades: mais sombra e menos calor?', curtidas: 40, numeroComentario: 15 },
-    { categoria: 'Meio Ambiente', enquete: 'A preservação de nascentes em áreas urbanas', curtidas: 22, numeroComentario: 8 },
-    { categoria: 'Meio Ambiente', enquete: 'Uso de energia renovável em espaços públicos', curtidas: 30, numeroComentario: 12 },
-    { categoria: 'Meio Ambiente', enquete: 'Redução do consumo de plásticos nas cidades', curtidas: 28, numeroComentario: 10 },
-  ];
+  useEffect(() => {
+      const obterToken = async () => {
+        try {
+          const tokenSalvo = await AsyncStorage.getItem('accessToken');
+          console.log('Token recuperado3:', tokenSalvo); // 👈 veja se está vindo
 
-  const listaPalavras = [
-  'sustentabilidade',
-  'ambiental',
-  'universidade',
-  'campus',
-  'questão',
-  'resíduo',
-  'diversão',
-  'ação',
-  'preservação',
-  'pesquisa',
-  'área',
-  'ambiente',
-    'ambiente',
-      'ambiente',
-        'ambiente',
-          'ambiente',
-];
+          if (tokenSalvo) {
+            setToken(tokenSalvo);
+          } else {
+            console.log('Token não encontrado, redirecionando...');
+            router.replace('/login');
+          }
+        } catch (error) {
+          console.log('Erro ao buscar token:', error);
+          router.replace('/login');
+        }
+      };
+    obterToken();
+  }, []);
+
+
+
+ const fetchCategoria = async () => {
+  try {
+     const response = await fetch(`http://localhost:8000/comunidade/categorias/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+
+    if (response.ok) {
+      const json = await response.json();
+
+      setNomeCategoria(json.nome || 'Categoria');
+
+      setConferencias(json.conferencias || []);
+      setPlanos(json.planos || []);
+      setConsultas(json.consultas || []);
+      setComentarios(json.comentarios || []);
+      setChats(json.chats || []); // <- 🟩 Adicione ISSO
+      setListaNuvem(json.lista_nuvem || []);
+      setLoading(false);
+      console.log('JSON recebido:', json);
+
+    } else {
+      router.replace('/login');
+    }
+  } catch (error) {
+    console.error('Erro na chamada da categoria:', error);
+
+    router.replace('/');
+  }
+};
+
+useEffect(() => {
+  if (token && id) {
+    fetchCategoria();
+  }
+}, [token, id]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container_total}>
+        <ActivityIndicator size="large" color="#2670E8" style={{ marginTop: 50 }} />
+      </SafeAreaView>
+    );
+  }
+
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -73,26 +108,24 @@ const imagensPlanos = [
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.tituloHeader}>Meio Ambiente</Text>
+        <Text style={styles.tituloHeader}>{nomeCategoria}</Text>
         <View style={{ width: 24 }} /> 
       </View>
 
       <ScrollView style={styles.container}>
         <View>
-        <CategoriaDescricao categoria="meio ambiente" />
+        <CategoriaDescricao categoria={nomeCategoria.toLowerCase()} />
         </View>
         {/* Conferências */}
         <Text style={styles.tituloSecao}>Conferências</Text>
-        <FlatList
-          data={imagensConferencias}
+          <FlatList
+          data={conferencias}
           horizontal
-          keyExtractor={(item) => item.id}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listaHorizontal}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <TouchableOpacity>
               <ImageBackground
-                source={{ uri: item.imagem }}
+                source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
                 imageStyle={{ borderRadius: 12 }}
               />
@@ -103,15 +136,15 @@ const imagensPlanos = [
         {/* Planos */}
         <Text style={styles.tituloSecao}>Planos</Text>
         <FlatList
-          data={imagensPlanos}
+          data={planos}
           horizontal
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listaHorizontal}
           renderItem={({ item }) => (
             <TouchableOpacity>
               <ImageBackground
-                source={{ uri: item.imagem }}
+                source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
                 imageStyle={{ borderRadius: 12 }}
               />
@@ -122,15 +155,15 @@ const imagensPlanos = [
         {/* Consultas */}
         <Text style={styles.tituloSecao}>Consultas</Text>
         <FlatList
-          data={imagensConsultas}
+          data={consultas}
           horizontal
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listaHorizontal}
           renderItem={({ item }) => (
             <TouchableOpacity>
               <ImageBackground
-                source={{ uri: item.imagem }}
+                source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
                 imageStyle={{ borderRadius: 12 }}
               />
@@ -142,7 +175,7 @@ const imagensPlanos = [
         <Text style={styles.tituloSecao}>Acesse as discussões por aqui!</Text>
         <View style={styles.quadroEnquete}>
           <ScrollView contentContainerStyle={{ gap: 10 }}>
-            {enquetes.map((item, index) => (
+            {chats.map((item, index) => (
               <TouchableOpacity key={`${item.categoria}-${index}`}>
                 <View style={styles.cardEnquete}>
                 <View style={styles.linha_icon}>
@@ -171,7 +204,7 @@ const imagensPlanos = [
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.carrossel}
           keyExtractor={(item, index) => `${item.categoria}-${index}`}
-          data={dados} // <- você precisa ter `const dados = [...]` no mesmo arquivo
+          data={comentarios} // <- você precisa ter `const dados = [...]` no mesmo arquivo
           renderItem={({ item }) => (
             <TouchableOpacity>
               <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(item.categoria) }]}>
@@ -191,7 +224,8 @@ const imagensPlanos = [
             </TouchableOpacity>
           )}
         />
-        <NuvemDePalavras palavras={listaPalavras} />
+
+        <NuvemDePalavras palavras={listaNuvem} />
 
       </ScrollView>
     </SafeAreaView>
@@ -218,6 +252,7 @@ function corDaCategoria(categoria: string): string {
 
 // 🎨 Styles
 const styles = StyleSheet.create({
+  
   safe: {
     flex: 1,
     backgroundColor: '#fff',
@@ -351,4 +386,8 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexWrap: 'wrap',
   },
+    container_total: {
+    flex: 1,
+    backgroundColor: '#fff',}
+    
 });
