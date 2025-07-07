@@ -11,6 +11,7 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView, StatusBar } from 'react-native';
 
 interface Notificacao {
   id: number;
@@ -110,38 +111,45 @@ export default function Notificacoes() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notificações</Text>
-        <View style={{ width: 28 }} /> {/* Espaço vazio para alinhar */}
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar backgroundColor="#fff" barStyle="dark-content" />
 
-      <FlatList
-        data={notificacoes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity>
-            <View style={styles.notificacao}>
-              <Text style={styles.notificacaoTitulo}>{item.titulo}</Text>
-              <Text>{item.message}</Text>
-              <Text style={styles.data}>{item.created_at}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={{ textAlign: 'center' }}>Nenhuma notificação encontrada.</Text>}
-      />
-    </View>
-  );
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={28} color="#000" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Notificações</Text>
+            <View style={{ width: 28 }} />
+          </View>
+
+          <FlatList
+            data={notificacoes}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity>
+                <View style={styles.notificacao}>
+                  <Text style={styles.notificacaoTitulo}>{item.titulo}</Text>
+                  <Text>{item.message}</Text>
+                  <Text style={styles.data}>{item.created_at}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <Text style={{ textAlign: 'center' }}>
+                Nenhuma notificação encontrada.
+              </Text>
+            }
+          />
+        </View>
+      </SafeAreaView>
+    );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    top: 40,
-    padding: 16,
     backgroundColor: '#fff',
   },
   titulo: {
@@ -183,6 +191,10 @@ const styles = StyleSheet.create({
 headerTitle: {
   fontSize: 22,
   fontWeight: 'bold',
+},
+safeArea: {
+  flex: 1,
+  backgroundColor: '#fff',
 },
 
 });

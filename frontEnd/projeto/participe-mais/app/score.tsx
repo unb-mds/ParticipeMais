@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView, StatusBar } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Nivel {
   nome: string;
@@ -129,14 +131,20 @@ export default function ScoreScreen() {
     : 100;
 
   return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="#267DFF" barStyle="light-content" />
+
+    <View style={styles.container_maior}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={28} color="#fff" />
+        </TouchableOpacity>
+         <Text style={styles.headerTitle}>Score</Text>
+        <View style={{ width: 28 }} />
+      </View>
+
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Stack.Screen
-          options={{
-            title: "Score",
-            headerBackTitle: "Voltar",
-          }}
-        />
 
         <View style={styles.welcomeBox}>
           <Text style={styles.welcomeText}>
@@ -212,7 +220,10 @@ export default function ScoreScreen() {
         </View>
       </ScrollView>
     </View>
-  );
+     </View>
+
+</SafeAreaView>
+  ); 
 }
 
 const MissionButton = ({ title, xp, completed }: { title: string; xp: string; completed: boolean }) => (
@@ -226,6 +237,10 @@ const MissionButton = ({ title, xp, completed }: { title: string; xp: string; co
 );
 
 const styles = StyleSheet.create({
+    container_maior: {
+    flex: 1,
+    backgroundColor: '#267DFF',
+  },
   container: {
     flex: 1,
     paddingTop: 60,
@@ -364,4 +379,23 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontFamily: 'Raleway_400Regular',
   },
+  
+  safeArea: {
+  flex: 1,
+  backgroundColor: '#267DFF',
+},
+header: {
+  width: '100%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 5,
+  marginBottom: 10,
+},
+headerTitle: {
+  fontSize: 22,
+  fontWeight: 'bold',
+  color: '#fff',
+},
+
 });
