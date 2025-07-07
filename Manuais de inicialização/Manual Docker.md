@@ -24,7 +24,8 @@ Este repositório contém uma aplicação Django configurada com Docker para fac
 ### 1. Subir o ambiente
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker compose --env-file .env -f docker-compose.dev.yml up --build
+
 ```
 
 A aplicação estará disponível em:  
