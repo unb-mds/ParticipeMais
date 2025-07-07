@@ -63,7 +63,7 @@ export default function PerfilScreen() {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const response = await fetch('http://localhost:8000/comunidade/score', {
+        const response = await fetch('http://172.20.10.9:8000/comunidade/score', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function PerfilScreen() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/logout/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/logout/', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

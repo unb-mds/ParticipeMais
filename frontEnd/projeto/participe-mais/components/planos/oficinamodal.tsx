@@ -8,35 +8,24 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import Propostas from '../conferencia/propostas_gerais';
-
-type Oficina = {
-  id: number;
-  cidade: string;
-  estado: string;
-  dataInicio: string;
-  dataTermino: string;
-  status: 'Ativa' | 'Encerrada';
-  modalidade: 'Presencial' | 'Online';
-};
-
-type Proposta = {
-  id: number;
-  eixo: string;
-  publicadoEm: string;
-  usuario: string;
-  descricao: string;
-};
+import Propostas from '@/components/conferencia/propostas_gerais';
+import { Oficinas , Proposta } from '../../app/planos'; // ou o caminho correto
 
 type Props = {
   visible: boolean;
   onClose: () => void;
-  oficina: Oficina | null;
-  propostas: Propostas[];
+  oficina: Oficinas | null;
+  propostas: Proposta[];
 };
+
 
 export default function OficinaModal({ visible, onClose, oficina, propostas }: Props) {
   if (!oficina) return null;
+
+const propostasRelacionadas = propostas.filter((p) =>
+  oficina.propostas_relacionadas.includes(p.id.toString())
+);
+
 
   return (
     <Modal
@@ -53,14 +42,14 @@ export default function OficinaModal({ visible, onClose, oficina, propostas }: P
 
           <ScrollView showsVerticalScrollIndicator={true}>
             {/* Título */}
-            <Text style={styles.modalTitulo}>{oficina.estado}</Text>
+            <Text style={styles.modalTitulo}>{oficina.regiao_oficina}</Text>
 
             {/* Localização e Tags */}
             <View style={styles.modalInfoHeader}>
               <View style={styles.modalInfoLocal}>
                 <MaterialCommunityIcons name="office-building" size={14} color="#2670E8" />
                 <Text style={styles.modalInfoLocalText}>
-                  {oficina.cidade} - {oficina.estado}
+                  {/* {oficina.cidade} - {oficina.estado} */}
                 </Text>
               </View>
 
@@ -87,7 +76,7 @@ export default function OficinaModal({ visible, onClose, oficina, propostas }: P
                   <Ionicons name="people-outline" size={18} color="#000" />
                   <Text style={styles.modalVisaoTexto}>Inscritos</Text>
                 </View>
-                <Text style={styles.modalVisaoNumero}>30</Text>
+                <Text style={styles.modalVisaoNumero}>{oficina.qtd_inscritos_oficina}</Text>
               </View>
 
               <MaterialCommunityIcons name="view-dashboard-outline" size={28} color="#aaa" />
@@ -97,7 +86,7 @@ export default function OficinaModal({ visible, onClose, oficina, propostas }: P
                   <Ionicons name="document-text-outline" size={18} color="#000" />
                   <Text style={styles.modalVisaoTexto}>Propostas</Text>
                 </View>
-                <Text style={styles.modalVisaoNumero}>{propostas.length}</Text>
+                <Text style={styles.modalVisaoNumero}>{oficina.qtd_propostas_oficina}</Text>
               </View>
             </View>
 
@@ -125,14 +114,14 @@ export default function OficinaModal({ visible, onClose, oficina, propostas }: P
                 </View>
 
                 <View style={styles.periodoLinha}>
-                  <Text style={styles.periodoDataText}>{oficina.dataInicio}</Text>
-                  <Text style={styles.periodoDataText}>{oficina.dataTermino}</Text>
+                  {/* <Text style={styles.periodoDataText}>{oficina.dataInicio}</Text>
+                  <Text style={styles.periodoDataText}>{oficina.dataTermino}</Text> */}
                 </View>
               </View>
             </View>
 
             {/* Propostas */}
-            <Propostas propostas={propostas} />
+            <Propostas propostas={propostasRelacionadas} />
 
             {/* Link de acesso */}
             <View style={styles.linkContainer}>

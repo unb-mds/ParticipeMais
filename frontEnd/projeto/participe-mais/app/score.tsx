@@ -70,7 +70,7 @@ export default function ScoreScreen() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://localhost:8000/comunidade/score/', {
+      const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -235,25 +235,48 @@ const MissionButton = ({ title, xp, completed }: { title: string; xp: string; co
     <Text style={styles.missionXP}>{xp}</Text>
   </TouchableOpacity>
 );
-
 const styles = StyleSheet.create({
-    container_maior: {
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#267DFF',
+  },
+  container_maior: {
     flex: 1,
     backgroundColor: '#267DFF',
   },
   container: {
     flex: 1,
-    paddingTop: 60,
+    paddingTop: 20,
     backgroundColor: '#267DFF',
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
+    paddingBottom: 60,
+  },
+  header: {
+    width: '100%',
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   welcomeBox: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   welcomeText: {
     fontSize: 14,
@@ -264,6 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     marginTop: 16,
+    marginBottom: 8,
     fontFamily: 'Raleway_700Bold',
   },
   sectionTitleBlack: {
@@ -282,26 +306,34 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_400Regular',
   },
   level: {
+    fontSize: 16,
     color: "white",
-    marginBottom: 8,
-    fontFamily: 'Raleway_700Bold',
+    marginTop: 6,
+    marginBottom: 14,
+    fontFamily: 'Raleway_600SemiBold',
   },
   progressBarBackground: {
-    backgroundColor: "#b0d6b0",
-    height: 8,
-    borderRadius: 4,
+    backgroundColor: "#cfe3fc",
+    height: 10,
+    borderRadius: 5,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: 24,
   },
   progressBarFill: {
     height: "100%",
     backgroundColor: "#4CAF50",
   },
   rewardBox: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 20,
+    alignItems: "center",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   rewardText: {
     color: "#267DFF",
@@ -310,29 +342,37 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_700Bold',
   },
   unifiedBox: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 24,
-    padding: 16,
+    padding: 20,
     marginTop: 16,
-    marginBottom: 24,
+    marginBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   missionsTitle: {
     fontSize: 18,
     color: "#333",
     fontFamily: 'Raleway_700Bold',
+    marginBottom: 4,
   },
   missionsSubtitle: {
     fontSize: 13,
-    color: "#444",
-    marginBottom: 12,
+    color: "#555",
+    marginBottom: 16,
     fontFamily: 'Raleway_400Regular',
   },
   missionButton: {
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   missionButtonFilled: {
     backgroundColor: "#267DFF",
@@ -341,17 +381,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#dcdcdc",
   },
   missionText: {
+    fontSize: 14,
     color: "#000",
     fontFamily: 'Raleway_700Bold',
   },
   missionXP: {
+    fontSize: 14,
     color: "#555",
     fontFamily: 'Raleway_400Regular',
   },
   linkText: {
     textAlign: "center",
     color: "#267DFF",
-    marginTop: 8,
+    marginTop: 12,
     fontFamily: 'Raleway_700Bold',
   },
   levelsDescBlack: {
@@ -360,42 +402,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_400Regular',
   },
   levelsListBlack: {
-    borderLeftWidth: 2,
+    borderLeftWidth: 3,
     borderLeftColor: "#267DFF",
-    paddingLeft: 8,
+    paddingLeft: 12,
+    marginTop: 10,
   },
   levelItemBlack: {
     color: "#333",
-    marginBottom: 4,
+    marginBottom: 6,
+    fontSize: 14,
     fontFamily: 'Raleway_400Regular',
   },
   levelCurrentBlack: {
     color: "#000",
-    marginBottom: 4,
+    marginBottom: 6,
+    fontSize: 14,
     fontFamily: 'Raleway_700Bold',
   },
   levelLockedBlack: {
     color: "#999",
-    marginBottom: 4,
+    marginBottom: 6,
+    fontSize: 14,
     fontFamily: 'Raleway_400Regular',
   },
-  
-  safeArea: {
-  flex: 1,
-  backgroundColor: '#267DFF',
-},
-header: {
-  width: '100%',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: 5,
-  marginBottom: 10,
-},
-headerTitle: {
-  fontSize: 22,
-  fontWeight: 'bold',
-  color: '#fff',
-},
-
 });

@@ -14,6 +14,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
+
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = 2;
@@ -223,7 +225,7 @@ export default function DescubraSection() {
       setRefreshing(true);
       setError(null);
       
-      const response = await fetch('http://localhost:8000/descubra/', {
+      const response = await fetch('http://172.20.10.9:8000/descubra/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -425,7 +427,7 @@ export default function DescubraSection() {
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View entering={FadeInDown.duration(400)} exiting={FadeOutUp.duration(300)} style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -444,7 +446,7 @@ export default function DescubraSection() {
           />
         }
       />
-    </View>
+    </Animated.View>
   );
 }
 

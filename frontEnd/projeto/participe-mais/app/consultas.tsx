@@ -84,7 +84,7 @@ export default function ConsultaScreen() {
   
   const fetchConsultas = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/consultas/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/consultas/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function ConsultaScreen() {
 
   const verificarFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/favoritas/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/favoritas/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -149,7 +149,7 @@ export default function ConsultaScreen() {
 };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/toggle/${id}/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

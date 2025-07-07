@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from propostas.models import Propostas
 from propostas.serializers import PropostaSerializer
 
-from .models import Planos
-from .serializers import PlanosSerializer
+from .models import Planos, Oficinas
+from .serializers import PlanosSerializer, Oficinas_serializer
 from autenticacao.models import Usuario  
 
 # Rota para listar todos os planos existentes
@@ -45,15 +45,17 @@ class AcessaPlano(APIView):
             
         propostas = Propostas.objects.filter(plano=planos)[:250]
         propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
-
-
+        
+        oficinas = Oficinas.objects.filter(plano=planos)[:250]
+        oficinas_serializer = Oficinas_serializer(oficinas, many=True, context={'request': request})
 
         plano = PlanosSerializer(planos, context={'request': request})
         return Response({
             'message': 'Planos encontrados!',
             'data': {
-                'conferencias': plano.data,
+                'planos': plano.data,
                 'propostas': propostas_serializer.data,
+                'oficinas': oficinas_serializer.data
             }
         })
 

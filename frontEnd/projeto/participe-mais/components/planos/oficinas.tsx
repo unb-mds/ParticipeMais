@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import OficinaModal from './oficinamodal';
-import { Oficinas, Propostas } from '../../app/planos';
+import { Oficinas, Proposta } from '../../app/planos';
 
 export default function Oficina({
   oficinas,
   propostas,
 }: {
   oficinas: Oficinas[];
-  propostas: Propostas[];
+  propostas: Proposta[];
 }) {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,11 +27,14 @@ export default function Oficina({
     setModalVisible(true);
   };
 
-  const oficinasFiltradas = oficinas.filter(
-    (item) =>
-      item.cidade.toLowerCase().includes(search.toLowerCase()) ||
-      item.estado.toLowerCase().includes(search.toLowerCase())
+  const oficinasFiltradas = oficinas.filter((item) => {
+  const regiao = item.regiao_oficina ?? '';
+
+  return (
+    regiao.toLowerCase().includes(search.toLowerCase())
   );
+});
+
 
   return (
     <View style={styles.container}>
@@ -76,7 +79,7 @@ export default function Oficina({
               {/* Header com título e seta */}
               <View style={styles.headerCard}>
                 <Text style={styles.tituloCard}>
-                  {item.titulo || 'Oficina sem título'}
+                  {item.titulo_oficina || 'Oficina sem título'}
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color="#000" />
               </View>
@@ -85,7 +88,7 @@ export default function Oficina({
               <View style={styles.datasContainer}>
                 <Ionicons name="calendar-outline" size={14} color="#2670E8" />
                 <Text style={styles.datasTexto}>
-                  {item.dataInicio} ➝ {item.dataTermino}
+                  {/* {item.dataInicio} ➝ {item.dataTermino} */}
                 </Text>
               </View>
 
@@ -175,6 +178,9 @@ const styles = StyleSheet.create({
   listaContainer: {
     height: 300,
     backgroundColor: '#fff',
+    maxHeight: 300, // por exemplo
+    overflow: 'scroll', // opcional,
+
   },
   card: {
     backgroundColor: '#fff',

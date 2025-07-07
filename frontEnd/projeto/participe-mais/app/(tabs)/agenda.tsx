@@ -93,7 +93,7 @@ useEffect(() => {
         return;
       }
 
-      const response = await fetch('http://localhost:8000/agenda/', {
+      const response = await fetch('http://172.20.10.9:8000/agenda/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -156,7 +156,7 @@ useEffect(() => {
       return;
     }
 
-    const response = await fetch('http://localhost:8000/agenda/', {
+    const response = await fetch('http://172.20.10.9:8000/agenda/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

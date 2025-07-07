@@ -55,7 +55,7 @@ const [nomeCategoria, setNomeCategoria] = useState('Categoria');
 
  const fetchCategoria = async () => {
   try {
-     const response = await fetch(`http://localhost:8000/comunidade/categorias/${id}/`, {
+     const response = await fetch(`http://172.20.10.9:8000/comunidade/categorias/${id}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',

@@ -58,7 +58,7 @@ export default function Notificacoes() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://localhost:8000/comunidade/score/', {
+      const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
         // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,7 +82,7 @@ export default function Notificacoes() {
 
   const fetchNotificacoes = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/notifications/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/notifications/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -146,32 +146,55 @@ export default function Notificacoes() {
     );
 
 }
-
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  titulo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    backgroundColor: '#fff',
+  },
+  header: {
+    width: '100%',
+    paddingHorizontal: 4,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#000',
   },
   notificacao: {
-    backgroundColor: '#f2f2f2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   notificacaoTitulo: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 4,
+    fontWeight: '600',
+    fontSize: 17,
+    color: '#333',
+    marginBottom: 6,
   },
   data: {
     fontSize: 12,
-    color: 'gray',
-    marginTop: 8,
+    color: '#888',
+    marginTop: 10,
     textAlign: 'right',
   },
   loadingContainer: {
@@ -179,22 +202,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-  width: '100%',
-  paddingHorizontal: 16,
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: 15,
-  marginBottom: 10,
-},
-headerTitle: {
-  fontSize: 22,
-  fontWeight: 'bold',
-},
-safeArea: {
-  flex: 1,
-  backgroundColor: '#fff',
-},
-
 });

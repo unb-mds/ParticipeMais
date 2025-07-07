@@ -20,6 +20,7 @@ class Propostas(models.Model):
     descricao_proposta = models.TextField()
     qtd_votos = models.IntegerField(default=0)
     url_proposta = models.URLField(max_length=500, blank=True, null=True)
+    topicos = models.ManyToManyField(Topico, related_name='propostas', blank=True)
 
     conferencia = models.ForeignKey('conferencias.Conferencia', on_delete=models.CASCADE, null=True, blank=True)
     etapa = models.ForeignKey('conferencias.Etapas', on_delete=models.SET_NULL, null=True, blank=True)

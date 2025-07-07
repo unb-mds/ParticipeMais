@@ -68,7 +68,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   const fetchConferenciasLista = async () => {
     try {
-      const response = await fetch('http://localhost:8000/pesquisar/lista', {
+      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         setPlanos(data.planos);  // <-- AQUI
         setConsultas(data.consultas);  // <-- AQUI
 
-        console.log(data.planos)
+        // console.log(data.planos)
 
       } else if (response.status === 401 || response.status === 403) {
         console.log('Usuário não autorizado. Redirecionando para login.');

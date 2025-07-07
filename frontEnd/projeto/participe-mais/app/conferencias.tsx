@@ -21,7 +21,7 @@ export interface Conferencia {
   descricao: string;
   sobre: string;
   status: boolean;
-  data_subconferencia: string[] | string; // ajustado para array de strings
+  data_subconferencia: string[] | string;
   qtd_propostas: number;
 }
 
@@ -31,13 +31,13 @@ export interface Proposta {
   autor: string;
   descricao_proposta: string;
   qtd_votos: number;
-  data_criacao: string; //não tem...
-  total_palavras_chave: number
-  url_proposta: string; // URL da proposta
+  data_criacao: string;
+  total_palavras_chave: number;
+  url_proposta: string;
 }
 
 export interface Etapas {
-  id: number
+  id: number;
   titulo_etapa: string;
   descricao_etapa: string;
   status: string;
@@ -45,7 +45,7 @@ export interface Etapas {
   duracao_etapa: string;
   qtd_propostas_etapa: number;
   qtd_inscritos_etapa: number;
-  propostas_relacionadas: string; // ajustado para array de strings
+  propostas_relacionadas: string;
 }
 
 export default function ConferenciaDetalhadaScreen() {
@@ -63,61 +63,14 @@ export default function ConferenciaDetalhadaScreen() {
     const obterToken = async () => {
       try {
         const tokenSalvo = await AsyncStorage.getItem('accessToken');
-        if (tokenSalvo) {
-          setToken(tokenSalvo);
-        } else {
-          router.replace('/login');
-        }
-      } catch (error) {
+        if (tokenSalvo) setToken(tokenSalvo);
+        else router.replace('/login');
+      } catch {
         router.replace('/login');
       }
     };
     obterToken();
   }, []);
-
-  const fetchConferencias = async () => {
-    try {
-      const response = await fetch(`http://localhost:8000/conferencias/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const json = await response.json();
-        const data = json.data;
-
-        // ajusta se vier um objeto, coloca em array
-        setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
-        setEtapas(data.etapas || []);
-        setPropostas(data.propostas || []);
-        setLoading(false);
-
-      } else {
-        router.replace('/login');
-      }
-    } catch (error) {
-      router.replace('/login');
-    }
-  };
-//--------------------------------FAVORITO
-    const verificarFavorito = async () => {
-      try {
-        const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        console.log('Resposta da API /conferencias/favoritas:', data); // 👈 veja aqui o que está vindo
-
-        const idsFavoritos = data.favoritos; // deve ser lista de IDs
-        setFavorito(idsFavoritos.includes(Number(id)));
-      } catch (error) {
-        console.error('Erro ao verificar favorito', error);
-      }
-    };
 
   useEffect(() => {
     if (token && id) {
@@ -126,65 +79,51 @@ export default function ConferenciaDetalhadaScreen() {
     }
   }, [token, id]);
 
-    const toggleFavorito = async () => {
-    console.log('Função toggleFavorito foi chamada');
+  const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
-        method: 'POST',
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
-      console.log('Resposta da API:', res);
-
       if (res.ok) {
-        setFavorito((prev: boolean) => !prev);
-      } else {
-        console.warn('Não foi possível atualizar favorito');
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar favorito', error);
+        const json = await res.json();
+        const data = json.data;
+        setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
+        setEtapas(data.etapas || []);
+        setPropostas(data.propostas || []);
+        setLoading(false);
+      } else router.replace('/login');
+    } catch {
+      router.replace('/login');
     }
   };
 
-
-  const eixos = [
-    {
-      titulo: 'I – Mitigação',
-      descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.',
-    },
-    {
-      titulo: 'II – Adaptação',
-      descricao: 'Fortalecer a resiliência às mudanças climáticas.',
-    },
-    {
-      titulo: 'III – Financiamento',
-      descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.',
-    },
-    {
-      titulo: 'IV – Governança',
-      descricao: 'Promover uma governança climática participativa.',
-    },
-  ];
-
-  const dadosEstatisticos = {
-    total: etapas.length || 0,
-    andamento: 57,
-    encerradas: 43,
+  const verificarFavorito = async () => {
+    try {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setFavorito(data.favoritos.includes(Number(id)));
+    } catch (err) {
+      console.error('Erro ao verificar favorito', err);
+    }
   };
 
-  const palavrasChave = [
-    'Sustentabilidade',
-    'Clima',
-    'Energia',
-    'Resíduos',
-    'Água',
-    'Educação Ambiental',
-    'Transporte',
-    'Justiça Climática',
-    'Inovação',
-  ];
+  const toggleFavorito = async () => {
+    try {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setFavorito(prev => !prev);
+    } catch (err) {
+      console.error('Erro ao atualizar favorito', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -195,100 +134,62 @@ export default function ConferenciaDetalhadaScreen() {
   }
 
   const conferencia = conferencias[0];
-  console.log('Acessando conferência:');
-  console.log('Conferências:', conferencias);
-  // console.log('Etapas:', etapas);
-  // console.log('Propostas:', propostas);
-//-------------------------------------- FAVORITO
 
+  const eixos = [
+    { titulo: 'I – Mitigação', descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.' },
+    { titulo: 'II – Adaptação', descricao: 'Fortalecer a resiliência às mudanças climáticas.' },
+    { titulo: 'III – Financiamento', descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.' },
+    { titulo: 'IV – Governança', descricao: 'Promover uma governança climática participativa.' },
+  ];
+
+  const dadosEstatisticos = {
+    total: etapas.length || 0,
+    andamento: 57,
+    encerradas: 43,
+  };
+
+  const palavrasChave = [
+    'Sustentabilidade', 'Clima', 'Energia', 'Resíduos', 'Água',
+    'Educação Ambiental', 'Transporte', 'Justiça Climática', 'Inovação'
+  ];
 
   return (
-    
     <SafeAreaView style={styles.container_total}>
-      <Header
-        router={router}
-        titulo="Conferências"
-        favorito={favorito}
-        onToggleFavorito={toggleFavorito}
-      />
-
-
+      <Header router={router} titulo="Conferências" favorito={favorito} onToggleFavorito={toggleFavorito} />
       <FlatList
-        data={[]} // conteudo renderizado só no header
-        keyExtractor={(_, index) => `dummy-${index}`}
+        data={[]}
+        keyExtractor={(_, i) => `dummy-${i}`}
         renderItem={null}
         ListHeaderComponent={
           <View style={styles.container}>
-            <StatusBadge status={conferencia?.status ? "Ativa" : "Inativa"} />
-
-            <Text style={styles.title}>
-              {conferencia?.titulo || 'Não informado'}
-            </Text>
-
+            <StatusBadge status={conferencia?.status ? 'Ativa' : 'Inativa'} />
+            <Text style={styles.title}>{conferencia?.titulo || 'Não informado'}</Text>
             <View style={styles.subinfo}>
               <Entypo name="location" size={14} />
               <Text style={styles.subinfoText}>{etapas.length} conferências</Text>
               <MaterialCommunityIcons name="file-document-outline" size={14} />
               <Text style={styles.subinfoText}>{propostas.length} propostas</Text>
             </View>
-
             <Text style={styles.description}>
-              {conferencia.descricao && conferencia.descricao.trim().toLowerCase() !== 'nan' ? conferencia.descricao?.trim() : 'Descrição não informada'}
+              {conferencia.descricao?.trim().toLowerCase() !== 'nan'
+                ? conferencia.descricao?.trim()
+                : 'Descrição não informada'}
             </Text>
-
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             <EixosTematicos eixos={eixos} />
-
-
-          
-
-            {etapas && etapas.length > 0 ? (
-              <View style={{ marginBottom: 20 }}>
-                <Conferencias
-                  etapas={etapas}
-                  conferencias={conferencias}
-                  propostas={propostas}
-                />
-                <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />
-              </View>
-            ) : (
-              
-              <View>
-                <Conferencias
-                  etapas={etapas}
-                  conferencias={conferencias}
-                  propostas={propostas}
-                />  
-              {/* <Text style={{ textAlign: 'center', marginVertical: 20 }}>
-                Não possui conferências
-              </Text> */}
-              </View>
-            )}
-
-            {propostas && propostas.length > 0 ? (
-              <View>
-                <Propostas propostas={propostas} />
-                <DadosPizza
-                  estatisticas={[
-                    { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
-                    { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
-                    { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
-                    { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
-                  ]}
-                  total={10794}
-                  palavrasChave={[
-                    'Sustentabilidade',
-                    'Inovação',
-                    'Energia',
-                    'Clima',
-                    'Justiça',
-                    'Biodiversidade',
-                  ]}
-                />
-              </View>
-            ) : (
-              <Propostas propostas={propostas} />
-            )}
+            <Conferencias etapas={etapas} conferencias={conferencias} propostas={propostas} />
+            {etapas.length > 0 && <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />}
+            <Propostas propostas={propostas} />
+            <DadosPizza
+              estatisticas={[
+                { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
+                { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
+                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
+                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
+              ]}
+              total={10794}
+              palavrasChave={['Sustentabilidade', 'Inovação', 'Energia', 'Clima', 'Justiça', 'Biodiversidade']}
+            />
           </View>
         }
       />

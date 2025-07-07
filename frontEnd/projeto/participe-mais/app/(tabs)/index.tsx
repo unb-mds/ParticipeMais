@@ -8,6 +8,14 @@ import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Animated, {
+  SlideInRight,
+  SlideOutLeft,
+  SlideInLeft,
+  SlideOutRight,
+} from 'react-native-reanimated';
+
+
 export default function HomeScreen() {
   const router = useRouter();
   const [nomeUsuario, setNomeUsuario] = useState('');
@@ -114,6 +122,12 @@ export default function HomeScreen() {
       />
 
       <View style={styles.contentArea}>
+      <Animated.View
+        key={abaAtiva}
+        entering={SlideInRight.duration(300)}
+        exiting={SlideOutLeft.duration(200)}
+        style={{ flex: 1 }}
+      >
         {abaAtiva === 'descubra' && <DescubraSection />}
         {abaAtiva === 'comunidade' && (
           <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -131,7 +145,8 @@ export default function HomeScreen() {
             </View>
           </ScrollView>
         )}
-      </View>
+      </Animated.View>
+    </View>
     </SafeAreaView>
   );
 }

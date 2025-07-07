@@ -15,6 +15,7 @@ import Oficina from '../components/planos/oficinas';
 import Dados from '../components/conferencia/dados';
 import Eventos from '../components/planos/eventos';
 import { UrlObject } from 'expo-router/build/global-state/routeInfo';
+import Propostas from '@/components/conferencia/propostas_gerais';
 
 export interface Planos {
   id: number;
@@ -24,22 +25,26 @@ export interface Planos {
   status: boolean;
 }
 
-export interface Propostas {
+export interface Proposta {
   id: number;
   titulo_proposta: string;
   autor: string;
-  descricao_propostas: string;
+  descricao_proposta: string;
   qtd_votos: number;
+  data_criacao: string; //não tem...
+  total_palavras_chave: number
+  url_proposta: string; // URL da proposta
 }
 
 export type Oficinas = {
   id: number;
-  titulo: string;
-  descricao: string;
-  cidade: string;
-  estado: string;
-  dataInicio: string;
-  dataTermino: string;
+  titulo_oficina:string;
+  descricao_oficina: string;
+  regiao_oficina: string;
+  duracao_oficina:string;
+  qtd_propostas_oficina:number;
+  qtd_inscritos_oficina:number;
+  propostas_relacionadas: string[];
   status: 'Ativa' | 'Encerrada';
   modalidade: 'Presencial' | 'Online';
 };
@@ -50,7 +55,7 @@ export default function PlanoScreen() {
 
   const [token, setToken] = useState<string>('');
   const [planos, setPlanos] = useState<Planos[]>([]);
-  const [proposta, setProposta] = useState<Propostas[]>([]);
+  const [proposta, setProposta] = useState<Proposta[]>([]);
   const [oficinas, setOficinas] = useState<Oficinas[]>([])
   const [loading, setLoading] = useState<boolean>(true);
   const [favorito, setFavorito] = useState<boolean>(false);
@@ -79,7 +84,7 @@ useEffect(()=> {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/planos/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -90,9 +95,10 @@ useEffect(()=> {
         const json = await response.json();
         console.log('API response:', json);
 
-        setPlanos([json.data.conferencias]);  // ajustado
-        setProposta(json.data.propostas);  // ajustado
+        setPlanos([json.data.planos]);  // ajustado
+        setProposta(json.data.propostas || null);  // ajustado
         setOficinas(json.data.oficinas || null);  // ajustado
+        console.log(oficinas)
 
         setLoading(false);
       } else {
@@ -105,7 +111,7 @@ useEffect(()=> {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/planos/favoritas/`, {
+      const res = await fetch(`http://172.20.10.9:8000/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -119,7 +125,7 @@ useEffect(()=> {
   };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/planos/toggle/${id}/`, {
+    const res = await fetch(`http://172.20.10.9:8000/planos/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -208,7 +214,7 @@ const palavrasChave = [
               <View style={styles.dadosLinha}>
                 <View style={styles.dadoItem}>
                   <MaterialCommunityIcons name="account-group-outline" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>sla</Text>
+                  <Text style={styles.dadoNumero}>{oficinas.length}</Text>
                   <Text style={styles.dadoText}>Oficinas</Text>
                 </View>
                 <View style={styles.dadoItem}>
@@ -233,6 +239,16 @@ const palavrasChave = [
             {/* <EtapasCalendar etapas={etapas} /> */}
 
             <Objetivos objetivos={objetivos} />
+
+            { proposta && proposta.length > 0 ? (
+              <Propostas  propostas={proposta} /> 
+              ) : (
+                <View>
+                  <Text>
+                    Não há propostas disponíveis no momento.
+                  </Text>
+                </View>
+              )}
 
             { oficinas && oficinas.length > 0 ? (
               <Oficina oficinas={oficinas} propostas={proposta} />
