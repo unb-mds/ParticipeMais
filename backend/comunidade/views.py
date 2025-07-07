@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions
 from .models import *
 from .serializers import *
+from propostas.models import Categoria
 
 class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -124,3 +125,31 @@ class CurtidaView(APIView):
             "curtido": curtida.curtido,
             "quantidade_curtidas": quantidade_curtidas
         }, status=status.HTTP_200_OK)
+
+class CategoriaView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, id):
+  
+        categoria = Categoria.objects.get(pk=id)
+       
+
+        # conferencias = Conferencia.objects.filter(categoria=id)
+        # planos = Planos.objects.filter(categoria=id)
+        # consultas = Consultas.objects.filter(categoria=id)
+
+        chats = Chat.objects.filter(categoria=id)
+        comentarios = Comentarios.objects.filter(chat__categoria=id)[:10]
+        lista_nuvem = Categoria.nuvem_palavras.split(', ')[:12]  # Assume string separada por vírgula
+
+        return Response({
+            "mensagem": "Categoria carregada com sucesso.",
+            # "conferencias": ConferenciaSerializer(conferencias, many=True).data,
+            # "planos": PlanoSerializer(planos, many=True).data,
+            # "consultas": ConsultaSerializer(consultas, many=True).data,
+            "chats": [chat.id for chat in chats],
+            "comentarios": ComentariosSerializer(comentarios, many=True).data,
+            "lista_nuvem": lista_nuvem
+        }, status=status.HTTP_200_OK)
+
+

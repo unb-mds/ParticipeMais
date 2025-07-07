@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import sys
+import socket
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,7 +120,15 @@ EMAIL_USE_TLS = True
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 
+try:
+    socket.create_connection(('db', 5432), timeout=1)
+    DB_HOST = 'db'
+    DB_PORT = '5432'
+except Exception:
+    DB_HOST = 'localhost'
+    DB_PORT = '5432'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -138,7 +148,7 @@ else:
             'NAME': os.getenv('POSTGRES_DB', 'participemais'),
             'USER': os.getenv('POSTGRES_USER', 'postgres'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'unbook'),
-            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'HOST': DB_HOST,
             'PORT': os.getenv('POSTGRES_PORT', '5432'),
         }
     }
