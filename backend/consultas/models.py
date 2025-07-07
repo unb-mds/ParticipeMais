@@ -10,7 +10,7 @@ class Consultas(models.Model):
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
     link = models.URLField(max_length=500, blank=True, null=True)
-    categorias = models.ManyToManyField(Categoria, blank=True, related_name='consultas')
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL, related_name='consultas')
     palavras_chaves = models.CharField(max_length=1000, default="", blank=True)
 
     def __str__(self):

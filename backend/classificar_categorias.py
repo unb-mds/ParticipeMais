@@ -168,8 +168,8 @@ def linkar_categorias_a_propostas():
 
 
 # Executar processos
-# criar_categorias()
-# linkar_categorias_a_propostas()
-# categorizar_documentos(Conferencia, 'conferencia', 'conferências')
-categorizar_documentos(Planos, 'plano', 'planos')
-categorizar_documentos(Consultas, 'consulta', 'consultas')
+criar_categorias()
+linkar_categorias_a_propostas()
+#categorizar_documentos(Conferencia, 'conferencia', 'conferências')
+#categorizar_documentos(Planos, 'plano', 'planos')
+#categorizar_documentos(Consultas, 'consulta', 'consultas')

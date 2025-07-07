@@ -13,7 +13,7 @@ class Conferencia(models.Model):
     data_subconferencia = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
-    categorias = models.ManyToManyField(Categoria, blank=True, related_name='conferencias')
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL, related_name='categorias')
     palavras_chaves = models.CharField(max_length=1000,default="", blank=True)
 
     def __str__(self):

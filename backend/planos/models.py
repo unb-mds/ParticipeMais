@@ -12,7 +12,8 @@ class Planos(models.Model):
     image_url = models.URLField(max_length=500, blank=True, null=True)
     sobre = models.TextField(blank=True, null=True)
     qtd_propostas = models.IntegerField(default=0)
-    categorias = models.ManyToManyField(Categoria, blank=True, related_name='planos')
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL, related_name='planos')
+
     palavras_chaves = models.CharField(max_length=1000, default="", blank=True)
 
     def __str__(self):

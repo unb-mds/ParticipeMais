@@ -134,9 +134,9 @@ class CategoriaView(APIView):
         categoria = Categoria.objects.get(pk=id)
        
 
-        conferencias = Conferencia.objects.filter(categorias=id)
-        planos = Planos.objects.filter(categorias=id)
-        consultas = Consultas.objects.filter(categorias=id)
+        conferencias = Conferencia.objects.filter(categoria=id)
+        planos = Planos.objects.filter(categoria=id)
+        consultas = Consultas.objects.filter(categoria=id)
 
         chats = Chat.objects.filter(categoria=id)
         comentarios = Comentarios.objects.filter(chat__categoria=id)[:10]
