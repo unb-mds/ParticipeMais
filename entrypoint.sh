@@ -8,6 +8,10 @@ done
 
 echo "Banco disponível!"
 
+echo "Executando migrations..."
+
+python backend/manage.py migrate
+
 # Espera até que a tabela conferencias_conferencia exista (máximo 60 tentativas)
 if [ "$ROLE" = "importer" ]; then
   echo "Verificando se as tabelas estão disponíveis..."
@@ -15,18 +19,19 @@ if [ "$ROLE" = "importer" ]; then
     TABLE_EXISTS=$(PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tAc "SELECT to_regclass('conferencias_conferencia');")
     if [ "$TABLE_EXISTS" = "conferencias_conferencia" ]; then
       echo "Tabela conferencias_conferencia existe! Executando importação..."
-      exec python3 backend/jogadados.py
+      python3 backend/jogadados.py
+      python3 backend/classificar_categorias.py
+      python3 backend/relacao_conf.py
+
+      break 
+
     else
       echo "Aguardando tabelas do Django serem criadas... ($i/60)"
       sleep 2
     fi
   done
-  echo "Erro: Tabela conferencias_conferencia não foi criada após aguardar."
-  exit 1
 fi
 
-echo "Executando migrations..."
-python backend/manage.py migrate
 
 if [ "$DJANGO_ENV" = "prod" ]; then
   echo "Coletando arquivos estáticos..."
