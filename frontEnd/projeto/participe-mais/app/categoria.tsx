@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
+  TextInput 
 } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, Ionicons,FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -41,12 +42,7 @@ const imagensPlanos = [
     { id: '1', imagem: 'https://via.placeholder.com/250x120.png?text=Consulta+1' },
   ];
 
-  const enquetes = [
-    { categoria: 'Meio Ambiente', enquete: 'Arborização nas cidades: mais sombra e menos calor?', curtidas: 40, numeroComentario: 15 },
-    { categoria: 'Meio Ambiente', enquete: 'A preservação de nascentes em áreas urbanas', curtidas: 22, numeroComentario: 8 },
-    { categoria: 'Meio Ambiente', enquete: 'Uso de energia renovável em espaços públicos', curtidas: 30, numeroComentario: 12 },
-    { categoria: 'Meio Ambiente', enquete: 'Redução do consumo de plásticos nas cidades', curtidas: 28, numeroComentario: 10 },
-  ];
+
 
   const listaPalavras = [
   'sustentabilidade',
@@ -66,7 +62,36 @@ const imagensPlanos = [
         'ambiente',
           'ambiente',
 ];
+const [enquetes, setEnquetes] = useState<Enquete[]>([
+  {
+    enquete: 'Você apoia a ideia X?',
+    categoria: 'Meio ambiente',
+    curtidas: 10,
+    numeroComentario: 5,
+  },
+]);
+const [novaEnquete, setNovaEnquete] = useState<string>('');
+interface Enquete {
+  enquete: string;
+  categoria: string;
+  curtidas: number;
+  numeroComentario: number;
+}
 
+
+const criarEnquete = () => {
+  if (!novaEnquete.trim()) return;
+
+  const nova = {
+    categoria: 'Meio Ambiente',
+    enquete: novaEnquete.trim(),
+    curtidas: 0,
+    numeroComentario: 0,
+  };
+
+setEnquetes([...enquetes, nova]); 
+  setNovaEnquete('');
+};
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
@@ -191,9 +216,25 @@ const imagensPlanos = [
             </TouchableOpacity>
           )}
         />
+            <View style={styles.caixaCriarEnquete}>
+          <Text style={styles.tituloCriarEnquete}>Crie sua enquete</Text>
+          <View style={styles.criarEnqueteBox}>
+            <TextInput
+              style={styles.inputEnquete}
+              placeholder="Digite o título da enquete"
+              value={novaEnquete}
+              onChangeText={setNovaEnquete}
+              placeholderTextColor="#888"
+            />
+            <TouchableOpacity style={styles.botaoCriar} onPress={criarEnquete}>
+              <Text style={styles.textoBotaoCriar}>Criar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <NuvemDePalavras palavras={listaPalavras} />
 
       </ScrollView>
+
     </SafeAreaView>
   );
 }
@@ -351,4 +392,48 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexWrap: 'wrap',
   },
+  criarEnqueteBox: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 16,
+  gap: 8,
+},
+inputEnquete: {
+  flex: 1,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  padding: 10,
+  fontSize: 14,
+  fontFamily: 'Raleway_400Regular',
+  color: '#000',
+  backgroundColor: '#fff',
+},
+botaoCriar: {
+  backgroundColor: '#267DFF',
+  paddingVertical: 10,
+  paddingHorizontal: 16,
+  borderRadius: 8,
+},
+textoBotaoCriar: {
+  color: '#fff',
+  fontWeight: 'bold',
+  fontSize: 14,
+  fontFamily: 'Raleway_700Bold',
+},
+caixaCriarEnquete: {
+  backgroundColor: '#F1F1F1',
+  borderRadius: 12,
+  padding: 16,
+  marginBottom: 20,
+  marginTop: 30, // distância da seção anterior
+},
+tituloCriarEnquete: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  fontFamily: 'Raleway_700Bold',
+  color: '#000',
+},
+
 });
