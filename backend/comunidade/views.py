@@ -5,7 +5,6 @@ from rest_framework import status, permissions
 from .models import *
 from .serializers import *
 from propostas.models import Categoria
-from propostas.serializers import CategoriaSerializer
 
 class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -20,9 +19,13 @@ class ScoreView(APIView):
                 defaults={'pontos': 0}  # Valor padrão para novos registros
             )
         
+        score_obj.atualizar_nivel()
+        
         return Response({
                 'usuario': request.user.nome,
                 'pontos': score_obj.pontos,
+                'nivel_atual': score_obj.nivel,
+                'autor_papel': score_obj.classificao,
                 'novo_registro': created  # Indica se foi criado um novo registro
             }, status=status.HTTP_200_OK)
         
@@ -36,15 +39,11 @@ class ComunidadeView(APIView):
             total_curtidas=Count('comentarios__curtidas', filter=Q(comentarios__curtidas__curtido=True))
         ).order_by('-total_curtidas')
 
-        categorias = list(Categoria.objects.order_by("?"))
         serializer = ComunidadeSerializer(comunidades, many = True).data
-        comentarios = Comentarios.objects.order_by("?")[:10]
         
         return Response({
-            'quantidade_chat': comunidades.count(),
-            'Enquetes':serializer,
-            "comentarios": ComentariosSerializer(comentarios, many=True).data,
-            'categorias': CategoriaSerializer(categorias, many=True, context={'request': request},  fields=['id','nome']).data,
+            'Quantidade Chat': comunidades.count(),
+            'Enquetes':serializer
         }, status=status.HTTP_200_OK)
         
 class CriarChat(APIView):
@@ -83,7 +82,7 @@ class ChatView(APIView):
         except Chat.DoesNotExist:
             return Response({"error": "Chat não encontrado."}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = ChatSerializer(chat)
+        serializer = ChatSerializer(chat, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK) 
         
     def post(self, request, pk):  # recebe o id do chat via URL

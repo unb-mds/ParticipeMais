@@ -68,7 +68,7 @@ export default function Categoria() {
 
   const fetchCategoria = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/comunidade/categorias/${id}/`, {
+      const response = await fetch(`http://localhost:8000/comunidade/categorias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -85,6 +85,9 @@ export default function Categoria() {
         setComentarios(json.comentarios || []);
         setChats(json.chats || []);
         setListaNuvem(json.lista_nuvem || []);
+        console.log(chats)
+        const chatIds: number[] = json.chats || [];
+        buscarTodosOsChats(chatIds); 
       } else {
         const text = await response.text();
         console.warn("Erro ao buscar categoria:", response.status, text);
@@ -95,6 +98,84 @@ export default function Categoria() {
       router.replace('/');
     }
   };
+
+
+
+const criarNovaEnquete = async () => {
+  if (!novaEnquete.trim()) {
+    alert('A enquete não pode estar vazia.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:8000/comunidade/criachat/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        pergunta: novaEnquete,
+        categoria: id
+      }),
+    });
+
+    const json = await response.json();
+
+    if (response.ok) {
+      alert('Enquete criada com sucesso!');
+      setNovaEnquete('');
+      // Atualiza a lista de enquetes após criação
+      setChats(prev => [...prev, json.data]);
+    } else {
+      console.warn(json.message);
+      alert('Erro ao criar enquete: ' + (json?.errors?.pergunta || json.message));
+    }
+  } catch (error) {
+    console.error('Erro ao criar enquete:', error);
+    alert('Erro ao criar enquete.');
+  }
+};
+
+const buscarTodosOsChats = async (chatIds: number[]) => {
+  try {
+    const resultados: Enquete[] = [];
+
+    for (const chatId of chatIds) {
+      const res = await fetch(`http://localhost:8000/comunidade/chat/${chatId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        resultados.push(json);
+      } else {
+        console.warn(`Erro ao buscar chat ${chatId}`);
+      }
+    }
+
+    setChats(resultados);
+    console.log('Chats recebidos do backend:', resultados);
+    setChats(resultados);
+
+  } catch (err) {
+    console.error('Erro ao buscar chats:', err);
+  }
+};
+
+interface Enquete {
+  id: number;
+  pergunta: string;
+  categoria: string;
+  data_criacao: string;
+  autor_nome: string;
+  comentarios: Comentario[];
+  total_curtidas: number
+}
+
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -116,10 +197,7 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push({
-            pathname: '/conferencias',
-            params: { id: item.id.toString() }
-          })}>
+            <TouchableOpacity>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -136,10 +214,7 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push({
-            pathname: '/planos',
-            params: { id: item.id.toString() }
-          })}>
+            <TouchableOpacity>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -156,10 +231,7 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push({
-            pathname: '/consultas',
-            params: { id: item.id.toString() }
-          })}>
+            <TouchableOpacity>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -173,22 +245,26 @@ export default function Categoria() {
         <Text style={styles.tituloSecao}>Discussões</Text>
         <View style={styles.quadroEnquete}>
           <ScrollView contentContainerStyle={{ gap: 10 }}>
-            {chats.map((item, index) => (
-              <TouchableOpacity key={`${item.enquete}-${index}`}>
-                <View style={styles.cardEnquete}>
-                  <View style={styles.linha_icon}>
-                    <CategoriaIcone categoria={item.categoria} tamanho={35} />
-                    <Text style={styles.textoEnquete}>{item.enquete}</Text>
+            {chats.length === 0 ? (
+              <Text style={styles.infoEnquete}>Nenhuma discussão encontrada.</Text>
+            ) : (
+              chats.map((item, index) => (
+                  <TouchableOpacity key={`${item.pergunta}-${index}`} onPress={() => router.push({ pathname: '/enquete', params: { id: item.id } })}>
+                  <View style={styles.cardEnquete}>
+                    <View style={styles.linha_icon}>
+                      <CategoriaIcone categoria={titulo} tamanho={35} />
+                      <Text style={styles.textoEnquete}>{item.pergunta}</Text>
+                    </View>
+                    <View style={styles.linha}>
+                      <MaterialCommunityIcons name="cards-heart-outline" size={14} color="#000" />
+                      <Text style={styles.infoEnquete}>{item.total_curtidas} curtidas</Text>
+                      <MaterialIcons name="chat-bubble-outline" size={12} color="#000" style={{ marginLeft: 12 }} />
+                      <Text style={styles.infoEnquete}>{item.comentarios?.length || 0} comentários</Text>
+                    </View>
                   </View>
-                  <View style={styles.linha}>
-                    <MaterialCommunityIcons name="cards-heart-outline" size={14} color="#000" />
-                    <Text style={styles.infoEnquete}>{item.curtidas} curtidas</Text>
-                    <MaterialIcons name="chat-bubble-outline" size={12} color="#000" style={{ marginLeft: 12 }} />
-                    <Text style={styles.infoEnquete}>{item.numeroComentario} comentários</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              ))
+            )}
           </ScrollView>
         </View>
 
@@ -203,34 +279,40 @@ export default function Categoria() {
               onChangeText={setNovaEnquete}
               placeholderTextColor="#888"
             />
-            <TouchableOpacity style={styles.botaoCriar}>
-              <Text style={styles.textoBotaoCriar}>Criar</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.botaoCriar} onPress={criarNovaEnquete}>
+            <Text style={styles.textoBotaoCriar}>Criar</Text>
+          </TouchableOpacity>
+
           </View>
         </View>
 
         {/* Comentários */}
         <Text style={styles.titulo_enquete}>Acesse as enquetes pelos comentários!</Text>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.carrossel}
-          keyExtractor={(item, index) => `${item.autor}-${index}`}
-          data={comentarios}
-          renderItem={({ item }) => (
-            <TouchableOpacity>
-              <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(item.categoria) }]}>
-                <View style={styles.dados_comentarios}>
-                  <View style={styles.autorHeader}>
-                    <FontAwesome5 name="user-circle" size={14} color="#fff" style={{ marginRight: 6 }} />
-                    <Text style={styles.autorComentario}>{item.autor}</Text>
+        {comentarios.length === 0 ? (
+          <Text style={styles.infoEnquete}>Nenhum comentário existente.</Text>
+        ) : (
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.carrossel}
+            keyExtractor={(item, index) => `${item.autor}-${index}`}
+            data={comentarios}
+            renderItem={({ item }) => (
+              <TouchableOpacity>
+                <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(item.categoria) }]}>
+                  <View style={styles.dados_comentarios}>
+                    <View style={styles.autorHeader}>
+                      <FontAwesome5 name="user-circle" size={14} color="#fff" style={{ marginRight: 6 }} />
+                      <Text style={styles.autorComentario}>{item.autor}</Text>
+                    </View>
+                    <Text style={styles.comentarioTexto}>{`"${item.comentario}"`}</Text>
                   </View>
-                  <Text style={styles.comentarioTexto}>{`"${item.comentario}"`}</Text>
                 </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+              </TouchableOpacity>
+            )}
+          />
+        )}
+
 
         {/* Nuvem de Palavras */}
         <NuvemDePalavras palavras={listaNuvem} />
@@ -260,188 +342,44 @@ function corDaCategoria(categoria: string): string {
   };
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
 }
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
 
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#fff' },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-
-  tituloHeader: {
-    fontSize: 18,
-    fontFamily: 'Raleway-Bold',
-    color: '#000',
-  },
-
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 16,
-    gap: 24,
-  },
-
-  tituloSecao: {
-    fontSize: 18,
-    fontFamily: 'Raleway-Bold',
-    marginBottom: 12,
-    color: '#000',
-  },
-
+  tituloHeader: { fontSize: 18, fontFamily: 'Raleway-Bold', color: '#000' },
+  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
+  tituloSecao: { fontSize: 18, fontFamily: 'Raleway-Bold', marginBottom: 8, marginTop:10 },
   cardImagem: {
-    width: 240,
-    height: 120,
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginRight: 12,
-    borderWidth: 2,
-    backgroundColor: '#ddd',
+    width: 250, height: 120, borderRadius: 12, overflow: 'hidden', marginRight: 14,
+    backgroundColor: '#ccc', borderWidth: 2,
   },
-
-  quadroEnquete: {
-    backgroundColor: '#F1F1F1',
-    borderRadius: 12,
-    padding: 16,
-    maxHeight: 300,
-  },
-
-  cardEnquete: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 10,
-  },
-
-  linha_icon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 10,
-  },
-
-  textoEnquete: {
-    fontSize: 14,
-    fontFamily: 'Raleway-Bold',
-    color: '#000',
-    flex: 1,
-    flexWrap: 'wrap',
-  },
-
-  linha: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    marginLeft: 6,
-    gap: 10,
-  },
-
-  infoEnquete: {
-    fontSize: 12,
-    color: '#555',
-    fontFamily: 'Raleway-Regular',
-  },
-
-  caixaCriarEnquete: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 12,
-    padding: 16,
-  },
-
-  tituloCriarEnquete: {
-    fontSize: 16,
-    fontFamily: 'Raleway-Bold',
-    marginBottom: 10,
-    color: '#000',
-  },
-
-  criarEnqueteBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-
+  quadroEnquete: { backgroundColor: '#F1F1F1', borderRadius: 12, padding: 12, maxHeight: 300 },
+  cardEnquete: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12 },
+  linha: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4, marginLeft: 10 },
+  textoEnquete: { fontSize: 14, color: '#000', flex: 1, fontFamily: 'Raleway-Bold' },
+  infoEnquete: { fontSize: 12, color: '#555' },
+  linha_icon: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
+  caixaCriarEnquete: { backgroundColor: '#F1F1F1', borderRadius: 12, padding: 16, marginVertical: 20 },
+  tituloCriarEnquete: { fontSize: 16, fontWeight: 'bold', marginBottom: 10, fontFamily: 'Raleway_700Bold', color: '#000' },
+  criarEnqueteBox: { flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 8 },
   inputEnquete: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    fontFamily: 'Raleway-Regular',
-    color: '#000',
+    flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, fontSize: 14,
+    fontFamily: 'Raleway_400Regular', color: '#000', backgroundColor: '#fff',
   },
-
-  botaoCriar: {
-    backgroundColor: '#267DFF',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-
-  textoBotaoCriar: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Raleway-Bold',
-  },
-
-  titulo_enquete: {
-    fontSize: 16,
-    fontFamily: 'Raleway-Bold',
-    marginTop: 16,
-    marginBottom: 10,
-    color: '#000',
-  },
-
-  carrossel: {
-    paddingHorizontal: 4,
-    paddingVertical: 10,
-    gap: 10,
-  },
-
+  botaoCriar: { backgroundColor: '#267DFF', paddingVertical: 10, paddingHorizontal: 16, borderRadius: 8 },
+  textoBotaoCriar: { color: '#fff', fontWeight: 'bold', fontSize: 14, fontFamily: 'Raleway_700Bold' },
+  titulo_enquete: { fontSize: 16, fontWeight: 'bold', marginBottom: 4, fontFamily: 'Raleway_700Bold' },
+  carrossel: { marginTop: 20, paddingHorizontal: 16, gap: 6 },
   bloco_comentarios: {
-    backgroundColor: '#ccc',
-    borderRadius: 8,
-    padding: 14,
-    marginRight: 10,
-    minWidth: 220,
-    maxWidth: 260,
-    minHeight: 120,
-    justifyContent: 'flex-start',
+    borderRadius: 5, padding: 12, elevation: 2, minWidth: 200, maxWidth: 240, minHeight: 120,
+    alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'column', marginRight: 5,
   },
-
-  dados_comentarios: {
-    flexDirection: 'column',
-    gap: 6,
-  },
-
-  autorHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-
-  autorComentario: {
-    fontSize: 14,
-    fontFamily: 'Raleway-Bold',
-    color: '#fff',
-  },
-
-  comentarioTexto: {
-    fontSize: 14,
-    fontFamily: 'Raleway-Regular',
-    color: '#fff',
-  },
+  dados_comentarios: { width: '100%', flexDirection: 'column', alignItems: 'flex-start' },
+  autorHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%', marginBottom: 6 },
+  autorComentario: { fontSize: 14, color: '#fff', fontFamily: 'Raleway_400Regular' },
+  comentarioTexto: { fontSize: 14, color: '#fff', fontFamily: 'Raleway_400Regular', width: '100%' },
 });
