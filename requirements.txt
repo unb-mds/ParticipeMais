@@ -1,5 +1,18 @@
+# Processamento de dados
 pandas==2.2.2
+numpy==1.26.4
+
+# NLP e pré-processamento
 nltk==3.8.1
-langchain==0.1.14
+
+# Embeddings e IA
 sentence-transformers==2.2.2
 faiss-cpu==1.7.4
+
+# LangChain (versão modular + compatível)
+langchain==0.1.14
+langchain-community==0.0.30
+langchain-core==0.1.35
+
+# Clusterização
+hdbscan==0.8.33

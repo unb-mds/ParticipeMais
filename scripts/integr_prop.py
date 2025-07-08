@@ -41,17 +41,3 @@ df["propostas1_processadas"] = df["propostas1_brutas"].apply(limpar_texto)
 # 💾 Salvar como novo CSV
 df[["propostas1_processadas"]].to_csv("propostas_limpa.csv", index=False)
 print("✅ Arquivo 'propostas_limpa.csv' salvo com sucesso!")
-
-
-# # 📄 Tratar como lista de strings (avaliar se necessário)
-# import ast
-# df["propostas1_lista"] = df["propostas1_brutas"].apply(ast.literal_eval)  # converte de string para lista
-
-# # 🧹 Aplicar pré-processamento em cada item da lista
-# df["propostas1_processadas"] = df["propostas1_lista"].apply(
-#     lambda lista: [limpar_texto(p) for p in lista]
-# )
-
-# # 💾 Salvar como novo CSV
-# df[["propostas1_processadas"]].explode("propostas1_processadas").to_csv("propostas_limpa.csv", index=False)
-# print("✅ Arquivo 'propostas_limpa.csv' salvo com sucesso!")
