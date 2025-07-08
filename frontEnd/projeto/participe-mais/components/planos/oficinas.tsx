@@ -28,13 +28,9 @@ export default function Oficina({
   };
 
   const oficinasFiltradas = oficinas.filter((item) => {
-  const regiao = item.regiao_oficina ?? '';
-
-  return (
-    regiao.toLowerCase().includes(search.toLowerCase())
-  );
-});
-
+    const regiao = item.regiao_oficina ?? '';
+    return regiao.toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
     <View style={styles.container}>
@@ -44,82 +40,96 @@ export default function Oficina({
         <Text style={styles.tituloTexto}>Oficinas</Text>
       </View>
 
-      {/* Search + Filtro */}
-      <View style={styles.pesquisaContainer}>
-        <View style={styles.inputContainer}>
-          <Ionicons name="search-outline" size={24} color="#000" />
-          <TextInput
-            placeholder="Buscar..."
-            style={styles.input}
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
-        <TouchableOpacity style={styles.filtroButton}>
-          <Ionicons name="options-outline" size={20} color="#000" />
-        </TouchableOpacity>
-      </View>
 
-      {/* Linha de separação */}
-      <View style={styles.linha} />
 
-      {/* Lista */}
-      <View style={styles.listaContainer}>
-        <ScrollView
-          showsVerticalScrollIndicator={true}
-          contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
-        >
-          {oficinasFiltradas.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              onPress={() => abrirModal(item)}
-              activeOpacity={0.8}
-            >
-              {/* Header com título e seta */}
-              <View style={styles.headerCard}>
-                <Text style={styles.tituloCard}>
-                  {item.titulo_oficina || 'Oficina sem título'}
-                </Text>
-                <Ionicons name="chevron-forward" size={20} color="#000" />
-              </View>
-
-              {/* Datas */}
-              <View style={styles.datasContainer}>
-                <Ionicons name="calendar-outline" size={14} color="#2670E8" />
-                <Text style={styles.datasTexto}>
-                  {/* {item.dataInicio} ➝ {item.dataTermino} */}
-                </Text>
-              </View>
-
-              {/* Tags */}
-              <View style={styles.tags}>
-                <View style={[styles.tagStatus, { backgroundColor: '#E0E0E0' }]}>
-                  <Text style={styles.tagText}>{item.status}</Text>
-                </View>
-                <View
-                  style={[
-                    styles.tagModalidade,
-                    {
-                      backgroundColor:
-                        item.modalidade === 'Presencial' ? '#FFA726' : '#E0E0E0',
-                    },
-                  ]}
-                >
-                  <Text style={styles.tagText}>{item.modalidade}</Text>
-                </View>
-              </View>
+      {oficinasFiltradas.length === 0 ? (
+          <>
+          {/* Linha de separação */}
+          <View style={styles.linha} />
+          
+          <Text style={{ textAlign: 'center', color: '#999' }}>
+            Nenhuma oficina encontrada.
+          </Text>
+            
+          </>
+          
+      ) : (
+        
+        <View style={styles.listaContainer}>
+        {/* Search + Filtro */}
+          <View style={styles.pesquisaContainer}>
+            <View style={styles.inputContainer}>
+              <Ionicons name="search-outline" size={24} color="#000" />
+              <TextInput
+                placeholder="Buscar..."
+                style={styles.input}
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+            <TouchableOpacity style={styles.filtroButton}>
+              <Ionicons name="options-outline" size={20} color="#000" />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          </View>
+
+          <View style={styles.linha} />
+
+          <ScrollView
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
+          >
+            {oficinasFiltradas.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() => abrirModal(item)}
+                activeOpacity={0.8}
+              >
+                {/* Header com título e seta */}
+                <View style={styles.headerCard}>
+                  <Text style={styles.tituloCard}>
+                    {item.titulo_oficina || 'Oficina sem título'}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color="#000" />
+                </View>
+
+                {/* Datas */}
+                <View style={styles.datasContainer}>
+                  <Ionicons name="calendar-outline" size={14} color="#2670E8" />
+                  <Text style={styles.datasTexto}>
+                    {/* {item.dataInicio} ➝ {item.dataTermino} */}
+                  </Text>
+                </View>
+
+                {/* Tags */}
+                <View style={styles.tags}>
+                  <View style={[styles.tagStatus, { backgroundColor: '#E0E0E0' }]}>
+                    <Text style={styles.tagText}>{item.status}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.tagModalidade,
+                      {
+                        backgroundColor:
+                          item.modalidade === 'Presencial' ? '#FFA726' : '#E0E0E0',
+                      },
+                    ]}
+                  >
+                    <Text style={styles.tagText}>{item.modalidade}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
 
       {/* Modal */}
       <OficinaModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         oficina={oficinaSelecionada}
-        propostas={propostas} // 🔥 Passando propostas para o modal
+        propostas={propostas}
       />
     </View>
   );
@@ -130,6 +140,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 16,
+    borderRadius: 7,
     marginBottom: 20,
     backgroundColor: '#fff',
   },
@@ -178,15 +189,18 @@ const styles = StyleSheet.create({
   listaContainer: {
     height: 300,
     backgroundColor: '#fff',
-    maxHeight: 300, // por exemplo
-    overflow: 'scroll', // opcional,
-
+    maxHeight: 300,
   },
   card: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#F9F9F9',
+    borderRadius: 8,
     padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   headerCard: {
     flexDirection: 'row',

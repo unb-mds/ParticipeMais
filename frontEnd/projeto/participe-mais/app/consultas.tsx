@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, FlatList, Pressable, Linking } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Pressable, Linking, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -44,9 +44,10 @@ export interface Proposta {
   autor: string;
   descricao_proposta: string;
   qtd_votos: number;
-  data_criacao: string; //não tem...
-  total_palavras_chave: number
-  url_proposta: string; // URL da proposta
+  data_criacao: string;
+  total_palavras_chave: number;
+  url_proposta: string;
+  etapa: number;
 }
 
 export default function ConsultaScreen() {
@@ -85,7 +86,7 @@ export default function ConsultaScreen() {
   
   const fetchConsultas = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/consultas/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/consultas/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -136,7 +137,7 @@ export default function ConsultaScreen() {
 
   const verificarFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/favoritas/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/favoritas/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -150,7 +151,7 @@ export default function ConsultaScreen() {
 };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/toggle/${id}/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -176,17 +177,9 @@ useEffect(() => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container_total}>
-        <Header
-          router={router}
-          titulo="Consultas Públicas"
-          favorito={favorito}
-          onToggleFavorito={toggleFavorito}
-        />
-
-        <View style={styles.container}>
-          <Text>Carregando...</Text>
-        </View>
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2670E8" />
+        <Text style={styles.loadingText}>Carregando consulta...</Text>
       </SafeAreaView>
     );
   }
@@ -303,6 +296,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 40,
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Raleway-Regular',
   },
   title: {
     fontSize: 30,

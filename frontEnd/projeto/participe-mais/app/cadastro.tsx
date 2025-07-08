@@ -71,7 +71,7 @@ export default function TelaCadastro() {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/auth/cadastro/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/cadastro/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -74,7 +74,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   const fetchPesquisa = async () => {
     try {
-      const response = await fetch('http://localhost:8000/pesquisar/lista', {
+      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

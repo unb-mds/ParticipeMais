@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 from .models import *
 from .serializers import *
 from propostas.models import Categoria
+from propostas.serializers import CategoriaSerializer
 
 class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -35,11 +36,15 @@ class ComunidadeView(APIView):
             total_curtidas=Count('comentarios__curtidas', filter=Q(comentarios__curtidas__curtido=True))
         ).order_by('-total_curtidas')
 
+        categorias = list(Categoria.objects.order_by("?"))
         serializer = ComunidadeSerializer(comunidades, many = True).data
+        comentarios = Comentarios.objects.order_by("?")[:10]
         
         return Response({
-            'Quantidade Chat': comunidades.count(),
-            'Enquetes':serializer
+            'quantidade_chat': comunidades.count(),
+            'Enquetes':serializer,
+            "comentarios": ComentariosSerializer(comentarios, many=True).data,
+            'categorias': CategoriaSerializer(categorias, many=True, context={'request': request},  fields=['id','nome']).data,
         }, status=status.HTTP_200_OK)
         
 class CriarChat(APIView):

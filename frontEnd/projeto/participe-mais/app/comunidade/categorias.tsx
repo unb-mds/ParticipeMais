@@ -68,7 +68,7 @@ export default function Categoria() {
 
   const fetchCategoria = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/comunidade/categorias/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/comunidade/categorias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -116,7 +116,10 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/conferencias',
+            params: { id: item.id.toString() }
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -133,7 +136,10 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/planos',
+            params: { id: item.id.toString() }
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -150,7 +156,10 @@ export default function Categoria() {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/consultas',
+            params: { id: item.id.toString() }
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -251,44 +260,188 @@ function corDaCategoria(categoria: string): string {
   };
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
 }
-
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  tituloHeader: { fontSize: 18, fontFamily: 'Raleway-Bold', color: '#000' },
-  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
-  tituloSecao: { fontSize: 18, fontFamily: 'Raleway-Bold', marginBottom: 8 },
+
+  tituloHeader: {
+    fontSize: 18,
+    fontFamily: 'Raleway-Bold',
+    color: '#000',
+  },
+
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 16,
+    gap: 24,
+  },
+
+  tituloSecao: {
+    fontSize: 18,
+    fontFamily: 'Raleway-Bold',
+    marginBottom: 12,
+    color: '#000',
+  },
+
   cardImagem: {
-    width: 250, height: 120, borderRadius: 12, overflow: 'hidden', marginRight: 14,
-    backgroundColor: '#ccc', borderWidth: 2,
+    width: 240,
+    height: 120,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: 12,
+    borderWidth: 2,
+    backgroundColor: '#ddd',
   },
-  quadroEnquete: { backgroundColor: '#F1F1F1', borderRadius: 12, padding: 12, maxHeight: 300 },
-  cardEnquete: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12 },
-  linha: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4, marginLeft: 10 },
-  textoEnquete: { fontSize: 14, color: '#000', flex: 1, fontFamily: 'Raleway-Bold' },
-  infoEnquete: { fontSize: 12, color: '#555' },
-  linha_icon: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  caixaCriarEnquete: { backgroundColor: '#F1F1F1', borderRadius: 12, padding: 16, marginVertical: 20 },
-  tituloCriarEnquete: { fontSize: 16, fontWeight: 'bold', marginBottom: 10, fontFamily: 'Raleway_700Bold', color: '#000' },
-  criarEnqueteBox: { flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 8 },
+
+  quadroEnquete: {
+    backgroundColor: '#F1F1F1',
+    borderRadius: 12,
+    padding: 16,
+    maxHeight: 300,
+  },
+
+  cardEnquete: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 14,
+    marginBottom: 10,
+  },
+
+  linha_icon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+  },
+
+  textoEnquete: {
+    fontSize: 14,
+    fontFamily: 'Raleway-Bold',
+    color: '#000',
+    flex: 1,
+    flexWrap: 'wrap',
+  },
+
+  linha: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginLeft: 6,
+    gap: 10,
+  },
+
+  infoEnquete: {
+    fontSize: 12,
+    color: '#555',
+    fontFamily: 'Raleway-Regular',
+  },
+
+  caixaCriarEnquete: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 12,
+    padding: 16,
+  },
+
+  tituloCriarEnquete: {
+    fontSize: 16,
+    fontFamily: 'Raleway-Bold',
+    marginBottom: 10,
+    color: '#000',
+  },
+
+  criarEnqueteBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+
   inputEnquete: {
-    flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, fontSize: 14,
-    fontFamily: 'Raleway_400Regular', color: '#000', backgroundColor: '#fff',
+    flex: 1,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    fontFamily: 'Raleway-Regular',
+    color: '#000',
   },
-  botaoCriar: { backgroundColor: '#267DFF', paddingVertical: 10, paddingHorizontal: 16, borderRadius: 8 },
-  textoBotaoCriar: { color: '#fff', fontWeight: 'bold', fontSize: 14, fontFamily: 'Raleway_700Bold' },
-  titulo_enquete: { fontSize: 16, fontWeight: 'bold', marginBottom: 4, fontFamily: 'Raleway_700Bold' },
-  carrossel: { marginTop: 20, paddingHorizontal: 16, gap: 6 },
+
+  botaoCriar: {
+    backgroundColor: '#267DFF',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+
+  textoBotaoCriar: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Raleway-Bold',
+  },
+
+  titulo_enquete: {
+    fontSize: 16,
+    fontFamily: 'Raleway-Bold',
+    marginTop: 16,
+    marginBottom: 10,
+    color: '#000',
+  },
+
+  carrossel: {
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+    gap: 10,
+  },
+
   bloco_comentarios: {
-    borderRadius: 5, padding: 12, elevation: 2, minWidth: 200, maxWidth: 240, minHeight: 120,
-    alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'column', marginRight: 5,
+    backgroundColor: '#ccc',
+    borderRadius: 8,
+    padding: 14,
+    marginRight: 10,
+    minWidth: 220,
+    maxWidth: 260,
+    minHeight: 120,
+    justifyContent: 'flex-start',
   },
-  dados_comentarios: { width: '100%', flexDirection: 'column', alignItems: 'flex-start' },
-  autorHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%', marginBottom: 6 },
-  autorComentario: { fontSize: 14, color: '#fff', fontFamily: 'Raleway_400Regular' },
-  comentarioTexto: { fontSize: 14, color: '#fff', fontFamily: 'Raleway_400Regular', width: '100%' },
+
+  dados_comentarios: {
+    flexDirection: 'column',
+    gap: 6,
+  },
+
+  autorHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+
+  autorComentario: {
+    fontSize: 14,
+    fontFamily: 'Raleway-Bold',
+    color: '#fff',
+  },
+
+  comentarioTexto: {
+    fontSize: 14,
+    fontFamily: 'Raleway-Regular',
+    color: '#fff',
+  },
 });

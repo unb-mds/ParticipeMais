@@ -32,9 +32,10 @@ export interface Proposta {
   autor: string;
   descricao_proposta: string;
   qtd_votos: number;
-  data_criacao: string; //não tem...
-  total_palavras_chave: number
-  url_proposta: string; // URL da proposta
+  data_criacao: string;
+  total_palavras_chave: number;
+  url_proposta: string;
+  etapa: number;
 }
 
 export type Oficinas = {
@@ -85,7 +86,7 @@ useEffect(()=> {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/planos/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ useEffect(()=> {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/planos/favoritas/`, {
+      const res = await fetch(`http://172.20.10.9:8000/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -126,7 +127,7 @@ useEffect(()=> {
   };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/planos/toggle/${id}/`, {
+    const res = await fetch(`http://172.20.10.9:8000/planos/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -174,12 +175,13 @@ const palavrasChave = planopalavra?.palavras_chaves
   : [];
 
   if (loading) {
-      return (
-        <SafeAreaView style={styles.container_total}>
-          <ActivityIndicator size="large" color="#2670E8" style={{ marginTop: 50 }} />
-        </SafeAreaView>
-      );
-    }
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2670E8" />
+        <Text style={styles.loadingText}>Carregando plano...</Text>
+      </SafeAreaView>
+    );
+  }
 
   const plano = planos[0];
   console.log('Acessando planos:');
@@ -244,19 +246,21 @@ const palavrasChave = planopalavra?.palavras_chaves
               }
 
             { oficinas && oficinas.length > 0 ? (
+              <>
               <Oficina oficinas={oficinas} propostas={propostas} />
+
+              <Dados
+                estatisticas={dadosEstatisticos}
+                palavrasChave={palavrasChave}
+              />
+              
+              </>
             ) : (
               <View>
-                <Text style={styles.description}>
-                  Não há oficinas disponíveis no momento.
-                </Text>
+                <Oficina oficinas={oficinas} propostas={propostas} />
               </View>
             )}
 
-            <Dados
-              estatisticas={dadosEstatisticos}
-              palavrasChave={palavrasChave}
-            />
 
           </View>
         }
@@ -275,6 +279,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 40,
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Raleway-Regular',
   },
   title: {
     fontSize: 30,

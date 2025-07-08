@@ -87,7 +87,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/${id}/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ export default function ConferenciaDetalhadaScreen() {
     setLoadingPropostas(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/conferencias/${id}/propostas/`,
+        `http://172.20.10.9:8000/conferencias/${id}/propostas/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -142,7 +142,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -154,7 +154,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -188,6 +188,15 @@ export default function ConferenciaDetalhadaScreen() {
       .filter(p => p.length > 0)
       .slice(0, 12)
   : [];
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2670E8" />
+        <Text style={styles.loadingText}>Carregando conferência...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container_total}>
@@ -250,6 +259,18 @@ const styles = StyleSheet.create({
   container_total: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Raleway-Regular',
   },
   container: {
     marginTop: 10,
