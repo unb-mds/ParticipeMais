@@ -11,71 +11,122 @@ import {
 import { Ionicons, Feather, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Enquete() {
   const router = useRouter();
+  const { id } = useLocalSearchParams(); // id do chat
+  const [token, setToken] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const [comentarios, setComentarios] = useState<any[]>([]);
+  const [autor, setAutor] = useState('');
+  const [total_curtidas, setTotal_curtidas] = useState('');
 
-  const [comentarios, setComentarios] = useState([
-    {
-      id: '1',
-      nome: 'Charlie',
-      papel: 'Cidadão Participante',
-      cor: '#4CAF50',
-      texto: 'Na minha cidade começaram a cortar várias árvores antigas alegando risco de queda, mas não plantaram outras no lugar. Isso só aumentou o calor nos bairros. Arborização urbana não deveria ser prioridade?',
-      curtidas: 42,
-      curtido: false,
-    },
-    {
-      id: '2',
-      nome: 'Luísa',
-      papel: 'Ativador de Temas',
-      cor: '#2196F3',
-      texto: 'Concordo, @Charlie. Aqui na Asa Norte o que salvou foi um projeto comunitário que plantou árvores nativas nos canteiros. A prefeitura precisa ouvir mais a população nessas decisões.',
-      curtidas: 30,
-      curtido: false,
-    },
-    {
-      id: '3',
-      nome: 'Gabriel',
-      papel: 'Guardião do Debate',
-      cor: '#9C27B0',
-      texto: 'A questão é que muitas árvores estão mal cuidadas, em poda sem plano. O ideal seria um plano municipal de arborização com participação dos moradores.',
-      curtidas: 15,
-      curtido: false,
-    },
-  ]);
+ useEffect(() => {
+  const obterToken = async () => {
+    const t = await AsyncStorage.getItem('accessToken');
+    if (t) {
+      setToken(t);
+    }
+  };
+    obterToken();
+  }, []);
+
+  useEffect(() => {
+    if (token && id) {
+      buscarChat();
+    }
+  }, [token, id]);
+
+  const buscarChat = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/comunidade/chat/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const json = await res.json();
+      console.log(json)
+      if (res.ok) {
+      setTitulo(json.pergunta || 'Discussão');
+        setComentarios(json.comentarios || []);
+        setAutor(json.autor_nome || 'Anônimo'); // 👈 aqui
+        setTotal_curtidas(json.total_curtidas)
+      } else {
+        console.warn('Erro ao buscar chat:', json);
+      }
+    } catch (err) {
+      console.error('Erro na requisição:', err);
+    }
+  };
+
 
   const [novoComentario, setNovoComentario] = useState('');
 
-  const handlePostar = () => {
-    if (novoComentario.trim() === '') return;
-    const novo = {
-      id: Date.now().toString(),
-      nome: 'Você',
-      papel: 'Cidadão Participante',
-      cor: '#FF9800',
-      texto: novoComentario.trim(),
-      curtidas: 0,
-      curtido: false,
-    };
-    setComentarios([novo, ...comentarios]);
-    setNovoComentario('');
-    Keyboard.dismiss();
-  };
+const handlePostar = async () => {
+  if (novoComentario.trim() === '') return;
 
-  const handleCurtir = (id: string) => {
-    setComentarios((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              curtido: !item.curtido,
-              curtidas: item.curtido ? item.curtidas - 1 : item.curtidas + 1,
-            }
-          : item
-      )
-    );
-  };
+  try {
+    const res = await fetch(`http://localhost:8000/comunidade/chat/${id}/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ conteudo: novoComentario.trim() }),
+    });
+
+    const json = await res.json();
+
+    if (res.ok) {
+      // Atualiza a lista de comentários com o novo no topo
+      setComentarios(prev => [json.data, ...prev]);
+      setNovoComentario('');
+      Keyboard.dismiss();
+    } else {
+      alert(json.message || 'Erro ao postar comentário.');
+    }
+  } catch (err) {
+    console.error('Erro ao postar comentário:', err);
+    alert('Erro ao postar comentário.');
+  }
+};
+
+const handleCurtir = async (comentarioId: number) => {
+  try {
+    const res = await fetch(`http://localhost:8000/comunidade/chat/${id}/comentarios/${comentarioId}/curtir/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const json = await res.json();
+
+    if (res.ok) {
+      setComentarios((prev) =>
+        prev.map((c) =>
+          c.id === comentarioId
+            ? {
+                ...c,
+                curtido: json.curtido, // você pode adicionar isso no backend também
+                curtidas: json.quantidade_curtidas,
+              }
+            : c
+        )
+      );
+    } else {
+      console.warn('Erro ao curtir:', json);
+    }
+  } catch (error) {
+    console.error('Erro ao curtir comentário:', error);
+  }
+};
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -92,14 +143,13 @@ export default function Enquete() {
         </View>
 
         {/* Título */}
-        <Text style={styles.titulo}>
-          Arborização nas cidades: mais sombra e menos calor?
-        </Text>
+        <Text style={styles.titulo}>{titulo}</Text>
+
 
         {/* Info */}
         <View style={styles.info}>
           <Ionicons name="heart-outline" size={16} color="#000" />
-          <Text style={styles.infoText}>42 Curtidas</Text>
+          <Text style={styles.infoText}>{total_curtidas}</Text>
           <MaterialIcons
             name="chat-bubble-outline"
             size={16}
@@ -112,7 +162,7 @@ export default function Enquete() {
         {/* Criador */}
         <View style={styles.criador}>
           <View style={styles.bolaCriador} />
-          <Text style={styles.criadorText}>Francisco</Text>
+            <Text style={styles.criadorText}>{autor}</Text>
           <Text style={styles.criadorSub}>Criador da discussão</Text>
         </View>
 
@@ -146,32 +196,31 @@ export default function Enquete() {
 
         {/* Lista de comentários */}
         <FlatList
-          data={comentarios}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ gap: 12, paddingBottom: 40 }}
-          renderItem={({ item }) => (
-            <View style={styles.cardComentario}>
-              <View style={styles.headerComentario}>
-                <View
-                  style={[styles.bolaComentario, { backgroundColor: item.cor }]}
-                />
-                <Text style={styles.nome}>{item.nome}</Text>
-                <Text style={styles.papel}>{item.papel}</Text>
-              </View>
-              <Text style={styles.textoComentario}>{item.texto}</Text>
-              <View style={styles.footerComentario}>
-                <TouchableOpacity onPress={() => handleCurtir(item.id)}>
-                  <Ionicons
-                    name={item.curtido ? 'heart' : 'heart-outline'}
-                    size={16}
-                    color={item.curtido ? 'red' : '#000'}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.infoText}>{item.curtidas} Curtidas</Text>
-              </View>
-            </View>
-          )}
+  data={comentarios}
+  keyExtractor={(item) => item.id.toString()}
+  contentContainerStyle={{ gap: 12, paddingBottom: 40 }}
+  renderItem={({ item }) => (
+    <View style={styles.cardComentario}>
+      <View style={styles.headerComentario}>
+        <View style={[styles.bolaComentario, { backgroundColor: item.cor || '#ccc' }]} />
+        <Text style={styles.nome}>{item.nome_autor || 'Anônimo'}</Text>
+        <Text style={styles.papel}>{item.autor_papel || 'Usuário'}</Text>
+      </View>
+      <Text style={styles.textoComentario}>{item.conteudo}</Text>
+      <View style={styles.footerComentario}>
+      <TouchableOpacity onPress={() => handleCurtir(item.id)}>
+        <Ionicons
+          name={item.curtido ? 'heart' : 'heart-outline'}
+          size={16}
+          color={item.curtido ? '#E91E63' : '#000'}
         />
+      </TouchableOpacity>
+      <Text style={styles.infoText}>{item.quantidade_curtidas} Curtidas</Text>
+
+      </View>
+    </View>
+  )}
+/>
       </View>
     </SafeAreaView>
   );
