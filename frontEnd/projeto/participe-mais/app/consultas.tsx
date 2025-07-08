@@ -23,6 +23,7 @@ export interface Consultas {
   status: boolean;
   link: UrlObject;
   etapas: Etapas[];
+  palavras_chaves: string;
 }
 
 export interface Etapas {
@@ -192,6 +193,14 @@ useEffect(() => {
 
   const consulta = consultas[0];
 
+  const palavrasChave = consulta?.palavras_chaves
+  ? consulta.palavras_chaves
+      .split(',')
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .slice(0, 12)
+  : [];
+
   return (
     <SafeAreaView style={styles.container_total}>
       <Header
@@ -271,7 +280,7 @@ useEffect(() => {
                   { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
                 ]}
                 total={1527}
-                palavrasChave={['Saúde', 'Educação', 'Meio Ambiente', 'Justiça']}
+                palavrasChave={palavrasChave}
               />
             
             </>) : (<>

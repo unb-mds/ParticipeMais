@@ -23,6 +23,7 @@ export interface Conferencia {
   status: boolean;
   data_subconferencia: string[] | string;
   qtd_propostas: number;
+  palavras_chaves: string;
 }
 
 export interface Proposta {
@@ -180,10 +181,13 @@ export default function ConferenciaDetalhadaScreen() {
     encerradas: 43,
   };
 
-  const palavrasChave = [
-    'Sustentabilidade', 'Clima', 'Energia', 'Resíduos', 'Água',
-    'Educação Ambiental', 'Transporte', 'Justiça Climática', 'Inovação'
-  ];
+  const palavrasChave = conferencia?.palavras_chaves
+  ? conferencia.palavras_chaves
+      .split(',')
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .slice(0, 12)
+  : [];
 
   return (
     <SafeAreaView style={styles.container_total}>
@@ -227,7 +231,7 @@ export default function ConferenciaDetalhadaScreen() {
                   <DadosPizza
                     estatisticas={estatisticas}
                     total={propostas.length}
-                    palavrasChave={['Sustentabilidade', 'Inovação', 'Energia', 'Clima', 'Justiça', 'Biodiversidade']}
+                    palavrasChave={palavrasChave}
                   />
                 )}
                 {loadingPropostas && (

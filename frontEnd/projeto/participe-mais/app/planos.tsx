@@ -23,6 +23,7 @@ export interface Planos {
   descricao: string;
   sobre: string;
   status: boolean;
+  palavras_chaves: string;
 }
 
 export interface Proposta {
@@ -156,23 +157,21 @@ useEffect(() => {
     'Promover sustentabilidade macroeconômica',
   ];
 
+  const planopalavra = planos[0];
+
   const dadosEstatisticos = {
     total: 1527,
     andamento: 57, // percentual
     encerradas: 43, // percentual
   };
   
-const palavrasChave = [
-  'Sustentabilidade',
-  'Clima',
-  'Energia',
-  'Resíduos',
-  'Água',
-  'Educação Ambiental',
-  'Transporte',
-  'Justiça Climática',
-  'Inovação',
-];
+const palavrasChave = planopalavra?.palavras_chaves
+  ? planopalavra.palavras_chaves
+      .split(',')
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .slice(0, 12)
+  : [];
 
   if (loading) {
       return (

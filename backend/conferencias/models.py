@@ -14,7 +14,7 @@ class Conferencia(models.Model):
     qtd_propostas = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
     categorias = models.ManyToManyField(Categoria, blank=True, related_name='conferencias')
-    palavras_chaves = models.CharField(max_length=1000,default="", blank=True)
+    palavras_chaves = models.CharField(max_length=2000,default="", blank=True)
 
     def __str__(self):
         return self.titulo
