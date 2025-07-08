@@ -1,71 +1,93 @@
 ````markdown
-# 🧠 Cluster de Propostas com NLP + IA — Projeto Participa+
+# 🧠 Projeto Participa+ — Clusterização de Propostas com NLP + IA
 
-Este módulo implementa o pipeline de **análise semântica**, **clusterização automática** e **classificação temática** de propostas públicas extraídas do site [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/).
-
-O projeto visa agrupar as propostas por **similaridade temática** e classificá-las em **eixos interpretáveis**, utilizando técnicas de **NLP**, **embeddings semânticos**, **FAISS** e **algoritmos não supervisionados (como HDBSCAN)**.
+Este módulo aplica **Processamento de Linguagem Natural (NLP)** e **Inteligência Artificial** para organizar, agrupar e classificar propostas públicas extraídas do portal [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/).  
+O objetivo é apoiar análises qualitativas e decisões públicas com base em agrupamentos temáticos automáticos.
 
 ---
 
-## 📌 Etapas do Pipeline
+## 🤖 Machine Learning — Visão Geral
+
+### ✅ O que foi feito:
+- 🔹 Pré-processamento textual das propostas
+- 🔹 Geração de embeddings semânticos via LangChain
+- 🔹 Indexação com FAISS
+- 🔹 Clusterização com HDBSCAN
+- 🔹 Classificação automática de novas propostas
+- 🔹 Visualização com UMAP e WordClouds
+
+---
+
+### 🛠️ Como foi feito:
+- 🔸 Limpeza e normalização de texto (stopwords, acentos, links, etc.)
+- 🔸 Vetorização com `all-MiniLM-L6-v2` da HuggingFace usando LangChain
+- 🔸 Armazenamento vetorial com **FAISS** para busca semântica
+- 🔸 Agrupamento com **HDBSCAN** (densidade adaptativa)
+- 🔸 Visualização dos temas com **UMAP** + nuvens de palavras
+
+---
+
+### 🎯 Para que serve:
+- 🧭 Facilitar a **análise temática automatizada** das propostas
+- 🔍 Suportar **buscas por similaridade semântica**
+- 🧾 Auxiliar na **categorização e clusterização** de novas propostas
+- 📊 Gerar **insumos para dashboards e visualizações públicas**
+
+---
+
+## 🧪 Pipeline de Execução
 
 ```text
-✅ 1. Coleta por WebScraping
+✅ 1. WebScraping das propostas (já feito)
 ✅ 2. Pré-processamento textual
-✅ 3. Geração de embeddings semânticos com LangChain
-✅ 4. Indexação com FAISS
-✅ 5. Clusterização com HDBSCAN
-✅ 6. Visualizações com UMAP + WordCloud
+✅ 3. Geração de embeddings semânticos
+✅ 4. Armazenamento vetorial com FAISS
+✅ 5. Clusterização temática com HDBSCAN
+✅ 6. Visualizações com UMAP + WordClouds
 ✅ 7. Classificação automática de novas propostas
-🔜 8. Integração com frontend interativo (Kotlin ou Streamlit)
+🔜 8. Integração com frontend interativo
 ````
 
 ---
 
-## ⚙️ Instalação e Ambiente
-
-1. **Crie o ambiente virtual**:
+## ⚙️ Instalação do Ambiente
 
 ```bash
+# 1. Criar ambiente virtual
 python -m venv venv
-source venv/bin/activate        # Linux/macOS
-venv\Scripts\activate           # Windows
-```
+source venv/bin/activate      # Linux/macOS
+venv\Scripts\activate         # Windows
 
-2. **Instale as dependências**:
-
-```bash
+# 2. Instalar dependências
 pip install -r requirements.txt
 ```
 
-> 💡 Em sistemas Windows, troque `faiss-cpu` por `faiss-cpu-windows` no arquivo `requirements.txt`.
+> 💡 Se estiver no Windows, edite o `requirements.txt` e troque `faiss-cpu` por `faiss-cpu-windows`.
 
 ---
 
-## 🚀 Execução do Pipeline
+## 🚀 Como Executar
 
-Você pode executar o projeto etapa por etapa ou rodar **automaticamente com o script** `run_pipeline.sh`.
-
-### ▶️ Rodar tudo de uma vez (recomendado)
+### ✅ Rodar o pipeline completo automaticamente:
 
 ```bash
 chmod +x run_pipeline.sh
 ./run_pipeline.sh
 ```
 
-### 🎯 Etapas individuais
+### 🧩 Ou etapa por etapa:
 
 ```bash
-python scripts/integracao.py             # Etapa 1 - Pré-processamento
-python scripts/gerar_emb.py              # Etapa 2 - Embeddings + FAISS
-python scripts/clusterizacao_hdbscan.py  # Etapa 3 - Clusterização
-python scripts/classificacao_p_eixos.py  # Etapa 4 - Classificação de novas propostas
-python scripts/gerar_wordclouds.py       # Etapa 5 - Visualizações
+python scripts/integracao.py               # Etapa 1 — Pré-processamento
+python scripts/gerar_emb.py                # Etapa 2 — Geração de embeddings
+python scripts/clusterizacao_hdbscan.py    # Etapa 3 — Clusterização
+python scripts/classificacao_p_eixos.py    # Etapa 4 — Classificação
+python scripts/gerar_wordclouds.py         # Etapa 5 — Visualizações
 ```
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🗂️ Estrutura Recomendada
 
 ```
 machineLearning/
@@ -89,16 +111,22 @@ machineLearning/
 │   └── nuvens/
 │       └── cluster_0.png ...
 │
-├── run_pipeline.sh         ← Automação completa do pipeline
+├── run_pipeline.sh
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🧠 Sobre os Eixos Temáticos
+## 📊 Resultados Gerados
 
-Os clusters (`cluster_id`) são rotulados com eixos como:
+| Arquivo                        | Descrição                                          |
+| ------------------------------ | -------------------------------------------------- |
+| `propostas_classificadas.csv`  | Propostas novas com eixo temático                  |
+| `conferencia_com_clusters.csv` | Propostas agrupadas por `cluster_id`               |
+---
+
+## 🏷️ Exemplo de Mapeamento de Clusters
 
 ```python
 mapa_clusters = {
@@ -109,28 +137,11 @@ mapa_clusters = {
     4: "Governança Participativa"
 }
 ```
-
-Isso permite gerar uma saída interpretável como:
-
-| proposta                             | eixo\_tematico     |
-| ------------------------------------ | ------------------ |
-| Criar hortas escolares               | Educação Ambiental |
-| Construir ciclovias em zonas urbanas | Mobilidade Urbana  |
-
 ---
 
-## 🧪 Exemplos de Aplicações
+## 🤝 Contribuindo
 
-* Busca semântica por propostas semelhantes
-* Navegação temática por tópicos
-* Análise de demandas cidadãs por áreas do governo
-* Classificação automatizada de novos textos com IA
-* Interface com frontend em Kotlin, React ou Streamlit
+Pull requests, feedbacks e novas ideias são super bem-vindos!
+Este é um projeto colaborativo para fortalecer a **inteligência cidadã com IA**.
 
 ---
-
-## 🤝 Colaboração
-
-Pull requests e sugestões são muito bem-vindos!
-
-```
