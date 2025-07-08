@@ -1,135 +1,136 @@
 ````markdown
-# 🧠 Cluster de Propostas com NLP + IA
+# 🧠 Cluster de Propostas com NLP + IA — Projeto Participa+
 
-Este repositório contém o pipeline de **pré-processamento textual**, **geração de embeddings semânticos** e **armazenamento vetorial com FAISS** para organizar as propostas do site **Brasil Participativo** por similaridade temática.
+Este módulo implementa o pipeline de **análise semântica**, **clusterização automática** e **classificação temática** de propostas públicas extraídas do site [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/).
 
-Nosso objetivo é aplicar **Machine Learning e NLP** para agrupar automaticamente as propostas em **temas**, facilitando análises qualitativas e navegação por parte da sociedade civil, pesquisadores e gestores públicos.
+O projeto visa agrupar as propostas por **similaridade temática** e classificá-las em **eixos interpretáveis**, utilizando técnicas de **NLP**, **embeddings semânticos**, **FAISS** e **algoritmos não supervisionados (como HDBSCAN)**.
 
 ---
 
 ## 📌 Etapas do Pipeline
 
 ```text
-1. Web scraping das propostas  ✅
-2. Pré-processamento textual    ✅
-3. Geração de embeddings        ✅
-4. Armazenamento vetorial (FAISS) ✅
-5. Clusterização e visualização (em desenvolvimento)
-6. Frontend e navegação interativa (em breve)
+✅ 1. Coleta por WebScraping
+✅ 2. Pré-processamento textual
+✅ 3. Geração de embeddings semânticos com LangChain
+✅ 4. Indexação com FAISS
+✅ 5. Clusterização com HDBSCAN
+✅ 6. Visualizações com UMAP + WordCloud
+✅ 7. Classificação automática de novas propostas
+🔜 8. Integração com frontend interativo (Kotlin ou Streamlit)
 ````
 
 ---
 
-## ⚙️ Como instalar as dependências
+## ⚙️ Instalação e Ambiente
 
-Este projeto usa um ambiente Python com bibliotecas específicas para NLP e IA.
-
-### ▶️ 1. Crie um ambiente virtual (recomendado)
+1. **Crie o ambiente virtual**:
 
 ```bash
 python -m venv venv
-source venv/bin/activate    # Linux/Mac
-venv\Scripts\activate       # Windows
+source venv/bin/activate        # Linux/macOS
+venv\Scripts\activate           # Windows
 ```
 
-### ▶️ 2. Instale as dependências do projeto
+2. **Instale as dependências**:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> 💡 Em sistemas Windows, pode ser necessário editar o `requirements.txt` e substituir `faiss-cpu` por `faiss-cpu-windows`.
+> 💡 Em sistemas Windows, troque `faiss-cpu` por `faiss-cpu-windows` no arquivo `requirements.txt`.
 
 ---
 
-## 🧹 Etapa 1 — Pré-processamento Textual (`integracao.py`)
+## 🚀 Execução do Pipeline
 
-Esta etapa transforma os textos brutos em versões padronizadas e limpas, prontas para processamento semântico.
+Você pode executar o projeto etapa por etapa ou rodar **automaticamente com o script** `run_pipeline.sh`.
 
-### ✨ O que é feito:
-
-* Remoção de stopwords, pontuação e links
-* Padronização para caixa baixa
-* Remoção de acentos
-* Extração de listas textuais de colunas que armazenam múltiplas propostas
-
-### 📁 Entrada esperada:
-
-Um CSV contendo os textos brutos das propostas (como listas de strings):
-
-```
-['Proposta 1', 'Proposta 2', '...']
-```
-
-### ▶️ Como executar
+### ▶️ Rodar tudo de uma vez (recomendado)
 
 ```bash
-python integracao.py
+chmod +x run_pipeline.sh
+./run_pipeline.sh
 ```
 
-### 🧾 Resultado:
-
-Gera o arquivo `propostas_limpa.csv`, onde cada linha contém **uma proposta já pré-processada** na coluna `propostas_processadas`.
-
-Como o projeto possui **múltiplas áreas temáticas e ciclos de scraping distintos**, os códigos de processamento são executados **várias vezes** com diferentes conjuntos de dados. Para lidar com isso, adotamos uma estratégia **manual e descritiva**: antes de rodar o script, definimos **explicitamente qual arquivo será processado**, e ao final, salvamos o resultado com **nomes distintos** (ex: `propostas_meio_ambiente.csv`, `propostas_educacao.csv`), mantendo clareza e controle sobre os dados de saída.
-
-
----
-
-## 🧠 Etapa 2 — Geração de Embeddings com LangChain (`gerar_embeddings.py`)
-
-Nesta etapa, usamos o modelo `all-MiniLM-L6-v2` da HuggingFace (via LangChain) para transformar os textos em **vetores semânticos** e armazená-los com FAISS.
-
-### ✨ O que é feito:
-
-* Carregamento do CSV limpo
-* Vetorização dos textos com LangChain
-* Criação de um índice FAISS
-* Salvamento local para reuso posterior
-
-### 📁 Entrada esperada:
-
-```
-propostas_limpa.csv
-```
-
-Coluna: `propostas_processadas`
-
-### ▶️ Como executar
+### 🎯 Etapas individuais
 
 ```bash
-python gerar_embeddings.py
-```
-
-### 🧾 Resultado:
-
-Cria a pasta `faiss_index/` com o índice vetorial salvo, roda-ser o código de acordo com a quantidade de arquivos 'csv' que se deseja processar. Esse índice pode ser usado para:
-
-* 🔍 Buscar propostas semelhantes por tema
-* 📊 Aplicar clusterização temática (KMeans, HDBSCAN)
-* 💬 Alimentar um chatbot com IA baseado em busca semântica (LangChain RAG)
-
----
-
-## 📁 Estrutura sugerida do projeto
-
-```
-📦 cluster-propostas/
-├── integracao.py                # Pré-processamento textual
-├── gerar_embeddings.py          # Geração de embeddings + FAISS
-├── propostas_limpa.csv          # Textos limpos prontos para vetorização
-├── faiss_index/                 # Armazenamento dos vetores
-├── README.md                    # Documentação do projeto
-├── requirements.txt             # Lista de dependências
+python scripts/integracao.py             # Etapa 1 - Pré-processamento
+python scripts/gerar_emb.py              # Etapa 2 - Embeddings + FAISS
+python scripts/clusterizacao_hdbscan.py  # Etapa 3 - Clusterização
+python scripts/classificacao_p_eixos.py  # Etapa 4 - Classificação de novas propostas
+python scripts/gerar_wordclouds.py       # Etapa 5 - Visualizações
 ```
 
 ---
 
-## 🚀 Próximos passos
+## 📁 Estrutura do Projeto
 
-* [ ] Aplicar clusterização com KMeans e HDBSCAN
-* [ ] Visualizar clusters com UMAP e WordClouds
-* [ ] Criar uma interface interativa para explorar os temas (Streamlit, React ou Jetpack Compose)
-* [ ] Lançar um MVP do sistema "Participa+" para experimentação cidadã
+```
+machineLearning/
+├── data/
+│   ├── conferencia_com_clusters.csv
+│   ├── propostas_classificadas.csv
+│   └── embeddings/
+│       ├── faiss_index/
+│       ├── faiss_encerradas_index/
+│       └── faiss_prp_index/
+│
+├── scripts/
+│   ├── integracao.py
+│   ├── gerar_emb.py
+│   ├── clusterizacao_hdbscan.py
+│   ├── gerar_wordclouds.py
+│   └── classificacao_p_eixos.py
+│
+├── visualizacoes/
+│   ├── mapa_umap_clusters.png
+│   └── nuvens/
+│       └── cluster_0.png ...
+│
+├── run_pipeline.sh         ← Automação completa do pipeline
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🧠 Sobre os Eixos Temáticos
+
+Os clusters (`cluster_id`) são rotulados com eixos como:
+
+```python
+mapa_clusters = {
+    0: "Educação Ambiental",
+    1: "Mobilidade Urbana",
+    2: "Justiça Climática",
+    3: "Saúde Pública",
+    4: "Governança Participativa"
+}
+```
+
+Isso permite gerar uma saída interpretável como:
+
+| proposta                             | eixo\_tematico     |
+| ------------------------------------ | ------------------ |
+| Criar hortas escolares               | Educação Ambiental |
+| Construir ciclovias em zonas urbanas | Mobilidade Urbana  |
+
+---
+
+## 🧪 Exemplos de Aplicações
+
+* Busca semântica por propostas semelhantes
+* Navegação temática por tópicos
+* Análise de demandas cidadãs por áreas do governo
+* Classificação automatizada de novos textos com IA
+* Interface com frontend em Kotlin, React ou Streamlit
+
+---
+
+## 🤝 Colaboração
+
+Pull requests e sugestões são muito bem-vindos!
 
 ```
