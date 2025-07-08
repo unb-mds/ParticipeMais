@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Propostas
+from .models import Propostas, Categoria
 from api.serializers import DynamicFieldsModelSerializer
 
 class PropostaSerializer(DynamicFieldsModelSerializer):
@@ -57,3 +57,8 @@ class PropostaSerializer(DynamicFieldsModelSerializer):
     def get_total_topicos(self, obj):
         return obj.topicos.count()
     
+class CategoriaSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = "__all__"
+

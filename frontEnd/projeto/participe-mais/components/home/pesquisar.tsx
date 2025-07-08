@@ -4,6 +4,7 @@ import { FontAwesome, MaterialIcons, Ionicons, MaterialCommunityIcons,EvilIcons 
 import { routePatternToRegex } from 'expo-router/build/fork/getStateFromPath-forks';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMemo } from 'react';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const Largura = SCREEN_WIDTH * 0.85;
@@ -36,10 +37,15 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
     image_url: string;
     nome: string;
   }
+    interface Categoria {
+    id: number;
+    nome: string;
+  }
   
   const [conferencias, setConferencias] = useState<Conferencias[]>([])
   const [planos, setPlanos] = useState<Planos[]>([])
   const [consultas, setConsultas] = useState<Consultas[]>([])
+  const [categoria, setCategoria] = useState<Categoria[]>([])
   const [token, setToken] = useState<string>('');
 
   useEffect(() => {
@@ -60,15 +66,15 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   useEffect(() => {
     if (token) {
-      fetchConferenciasLista();
+      fetchPesquisa();
     }
   }, [token]);
 
 
 
-  const fetchConferenciasLista = async () => {
+  const fetchPesquisa = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/pesquisar/lista', {
+      const response = await fetch('http://localhost:8000/pesquisar/lista', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -79,10 +85,12 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
         const json = await response.json();
         const data = json.data;
 
+        // pega os dados da API e atualiza os estados
         setConferencias(data.conferencias);  // <-- AQUI
         setPlanos(data.planos);  // <-- AQUI
         setConsultas(data.consultas);  // <-- AQUI
-
+        setCategoria(data.categorias);  // <-- AQUI
+        console.log(data.categorias)
         // console.log(data.planos)
 
       } else if (response.status === 401 || response.status === 403) {
@@ -97,115 +105,160 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Barra de busca */}
-      <View style={styles.searchBar}>
-        <EvilIcons name="search" size={24} color="black" />
-        <TextInput
-          style={styles.input}
-          placeholder="Pesquise tudo que desejar!!"
-          placeholderTextColor="#aaa"
-          value={busca}
-          onChangeText={setBusca}
-        />
-        <TouchableOpacity>
-          <Ionicons name="filter-circle-outline" size={28} color="black" />
-        </TouchableOpacity>
-      </View>
+const conferenciasFiltradas = useMemo(() => {
+  return conferencias.filter((item) =>
+    item.titulo.toLowerCase().includes(busca.toLowerCase())
+  );
+}, [conferencias, busca]);
 
-      {/* Botões de filtro */}
-      <FlatList
-        data={filtros}
-        horizontal
-        keyExtractor={(item, index) => `${item}-${index}`}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listaFiltros}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.botaoFiltro}>
-            <Text style={styles.textoFiltro}>{item}</Text>
-          </TouchableOpacity>
-        )}
+const planosFiltrados = useMemo(() => {
+  return planos.filter((item) =>
+    item.nome.toLowerCase().includes(busca.toLowerCase())
+  );
+}, [planos, busca]);
+
+const consultasFiltradas = useMemo(() => {
+  return consultas.filter((item) =>
+    item.nome.toLowerCase().includes(busca.toLowerCase())
+  );
+}, [consultas, busca]);
+
+const categoriasFiltradas = useMemo(() => {
+  return categoria.filter((item) =>
+    item.nome.toLowerCase().includes(busca.toLowerCase())
+  );
+}, [categoria, busca]);
+
+return (
+  <View style={styles.container}>
+    {/* Barra de busca */}
+    <View style={styles.searchBar}>
+      <EvilIcons name="search" size={24} color="black" />
+      <TextInput
+        style={styles.input}
+        placeholder="Pesquise tudo que desejar!!"
+        placeholderTextColor="#aaa"
+        value={busca}
+        onChangeText={setBusca}
       />
+      <TouchableOpacity>
+        <Ionicons name="filter-circle-outline" size={28} color="black" />
+      </TouchableOpacity>
+    </View>
 
-      {/* Carrossel de bolinhas com ícones */}
-      <View style={styles.headerTematicas}>
-        <Text style={styles.textoTematicas}>Acesse as temáticas</Text>
-        </View>
+    {/* Botões de filtro */}
+    <FlatList
+      data={filtros}
+      horizontal
+      keyExtractor={(item, index) => `${item}-${index}`}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.listaFiltros}
+      renderItem={({ item }) => (
+        <TouchableOpacity style={styles.botaoFiltro}>
+          <Text style={styles.textoFiltro}>{item}</Text>
+        </TouchableOpacity>
+      )}
+    />
+
+    {/* Categorias */}
+    <View style={styles.headerTematicas}>
+      <Text style={styles.textoTematicas}>Acesse as temáticas</Text>
+    </View>
+
+    {categoriasFiltradas.length > 0 ? (
       <FlatList
-        data={filtros}
+        data={categoriasFiltradas}
         horizontal
-        keyExtractor={(item, index) => `bolinha-${item}-${index}`}
+        keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listaBolinhas}
         renderItem={({ item }) => (
-          <View style={[styles.bolinha, { backgroundColor: corDaCategoria(item) }]}>
-            {getIconByCategoria(item, '#fff')}
-          </View>
+          <TouchableOpacity onPress={() => router.push({
+            pathname: '/comunidade/categorias',
+            params: { id: item.id.toString() }
+          })}>
+            <View style={[styles.bolinha, { backgroundColor: corDaCategoria(item.nome) }]}>
+              {getIconByCategoria(item.nome, '#fff')}
+            </View>
+          </TouchableOpacity>
         )}
       />
-{/*  conferencias */}
-      <View style={styles.headerTematicas}>
-        <Text style={styles.textoTematicas}>Conferências</Text>
-        </View>
+    ) : (
+      <Text style={{ paddingHorizontal: 12, color: '#777' }}>Nenhuma temática encontrada.</Text>
+    )}
 
-        <FlatList
-        data={conferencias}
+    {/* Conferências */}
+    <View style={styles.headerTematicas}>
+      <Text style={styles.textoTematicas}>Conferências</Text>
+    </View>
+
+    {conferenciasFiltradas.length > 0 ? (
+      <FlatList
+        data={conferenciasFiltradas}
         horizontal
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listaConferencias}
         renderItem={({ item }) => (
-           <TouchableOpacity onPress={() => router.push({
+          <TouchableOpacity onPress={() => router.push({
             pathname: '../conferencias',
             params: { id: item.id.toString() },
           })}>
-        <ImageBackground
-          source={{ uri: item.image_url }}
-          style={[styles.cardConferencia, { borderWidth: 2, borderColor: corAleatoria() }]}
-          imageStyle={{ borderRadius: 12 }}
-        />
-      </TouchableOpacity>
-    
-  )}
-/>
-        {/* planos */}
-        <View style={styles.headerTematicas}>
-        <Text style={styles.textoTematicas}>Planos</Text>
-        </View>
+            <ImageBackground
+              source={{ uri: item.image_url }}
+              style={[styles.cardConferencia, { borderWidth: 2, borderColor: corAleatoria() }]}
+              imageStyle={{ borderRadius: 12 }}
+            />
+          </TouchableOpacity>
+        )}
+      />
+    ) : (
+      <Text style={{ paddingHorizontal: 12, color: '#777' }}>Nenhuma conferência encontrada.</Text>
+    )}
 
-        <FlatList
-        data={planos}
+    {/* Planos */}
+    <View style={styles.headerTematicas}>
+      <Text style={styles.textoTematicas}>Planos</Text>
+    </View>
+
+    {planosFiltrados.length > 0 ? (
+      <FlatList
+        data={planosFiltrados}
         horizontal
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listaConferencias}
         renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push({
+          <TouchableOpacity onPress={() => router.push({
             pathname: '../planos',
             params: { id: item.id.toString() },
           })}>
             <ImageBackground
-            source={{ uri: item.image_url }}
-            style={[styles.cardPlano, { borderWidth: 2, borderColor: corAleatoria() }]}
-            imageStyle={{ borderRadius: 12 }}
-          />
-            </TouchableOpacity>
+              source={{ uri: item.image_url }}
+              style={[styles.cardPlano, { borderWidth: 2, borderColor: corAleatoria() }]}
+              imageStyle={{ borderRadius: 12 }}
+            />
+          </TouchableOpacity>
         )}
-        />
-{/* consultas */}
-        <View style={styles.headerTematicas}>
-        <Text style={styles.textoTematicas}>Consultas</Text>
-        </View>
+      />
+    ) : (
+      <Text style={{ paddingHorizontal: 12, color: '#777' }}>Nenhum plano encontrado.</Text>
+    )}
 
-        <FlatList
-        data={consultas}
+    {/* Consultas */}
+    <View style={styles.headerTematicas}>
+      <Text style={styles.textoTematicas}>Consultas</Text>
+    </View>
+
+    {consultasFiltradas.length > 0 ? (
+      <FlatList
+        data={consultasFiltradas}
         horizontal
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.listaConferencias, {   paddingBottom: 100}]} 
+        contentContainerStyle={[styles.listaConferencias, { paddingBottom: 100 }]}
         renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => router.push({
+          <TouchableOpacity onPress={() => router.push({
             pathname: '../consultas',
             params: { id: item.id.toString() },
           })}>
@@ -214,12 +267,14 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
               style={[styles.cardConsulta, { borderWidth: 2, borderColor: corAleatoria() }]}
               imageStyle={{ borderRadius: 12 }}
             />
-            </TouchableOpacity>
+          </TouchableOpacity>
         )}
-        />
-
-    </View>
-  );
+      />
+    ) : (
+      <Text style={{ paddingHorizontal: 12, color: '#777', marginBottom: 100 }}>Nenhuma consulta encontrada.</Text>
+    )}
+  </View>
+);
 }
 
 // Função auxiliar para cor de fundo da categoria

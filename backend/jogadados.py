@@ -15,7 +15,7 @@ django.setup()
 from conferencias.models import Conferencia, Etapas, PerguntasParticipativas
 from planos.models import Planos, Oficinas
 from consultas.models import Consultas
-from propostas.models import Propostas
+from propostas.models import Propostas, Categoria
 
 
 # ==================== Conferencias ====================
@@ -280,5 +280,108 @@ for _, row in df_consultas.iterrows():
         qtd_votos=votos,
         consulta=consulta,
     )
+
+categorias = {
+     "Direito das Mulheres": [
+        "igualdade de gênero", "interseccionalidade", "autonomia das mulheres",
+        "políticas públicas mulheres", "diversidade", "mulheres", "feminino",
+        "direitos das mulheres", "empoderamento feminino", "violência contra mulheres",
+        "discriminação de gênero", "equidade de gênero", "movimento feminista", "saúde da mulher",
+        "participação feminina", "representatividade feminina", "direito reprodutivo"
+    ],
+    "Igualdade Racial": [
+        "igualdade racial", "justiça racial", "populacao negra", "quilombolas",
+        "matriz africana", "comunidades tradicionais", "povos de terreiro", "reparação", "reparacao",
+        "racismo estrutural", "discriminação racial", "direitos raciais", "políticas afirmativas",
+        "acao afirmativa", "diversidade racial", "inclusao racial", "combate ao racismo",
+        "cotas raciais", "etnias", "identidade racial"
+    ],
+    "Direitos da Pessoa Idosa": [
+        "envelhecimento", "pessoa idosa", "idosos", "velhice", "cuidados",
+        "violência contra idosos", "violencia contra idosos", "conselho da pessoa idosa",
+        "direitos do idoso", "proteção ao idoso", "assistência ao idoso", "idosos vulneráveis",
+        "terceira idade", "longevidade", "inclusão do idoso", "qualidade de vida do idoso",
+        "políticas para idosos", "saúde do idoso"
+    ],
+    "Desenvolvimento Rural": [
+        "agricultura familiar", "campo", "floresta", "águas",  "território",
+        "bem viver", "brasil rural", "agroecologia", "solo", "agricultura", "ecológica",
+        "produção rural", "agricultura sustentável", "pequenos produtores", "zona rural",
+        "desenvolvimento sustentável rural", "reforma agrária", "comunidades rurais",
+        "segurança alimentar", "agroflorestal", "produção agrícola",
+    ],
+    "Meio Ambiente": [
+        "sustentabilidade", "florestas",  "território", "agrofloresta", "natureza", "ecologia",
+         "CO2", "arborização",  "água", "bioma", "sementes", "solo", "meio ambiente","ambientais"
+        "hídrico",  "ecológica","renovaveis", "clima", "ambiental", "climatica", 
+        "biodiversidade", "poluição", "reciclagem", "conservação ambiental", "preservação ambiental",
+        "desmatamento", "recursos naturais", "energia renovável", "recursos hídricos", "políticas ambientais"
+    ],
+    "Participação Social": [
+        "conferencia livre", "protagonismo", "sociedade civil",
+        "votacao online", "escuta ativa", "participacao social", "consulta pública",
+        "consulta publica", "movimento social", "mobilização social", "controle social",
+        "engajamento comunitário", "democracia participativa", "fórum social", "assembleia comunitária"
+    ],
+    "Saúde": [
+        "saúde da pessoa idosa", "cuidado integral", "proteção à vida",
+       "autonomia", "abandono social", "atenção integral", "atencao integral",
+        "direito à saúde", "saúde pública", "promoção da saúde", "atenção básica",
+        "assistência médica", "serviços de saúde", "prevenção de doenças", "bem-estar",
+        "doenças crônicas", "saúde mental", "acesso à saúde",  "vigilância em saúde"
+    ],
+    "Educação": [
+        "educação", "ensino", "escola",  "professor","aprendizagem", "formação", "capacitação", 
+        "alfabetização", "letramento","pedagogia", "currículo", "educacional", "educar",
+        "inclusão escolar", "educação infantil", "educação básica", "educação superior", "educação técnica", 
+        "educação profissional","educação pública", "educação a distância", "ensino fundamental",
+        "ensino médio", "ensino superior", "educação especial", "educação para jovens e adultos","programa educacional", "política educacional", 
+        "avaliação escolar","desempenho escolar", "qualidade da educação", "recursos pedagógicos",
+        "escolas públicas", "educação inclusiva"
+        ],
+    "Infraestrutura": [
+        "infraestrutura", "urbana", "rural", "transporte",
+        "mobilidade urbana", "mobilidade sustentável", "transporte público", "energia elétrica", "energia eletrica",
+        "rede elétrica", "rede eletrica", "abastecimento de água", "abastecimento de agua",
+        "saneamento básico", "saneamento ambiental", "esgotamento sanitário", "esgotamento sanitario",
+        "iluminação pública", "iluminacao publica", "vias públicas", "vias publicas", "rodovias", "ferrovias",
+        "portos", "aeroportos", "drenagem urbana", "drenagem pluvial", "rede de gás", "rede de gas",
+        "infraestrutura crítica", "infraestrutura de comunicação", "redes viárias", "rede viária",
+        "logística urbana", "conservação urbana", "infraestrutura digital", "planejamento urbano",
+    ],
+    "Tecnologia": [
+        "tecnologia","inovacao", 
+        "transformacao digital", "digitalizacao", "conectividade", "internet",
+        "banda larga", "telecomunicacoes", "telefonia movel",
+        "fibra otica", "tecnologia da informacao", "TI",
+        "sistemas de informacao","automacao",
+        "industria 4.0", "smart cities", "cidades inteligentes", "dados abertos", "big data",
+        "inteligencia artificial", "IA", "internet das coisas",
+        "internet of things", "IoT", "segurança da informacao",
+        "blockchain", "computacao em nuvem", "software", "hardware",
+        "rede de dados", "redes de dados", "ciberseguranca", 
+        "computacao quantica", "machine learning", "aprendizado de máquina", "aprendizado de maquina",
+        "robotica", "realidade aumentada", "realidade virtual", "realidade misturada",
+        "internet banda larga", "infraestrutura tecnológica", "infraestrutura tecnologica",
+        "plataformas digitais", "dispositivos moveis", "automação industrial",
+    ]
+}
+for nome_categoria, palavras in categorias.items():
+    # Remove duplicatas e espaços extras
+    palavras_limpa = [p.strip() for p in set(palavras)]
+    # Junta tudo em uma string separada por vírgulas
+    nuvem = ', '.join(palavras_limpa)
+    
+    # Corta se ultrapassar 1000 caracteres
+    if len(nuvem) > 1000:
+        print(f"Atenção: Categoria '{nome_categoria}' excedeu o limite de 1000 caracteres e será cortada.")
+        nuvem = nuvem[:997] + "..."
+
+    # Cria ou atualiza o objeto
+    obj, created = Categoria.objects.update_or_create(
+        nome=nome_categoria,
+        defaults={'nuvem_palavras': nuvem}
+    )
+    print(f"{'Criado' if created else 'Atualizado'}: {obj.nome}")
 
 print('Propostas importadas')

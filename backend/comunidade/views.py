@@ -127,13 +127,12 @@ class CurtidaView(APIView):
         }, status=status.HTTP_200_OK)
 
 class CategoriaView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, id):
   
         categoria = Categoria.objects.get(pk=id)
-       
-
+        
         conferencias = Conferencia.objects.filter(categorias=id)
         planos = Planos.objects.filter(categorias=id)
         consultas = Consultas.objects.filter(categorias=id)

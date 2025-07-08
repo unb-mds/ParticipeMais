@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+
 from .models import PerguntasParticipativas
 from propostas.models import Propostas
 from .serializers import *
@@ -8,6 +10,7 @@ from collections import Counter
 import re
 from autenticacao.models import Usuario  
 from .models import Conferencia      
+import random
 
 # Lista todas as conferências cadastradas
 class ListaConferencias(APIView):
@@ -34,11 +37,7 @@ class AcessaConferencia(APIView):
 
         conferencia_serializer = ConferenciaSerializer(conferencia, context={'request': request})
 
-        # Supondo que você tem relacionamentos ou filtros para propostas e etapas
-        propostas = Propostas.objects.filter(conferencia_id=pk)
-        print(propostas.count())
-        propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
-
+        # Verifica se a conferência tem etapas associadas
         etapas = Etapas.objects.filter(conferencia=conferencia)
         etapas_serializer = EtapaSerializer(etapas, many=True, context={'request': request})
         favoritado = conferencia in request.user.conferencias.all()
@@ -47,7 +46,6 @@ class AcessaConferencia(APIView):
             'message': 'Conferência encontrada!',
             'data': {
                 'conferencias': conferencia_serializer.data,
-                'propostas': propostas_serializer.data,
                 'etapas': etapas_serializer.data,
                 'favoritado': favoritado,     
             }
@@ -57,36 +55,62 @@ class AcessaConferencia(APIView):
 # Lista propostas de uma conferência específica + percentual por eixo (extraído do título)
 class AcessaPropostas(APIView):
     permission_classes = [permissions.AllowAny]  # Permite acesso público
+    pagination_class = LimitOffsetPagination
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)  # Busca conferência pelo ID
-        propostas = Propostas.objects.filter(conferencia=conferencia) # Limita a 1000 propostas para testes
-        serializer = PropostaSerializer(propostas, many=True)  # Serializa as propostas
-
-        total = propostas.count()
-        eixo_counter = Counter()  # Contador para eixos encontrados
+        propostas = list(Propostas.objects.filter(conferencia_id=pk))  # Converte para lista para embaralhar
+        total = len(propostas)
+        print(total)
 
         # Conta a ocorrência de eixos com base no título das propostas
+        eixo_counter = Counter()
         for proposta in propostas:
-            texto = proposta.titulo_proposta.lower()  # Transforma em minúsculas para evitar erros de maiúsculas
-            match = re.search(r"eixo\s*([1-6])", texto)  # Procura por "eixo 1" até "eixo 6"
+            texto = proposta.titulo_proposta.lower()
+            match = re.search(r"eixo\s*([1-6])", texto)
             if match:
                 eixo = match.group(1)
                 eixo_counter[eixo] += 1
             else:
-                eixo_counter["Não informado"] += 1  # Propostas sem eixo explícito
+                eixo_counter["Não informado"] += 1
 
-        # Calcula os percentuais por eixo
         percentuais_eixos = {
             f"Eixo {eixo}": round((qtd / total) * 100, 2) if total else 0
             for eixo, qtd in eixo_counter.items()
         }
 
+        CORES_EIXOS = {
+            "Eixo 1": "#2670E8",
+            "Eixo 2": "#4CAF50",
+            "Eixo 3": "#FFC107",
+            "Eixo 4": "#000000",
+            "Eixo 5": "#9C27B0",
+            "Eixo 6": "#00BCD4",
+            "Não informado": "#9E9E9E",
+        }
+
+        estatisticas = [
+            {
+                "eixo": eixo,
+                "percentual": percentual,
+                "cor": CORES_EIXOS.get(eixo, "#000000"),
+            }
+            for eixo, percentual in percentuais_eixos.items()
+        ]
+
+        # Embaralha e seleciona até 200 propostas
+        random.shuffle(propostas)
+        propostas_sample = propostas[:200]
+        propostas_serializer = PropostaSerializer(propostas_sample, many=True, context={'request': request})
+
+        # ratagem do caralho, vamo pegar o total e enviar, depois vamo pegar 200 propostas e mandar pro frontend
+        # que o cara vai pensar q é tudo, mas é só a amostra, e quando ele acessar por etapa a gnt manda so as q tem a ver
+
         return Response({
             'conferencia': conferencia.titulo,
             'total_propostas': total,
-            'eixos': percentuais_eixos,  # Mostra o percentual por eixo
-            'propostas': serializer.data  # Lista as propostas
+            'estatisticas': estatisticas,
+            'propostas': propostas_serializer.data
         })
             
 # Acessa uma proposta específica dentro de uma conferência

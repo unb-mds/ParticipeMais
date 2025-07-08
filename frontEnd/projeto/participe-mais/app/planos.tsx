@@ -55,7 +55,7 @@ export default function PlanoScreen() {
 
   const [token, setToken] = useState<string>('');
   const [planos, setPlanos] = useState<Planos[]>([]);
-  const [proposta, setProposta] = useState<Proposta[]>([]);
+  const [propostas, setProposta] = useState<Proposta[]>([]);
   const [oficinas, setOficinas] = useState<Oficinas[]>([])
   const [loading, setLoading] = useState<boolean>(true);
   const [favorito, setFavorito] = useState<boolean>(false);
@@ -84,7 +84,7 @@ useEffect(()=> {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
+      const response = await fetch(`http://localhost:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ useEffect(()=> {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/planos/favoritas/`, {
+      const res = await fetch(`http://localhost:8000/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -125,7 +125,7 @@ useEffect(()=> {
   };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://172.20.10.9:8000/planos/toggle/${id}/`, {
+    const res = await fetch(`http://localhost:8000/planos/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -219,7 +219,7 @@ const palavrasChave = [
                 </View>
                 <View style={styles.dadoItem}>
                   <MaterialCommunityIcons name="file-document-outline" size={14} color="#000" />
-                  <Text style={styles.dadoNumero}>{proposta.length}</Text>
+                  <Text style={styles.dadoNumero}>{propostas.length}</Text>
                   <Text style={styles.dadoText}>Propostas</Text>
                 </View>
               </View>
@@ -229,29 +229,23 @@ const palavrasChave = [
               {plano?.descricao || 'Não informado'}
             </Text>
 
-            <LinkAcesso
-              titulo="O que Brasil queremos nos próximos 25 anos?"
-              descricao="Para responder a essa pergunta, acesse diretamente o questionário na seção 'Planos' do site Brasil Participativo."
-              textoBotao="Acesse o questionário"
-              onPress={() => {}}
-            />
-
             {/* <EtapasCalendar etapas={etapas} /> */}
 
             <Objetivos objetivos={objetivos} />
 
-            { proposta && proposta.length > 0 ? (
-              <Propostas  propostas={proposta} /> 
-              ) : (
-                <View>
-                  <Text>
-                    Não há propostas disponíveis no momento.
-                  </Text>
-                </View>
-              )}
+            { propostas && propostas.length > 0 ? (
+              <>      
+              <Propostas propostas={propostas} />
+              </>) 
+              : 
+              (
+                <>
+              <Propostas propostas={propostas} />
+                </>)
+              }
 
             { oficinas && oficinas.length > 0 ? (
-              <Oficina oficinas={oficinas} propostas={proposta} />
+              <Oficina oficinas={oficinas} propostas={propostas} />
             ) : (
               <View>
                 <Text style={styles.description}>

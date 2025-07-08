@@ -17,8 +17,9 @@ from planos.models import Planos
 from planos.serializers import PlanosSerializer
 from consultas.models import Consultas
 from consultas.serializers import ConsultasSerializer
-from propostas.models import Propostas
-from propostas.serializers import PropostaSerializer
+from propostas.models import Propostas, Categoria
+from propostas.serializers import PropostaSerializer, CategoriaSerializer
+
 import datetime
 
 
@@ -148,11 +149,16 @@ class PesquisaListaTudo(APIView):
         conferencia = list(Conferencia.objects.order_by('?'))
         planos = list(Planos.objects.order_by('?'))
         consultas = list(Consultas.objects.order_by('?'))
+        # 
+        categorias = list(Categoria.objects.order_by("?"))
+        # print(categorias)
 
         data = {
             'conferencias': ConferenciaSerializer(conferencia, context={'request': request}, many=True, fields=['id','image_url','titulo']).data,  
             'planos': PlanosSerializer(planos, many=True, context={'request': request}, fields=['id','image_url','nome']).data,
             'consultas': ConsultasSerializer(consultas, many=True, context={'request': request},  fields=['id','image_url','nome']).data,
+            'categorias': CategoriaSerializer(categorias, many=True, context={'request': request},  fields=['id','nome']).data,
+
         }
         
         return Response({

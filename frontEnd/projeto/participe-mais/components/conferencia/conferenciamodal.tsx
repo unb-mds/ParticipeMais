@@ -29,9 +29,7 @@ export default function ConferenciaModal({
   if (!etapa) return null;
 
 const propostasFiltradas = propostas.filter(
-  (proposta) =>
-    proposta.url_proposta &&
-    etapa.propostas_relacionadas.includes(proposta.url_proposta)
+  (proposta) => proposta.etapa === etapa.id
 );
 
 

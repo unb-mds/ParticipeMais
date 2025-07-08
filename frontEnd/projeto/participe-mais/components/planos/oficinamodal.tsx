@@ -23,7 +23,8 @@ export default function OficinaModal({ visible, onClose, oficina, propostas }: P
   if (!oficina) return null;
 
 const propostasRelacionadas = propostas.filter((p) =>
-  oficina.propostas_relacionadas.includes(p.id.toString())
+  p.url_proposta &&
+    oficina.propostas_relacionadas.includes(p.url_proposta)
 );
 
 

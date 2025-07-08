@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -34,6 +34,7 @@ export interface Proposta {
   data_criacao: string;
   total_palavras_chave: number;
   url_proposta: string;
+  etapa: number;
 }
 
 export interface Etapas {
@@ -56,7 +57,10 @@ export default function ConferenciaDetalhadaScreen() {
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [etapas, setEtapas] = useState<Etapas[]>([]);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
+  const [estatisticas, setEstatisticas] = useState<any[]>([]);
+  const [totalPropostas, setTotalPropostas] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingPropostas, setLoadingPropostas] = useState<boolean>(false);
   const [favorito, setFavorito] = useState<boolean>(false);
 
   useEffect(() => {
@@ -76,12 +80,13 @@ export default function ConferenciaDetalhadaScreen() {
     if (token && id) {
       fetchConferencias();
       verificarFavorito();
+      fetchPropostas();
     }
   }, [token, id]);
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -93,17 +98,50 @@ export default function ConferenciaDetalhadaScreen() {
         const data = json.data;
         setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
         setEtapas(data.etapas || []);
-        setPropostas(data.propostas || []);
+        setTotalPropostas(data.total_propostas || 0);
         setLoading(false);
-      } else router.replace('/login');
-    } catch {
+      } else {
+        router.replace('/login');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar conferências:', error);
       router.replace('/login');
+    }
+  };
+
+  const fetchPropostas = async () => {    
+    setLoadingPropostas(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/conferencias/${id}/propostas/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Erro ao carregar mais propostas');
+      }
+
+      const json = await response.json();
+      
+      if (Array.isArray(json.propostas)) {
+        setPropostas(json.propostas || []);
+        setEstatisticas(json.estatisticas || []);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar mais propostas:', error);
+    } finally {
+      setLoadingPropostas(false);
     }
   };
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -115,7 +153,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -125,22 +163,16 @@ export default function ConferenciaDetalhadaScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container_total}>
-        <ActivityIndicator size="large" color="#2670E8" style={{ marginTop: 50 }} />
-      </SafeAreaView>
-    );
-  }
+
 
   const conferencia = conferencias[0];
 
-  const eixos = [
-    { titulo: 'I – Mitigação', descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.' },
-    { titulo: 'II – Adaptação', descricao: 'Fortalecer a resiliência às mudanças climáticas.' },
-    { titulo: 'III – Financiamento', descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.' },
-    { titulo: 'IV – Governança', descricao: 'Promover uma governança climática participativa.' },
-  ];
+  // const eixos = [
+  //   { titulo: 'I – Mitigação', descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.' },
+  //   { titulo: 'II – Adaptação', descricao: 'Fortalecer a resiliência às mudanças climáticas.' },
+  //   { titulo: 'III – Financiamento', descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.' },
+  //   { titulo: 'IV – Governança', descricao: 'Promover uma governança climática participativa.' },
+  // ];
 
   const dadosEstatisticos = {
     total: etapas.length || 0,
@@ -168,28 +200,41 @@ export default function ConferenciaDetalhadaScreen() {
               <Entypo name="location" size={14} />
               <Text style={styles.subinfoText}>{etapas.length} conferências</Text>
               <MaterialCommunityIcons name="file-document-outline" size={14} />
-              <Text style={styles.subinfoText}>{propostas.length} propostas</Text>
+              <Text style={styles.subinfoText}>{totalPropostas} propostas</Text>
             </View>
-            <Text style={styles.description}>
-              {conferencia.descricao?.trim().toLowerCase() !== 'nan'
-                ? conferencia.descricao?.trim()
-                : 'Descrição não informada'}
-            </Text>
+            
+            {conferencia?.descricao && conferencia.descricao.trim().toLowerCase() !== 'nan'
+              ? <Text style={styles.description}>{conferencia.descricao.trim()}</Text>
+              : <Text style={styles.description}>Descrição não informada</Text>}
+
+
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
-            <EixosTematicos eixos={eixos} />
+            {/* <EixosTematicos eixos={eixos} /> */}
             <Conferencias etapas={etapas} conferencias={conferencias} propostas={propostas} />
             {etapas.length > 0 && <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />}
-            <Propostas propostas={propostas} />
-            <DadosPizza
-              estatisticas={[
-                { eixo: 'Eixo 1', percentual: 40, cor: '#2670E8' },
-                { eixo: 'Eixo 2', percentual: 35, cor: '#4CAF50' },
-                { eixo: 'Eixo 3', percentual: 10, cor: '#FFC107' },
-                { eixo: 'Eixo 4', percentual: 15, cor: '#000' },
-              ]}
-              total={10794}
-              palavrasChave={['Sustentabilidade', 'Inovação', 'Energia', 'Clima', 'Justiça', 'Biodiversidade']}
-            />
+            
+            {propostas.length === 0 && !loadingPropostas ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>Nenhuma proposta encontrada.</Text>
+                <TouchableOpacity onPress={fetchPropostas} style={styles.retryButton}>
+                  <Text style={styles.retryButtonText}>Tentar novamente</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                <Propostas propostas={propostas} />
+                {propostas.length > 0 && (
+                  <DadosPizza
+                    estatisticas={estatisticas}
+                    total={propostas.length}
+                    palavrasChave={['Sustentabilidade', 'Inovação', 'Energia', 'Clima', 'Justiça', 'Biodiversidade']}
+                  />
+                )}
+                {loadingPropostas && (
+                  <ActivityIndicator size="small" color="#2670E8" style={{ marginVertical: 20 }} />
+                )}
+              </>
+            )}
           </View>
         }
       />
@@ -229,5 +274,24 @@ const styles = StyleSheet.create({
   subinfoText: {
     fontSize: 12,
     color: '#555',
+  },
+  errorContainer: {
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#ff4444',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: '#2670E8',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
