@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, TextInput, TouchableOpacity, Text, Dimensions, StyleSheet, ImageBackground  } from 'react-native';
-import { FontAwesome, MaterialIcons, Ionicons, MaterialCommunityIcons,EvilIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, Ionicons, MaterialCommunityIcons,EvilIcons, FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { routePatternToRegex } from 'expo-router/build/fork/getStateFromPath-forks';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -280,11 +280,15 @@ return (
 // Função auxiliar para cor de fundo da categoria
 function corDaCategoria(categoria: string): string {
     const mapaCores: Record<string, string> = {
-        'meio ambiente': '#4CAF50',     // verde claro
-        'infraestrutura': '#FF9800',   // amarelo claro
-        'saúde': '#2670E8',            // azul claro
-        'educação': '#ce93d8',  
-        'cultura': '#F44336',          // roxo claro (exemplo extra)
+    'meio ambiente': '#4CAF50',
+    'infraestrutura': '#FF9800',
+    'saúde': '#2670E8',
+    'educação': '#ce93d8',
+    "direito das mulheres": "#FF1493",
+    "igualdade racial" : "#CD853F",
+    "direitos da pessoa idosa": "#F0E68C",
+    "desenvolvimento rural":"#006400",
+    "tecnologia": "#8B008B"
     };
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
 }
@@ -292,7 +296,7 @@ function corDaCategoria(categoria: string): string {
 // Função auxiliar para ícone da categoria
 function getIconByCategoria(categoria: string, cor: string = "#fff") {
   switch (categoria.toLowerCase()) {
-    case 'meio ambiente':
+  case 'meio ambiente':
       return <Ionicons name="leaf-outline" size={24} color={cor} />;
     case 'educação':
       return <MaterialIcons name="school" size={24} color={cor} />;
@@ -300,8 +304,18 @@ function getIconByCategoria(categoria: string, cor: string = "#fff") {
       return <Ionicons name="medkit" size={24} color={cor} />;
     case 'infraestrutura':
       return <MaterialCommunityIcons name="wheel-barrow" size={24} color={cor} />;
-    case 'cultura':
+    case 'participação social':
       return <FontAwesome name="group" size={24} color={cor} />;
+    case 'direito das mulheres':
+      return <Ionicons name="woman" size={24} color={cor} />;
+    case 'tecnologia':
+      return <FontAwesome6 name="user-gear" size={24} color={cor} />;
+    case 'desenvolvimento rural':
+      return <FontAwesome6 name="cow" size={24} color={cor} />;
+    case 'direitos da pessoa idosa':
+      return <MaterialIcons name="elderly" size={24} color={cor} />;
+    case 'igualdade racial':
+      return <FontAwesome5 name="equals" size={24} color={cor} />;
     default:
       return <Ionicons name="alert-circle-outline" size={24} color={cor} />;
   }

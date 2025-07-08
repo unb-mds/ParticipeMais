@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Ionicons, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons, FontAwesome, FontAwesome6,FontAwesome5 } from '@expo/vector-icons';
 
 interface Props {
   categoria: string;
@@ -23,8 +23,18 @@ export default function CategoriaIcone({ categoria, tamanho = 24, corIcone = '#f
         return <Ionicons name="medkit" size={tamanho * 0.7} color={corIcone} />;
       case 'infraestrutura':
         return <MaterialCommunityIcons name="wheel-barrow" size={tamanho * 0.7} color={corIcone} />;
-      case 'cultura':
+      case 'participação social':
         return <FontAwesome name="group" size={tamanho * 0.7} color={corIcone} />;
+      case 'direito das mulheres':
+        return <Ionicons name="woman" size={tamanho * 0.7} color={corIcone} />;
+      case 'tecnologia':
+        return <FontAwesome6 name="user-gear" size={tamanho * 0.7} color={corIcone} />;
+      case 'desenvolvimento rural':
+        return <FontAwesome6 name="cow" size={tamanho * 0.7} color={corIcone} />;
+      case 'direitos da pessoa idosa':
+        return <MaterialIcons name="elderly" size={tamanho * 0.7} color={corIcone} />;
+      case 'igualdade racial':
+        return <FontAwesome5 name="equals" size={tamanho * 0.7} color={corIcone} />;
       default:
         return <Ionicons name="alert-circle-outline" size={tamanho * 0.7} color={corIcone} />;
     }
@@ -43,7 +53,11 @@ function corDaCategoria(categoria: string): string {
     'infraestrutura': '#FF9800',
     'saúde': '#2670E8',
     'educação': '#ce93d8',
-    'cultura': '#F44336',
+    "direito das mulheres": "#FF1493",
+    "igualdade racial" : "#CD853F",
+    "direitos da pessoa idosa": "#F0E68C",
+    "desenvolvimento rural":"#006400",
+    "tecnologia": "#8B008B"
   };
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
 }

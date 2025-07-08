@@ -232,7 +232,7 @@ export default function Categoria() {
 
 // 🔧 Funções auxiliares
 function corAleatoria(): string {
-  const cores = ['#2670E8', '#4CAF50', '#FF9800', '#ce93d8', '#F44336'];
+  const cores = ['#2670E8', '#4CAF50', '#FF9800', '#ce93d8', '#F44336', "#8B008B"];
   return cores[Math.floor(Math.random() * cores.length)];
 }
 
@@ -242,7 +242,12 @@ function corDaCategoria(categoria: string): string {
     'infraestrutura': '#FF9800',
     'saúde': '#2670E8',
     'educação': '#ce93d8',
-    'cultura': '#F44336',
+    'participação social': '#F44336',
+    "direito das mulheres": "#FF1493",
+    "igualdade racial" : "#CD853F",
+    "direitos da pessoa idosa": "#F0E68C",
+    "desenvolvimento rural":"#006400",
+    "tecnologia": "#8B008B"
   };
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0';
 }

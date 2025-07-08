@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, Text,  TouchableOpacity } from 'react-native';
-import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5, MaterialIcons, Ionicons, MaterialCommunityIcons, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -200,10 +200,15 @@ function BlocoEnqueteComentariosColuna({
 // Função auxiliar para retornar a cor com base na categoria
 function corDaCategoria(categoria: string): string {
   const mapaCores: Record<string, string> = {
-    'meio ambiente': '#4CAF50',     // verde claro
-    'infraestrutura': '#FF9800',   // amarelo claro
-    'saúde': '#90caf9',            // azul claro
-    'educação': '#ce93d8',         // roxo claro (exemplo extra)
+    'meio ambiente': '#4CAF50',
+    'infraestrutura': '#FF9800',
+    'saúde': '#2670E8',
+    'educação': '#ce93d8',
+    "direito das mulheres": "#FF1493",
+    "igualdade racial" : "#CD853F",
+    "direitos da pessoa idosa": "#F0E68C",
+    "desenvolvimento rural":"#006400",
+    "tecnologia": "#8B008B"
   };
 
   return mapaCores[categoria.toLowerCase()] || '#e0e0e0'; // cor padrão se não houver correspondência
@@ -212,7 +217,7 @@ function corDaCategoria(categoria: string): string {
 // Função auxiliar para retornar um ícone baseado na categoria
 function getIconByCategoria(categoria: string, cor: string = "#fff") {
   switch (categoria.toLowerCase()) {
-    case 'meio ambiente':
+  case 'meio ambiente':
       return <Ionicons name="leaf-outline" size={24} color={cor} />;
     case 'educação':
       return <MaterialIcons name="school" size={24} color={cor} />;
@@ -220,6 +225,18 @@ function getIconByCategoria(categoria: string, cor: string = "#fff") {
       return <Ionicons name="medkit" size={24} color={cor} />;
     case 'infraestrutura':
       return <MaterialCommunityIcons name="wheel-barrow" size={24} color={cor} />;
+    case 'participação social':
+      return <FontAwesome name="group" size={24} color={cor} />;
+    case 'direito das mulheres':
+      return <Ionicons name="woman" size={24} color={cor} />;
+    case 'tecnologia':
+      return <FontAwesome6 name="user-gear" size={24} color={cor} />;
+    case 'desenvolvimento rural':
+      return <FontAwesome6 name="cow" size={24} color={cor} />;
+    case 'direitos da pessoa idosa':
+      return <MaterialIcons name="elderly" size={24} color={cor} />;
+    case 'igualdade racial':
+      return <FontAwesome5 name="equals" size={24} color={cor} />;
     default:
       return <Ionicons name="alert-circle-outline" size={24} color={cor} />;
   }
