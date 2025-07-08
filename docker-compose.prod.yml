@@ -16,31 +16,28 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend.prod
-    ports:
-      - "8000:8000"
-    volumes:
-      - static:/app/backend/static
-    entrypoint: ["/app/entrypoint.sh"]
+      dockerfile: Dockerfile.prod
     environment:
       DJANGO_ENV: prod
       ROLE: backend
-      DEBUG: "False"
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
+      DEBUG: "False"
+    ports:
+      - "8000:8000"
+    volumes:
+      - static:/app/backend/static
+      - ./backend:/app/backend
+      - ./WebScraper:/app/WebScraper
     depends_on:
       - db
-
+    entrypoint: ["/entrypoint.sh"]
   importer:
     build:
       context: .
-      dockerfile: Dockerfile.backend.prod
-    volumes:
-      - ./backend:/app/backend
-      - ./WebScraper:/app/WebScraper
-    entrypoint: ["/app/entrypoint.sh"]
+      dockerfile: Dockerfile.prod
     environment:
       DJANGO_ENV: prod
       ROLE: importer
@@ -48,8 +45,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
+      DEBUG: "False"
     depends_on:
       - db
+    entrypoint: ["/entrypoint.sh"]
 
 volumes:
   pgdata:

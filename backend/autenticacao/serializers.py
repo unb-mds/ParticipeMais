@@ -5,6 +5,7 @@ Serializers para autenticação do ParticipeMais.
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import Usuario, Notification
+import re
 
 
 class PerfilSerializer(serializers.ModelSerializer):
@@ -37,6 +38,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
             usuario.set_password(password)
             usuario.save()
         return usuario
+    
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("A senha deve ter no mínimo 8 caracteres.")
+        if not re.search(r'[A-Za-z]', value) or not re.search(r'\d', value):
+            raise serializers.ValidationError("A senha deve conter letras e números.")
+        return value
     
     
     def update(self, instance, validated_data):

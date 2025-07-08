@@ -114,11 +114,18 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
+EMAIL_HOST_USER = 'participemais.mds@gmail.com'
+EMAIL_HOST_PASSWORD = 'gxpi apkk aibh ssxl '
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 
 #=================================================================
 
 WSGI_APPLICATION = 'project.wsgi.application'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/app/backend/static'
 
 POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 

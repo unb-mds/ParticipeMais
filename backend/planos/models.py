@@ -14,7 +14,7 @@ class Planos(models.Model):
     qtd_propostas = models.IntegerField(default=0)
     categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL, related_name='planos')
 
-    palavras_chaves = models.CharField(max_length=1000, default="", blank=True)
+    palavras_chaves = models.CharField(max_length=2000, default="", blank=True)
 
     def __str__(self):
         return str(self.nome)  # Garante que o retorno seja uma string

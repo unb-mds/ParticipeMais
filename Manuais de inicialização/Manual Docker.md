@@ -54,7 +54,7 @@ docker compose -f docker-compose.dev.yml exec backend python3 backend/manage.py 
 ### 1. Construir a imagem
 
 ```bash
-docker build -f Dockerfile.backend.prod -t backend/prod:v1 .
+docker compose --env-file .env.prod -f docker-compose.prod.yml build
 ```
 
 ---
@@ -62,7 +62,7 @@ docker build -f Dockerfile.backend.prod -t backend/prod:v1 .
 ### 2. Rodar o container
 
 ```bash
-docker run -d -p 8000:8000 --name backend-prod-v1 backend/prod:v1
+docker compose --env-file .env.prod -f docker-compose.prod.yml up
 ```
 
 A aplicação estará disponível em:  

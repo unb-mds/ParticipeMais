@@ -39,6 +39,7 @@ if [ "$DJANGO_ENV" = "prod" ]; then
 
   echo "Iniciando servidor Gunicorn (produção)..."
   exec gunicorn backend.project.wsgi:application --bind 0.0.0.0:8000
+
 else
   echo "Iniciando servidor de desenvolvimento..."
   exec python backend/manage.py runserver 0.0.0.0:8000
