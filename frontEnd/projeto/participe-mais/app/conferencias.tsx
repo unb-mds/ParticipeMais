@@ -87,7 +87,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -99,7 +99,6 @@ export default function ConferenciaDetalhadaScreen() {
         const data = json.data;
         setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
         setEtapas(data.etapas || []);
-        setTotalPropostas(data.total_propostas || 0);
         setLoading(false);
       } else {
         router.replace('/login');
@@ -114,7 +113,7 @@ export default function ConferenciaDetalhadaScreen() {
     setLoadingPropostas(true);
     try {
       const response = await fetch(
-        `http://172.20.10.9:8000/conferencias/${id}/propostas/`,
+        `http://localhost:8000/conferencias/${id}/propostas/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,7 +130,10 @@ export default function ConferenciaDetalhadaScreen() {
       
       if (Array.isArray(json.propostas)) {
         setPropostas(json.propostas || []);
+        setTotalPropostas(json.total || 0);
         setEstatisticas(json.estatisticas || []);
+
+        console.log(json)
       }
     } catch (error) {
       console.error('Erro ao carregar mais propostas:', error);
@@ -142,7 +144,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -154,7 +156,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -164,16 +166,7 @@ export default function ConferenciaDetalhadaScreen() {
     }
   };
 
-
-
   const conferencia = conferencias[0];
-
-  // const eixos = [
-  //   { titulo: 'I – Mitigação', descricao: 'Exploração de estratégias para reduzir emissões de gases de efeito estufa.' },
-  //   { titulo: 'II – Adaptação', descricao: 'Fortalecer a resiliência às mudanças climáticas.' },
-  //   { titulo: 'III – Financiamento', descricao: 'Mobilizar recursos financeiros públicos e privados para ações climáticas.' },
-  //   { titulo: 'IV – Governança', descricao: 'Promover uma governança climática participativa.' },
-  // ];
 
   const dadosEstatisticos = {
     total: etapas.length || 0,
@@ -224,30 +217,26 @@ export default function ConferenciaDetalhadaScreen() {
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             {/* <EixosTematicos eixos={eixos} /> */}
             <Conferencias etapas={etapas} conferencias={conferencias} propostas={propostas} />
-            {etapas.length > 0 && <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />}
+            {etapas.length > 0 && <Dados estatisticas={estatisticas} palavrasChave={palavrasChave} />}
             
-            {propostas.length === 0 && !loadingPropostas ? (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Nenhuma proposta encontrada.</Text>
-                <TouchableOpacity onPress={fetchPropostas} style={styles.retryButton}>
-                  <Text style={styles.retryButtonText}>Tentar novamente</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <>
-                <Propostas propostas={propostas} />
-                {propostas.length > 0 && (
-                  <DadosPizza
-                    estatisticas={estatisticas}
-                    total={propostas.length}
-                    palavrasChave={palavrasChave}
-                  />
-                )}
-                {loadingPropostas && (
-                  <ActivityIndicator size="small" color="#2670E8" style={{ marginVertical: 20 }} />
-                )}
-              </>
-            )}
+            { propostas && propostas.length > 0 ? (<> 
+              
+              <Propostas propostas={propostas} />
+            
+              {/* 📈 Dados */}
+              <DadosPizza
+                estatisticas={[
+                  { eixo: 'Eixo 1', percentual: 50, cor: '#2670E8' },
+                  { eixo: 'Eixo 2', percentual: 30, cor: '#4CAF50' },
+                  { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
+                ]}
+                total={totalPropostas}
+                palavrasChave={palavrasChave}
+              />
+            
+            </>) : (<>
+              <Propostas propostas={propostas} />
+            </>)}
           </View>
         }
       />

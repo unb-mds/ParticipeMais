@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 from .models import *
 from .serializers import *
 from propostas.models import Categoria
+from propostas.serializers import CategoriaSerializer
 
 class ScoreView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -15,42 +16,40 @@ class ScoreView(APIView):
         print("Nome:", request.user.nome)
 
         score_obj, created = UsuarioScore.objects.get_or_create(
-                usuario=request.user,
-                defaults={'pontos': 0}  # Valor padrão para novos registros
-            )
-        
-        score_obj.atualizar_nivel()
+            usuario=request.user,
+            defaults={'pontos': 0}
+        )
         
         return Response({
-                'usuario': request.user.nome,
-                'pontos': score_obj.pontos,
-                'nivel_atual': score_obj.nivel,
-                'autor_papel': score_obj.classificao,
-                'novo_registro': created  # Indica se foi criado um novo registro
-            }, status=status.HTTP_200_OK)
-        
-#lista e mostra quantidade perguntas/chat
+            'usuario': request.user.nome,
+            'pontos': score_obj.pontos,
+            'novo_registro': created
+        }, status=status.HTTP_200_OK)
+
+# lista e mostra quantidade perguntas/chat
 class ComunidadeView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
-    
-    def get(self, request):
-        
-        comunidades = Chat.objects.annotate(
-            total_curtidas=Count('comentarios__curtidas', filter=Q(comentarios__curtidas__curtido=True))
-        ).order_by('-total_curtidas')
 
-        serializer = ComunidadeSerializer(comunidades, many = True).data
-        
+    def get(self, request):
+        comunidades = Chat.objects.all().order_by('-data_criacao')
+        comentarios = Comentarios.objects.all().order_by('-data_criacao')[:10]
+        categorias = Categoria.objects.all()
+
+        serializer = ComunidadeSerializer(comunidades, many=True)
+
         return Response({
-            'Quantidade Chat': comunidades.count(),
-            'Enquetes':serializer
+            'quantidade_chat': comunidades.count(),
+            'enquetes': serializer.data,
+            "comentarios": ComentariosSerializer(comentarios, many=True, context={'request': request}).data,
+            'categorias': CategoriaSerializer(categorias, many=True, context={'request': request}, fields=['id', 'nome']).data,
         }, status=status.HTTP_200_OK)
-        
+
+
 class CriarChat(APIView):
     permission_classes = [permissions.IsAuthenticated]    
 
     def post(self, request):
-        serializer = ChatSerializer(data=request.data, context={'request': request})  # ⚠️ context aqui é essencial
+        serializer = ChatSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             chat = serializer.save()
             return Response({
@@ -62,7 +61,6 @@ class CriarChat(APIView):
             'message': 'Erro ao cadastrar chat.'
         }, status=status.HTTP_400_BAD_REQUEST)
 
-#carrossel de para acessar chat atraves do comentarios
 class ComentarioCarrossel(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -70,9 +68,7 @@ class ComentarioCarrossel(APIView):
         comentarios = Comentarios.objects.select_related('chat', 'autor').order_by('-data_criacao')[:10]
         serializer = ComentarioCarrosselSerializer(comentarios, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
-# onde fica os comentarios de cada pergunta
+
 class ChatView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
     
@@ -85,7 +81,7 @@ class ChatView(APIView):
         serializer = ChatSerializer(chat, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK) 
         
-    def post(self, request, pk):  # recebe o id do chat via URL
+    def post(self, request, pk):
         try:
             chat = Chat.objects.get(pk=pk)
         except Chat.DoesNotExist:
@@ -103,8 +99,7 @@ class ChatView(APIView):
             'errors': serializer.errors,
             'message': 'Erro ao cadastrar comentário.'
         }, status=status.HTTP_400_BAD_REQUEST)
-            
-#curte ou descurte comentario
+
 class CurtidaView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -112,7 +107,7 @@ class CurtidaView(APIView):
         usuario = request.user
         
         try:
-            comentario = Comentarios.objects.get(pk=comentario_pk, chat_id = chat_pk)
+            comentario = Comentarios.objects.get(pk=comentario_pk, chat_id=chat_pk)
         except Comentarios.DoesNotExist:
             return Response({"error": "Comentário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -134,7 +129,6 @@ class CategoriaView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, id):
-  
         categoria = Categoria.objects.get(pk=id)
         
         conferencias = Conferencia.objects.filter(categorias=id)
@@ -155,5 +149,3 @@ class CategoriaView(APIView):
             "comentarios": ComentariosSerializer(comentarios, many=True).data,
             "lista_nuvem": lista_nuvem
         }, status=status.HTTP_200_OK)
-
-

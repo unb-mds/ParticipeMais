@@ -74,7 +74,7 @@ export default function ComunidadePage() {
 
   const fetchComunidades = async () => {
     try {
-      const response = await fetch('http://172.20.10.9:8000/comunidade', {
+      const response = await fetch('http://localhost:8000/comunidade', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -84,13 +84,12 @@ export default function ComunidadePage() {
       if (response.ok) {
         const data = await response.json();
 
-        setUsuariosAtivos(data.usuarios_ativos ?? null);
         setQuantidadeChat(data.quantidade_chat ?? null);
         setCategorias(data.categorias ?? []);
         setComentariosEnquetes(data.comentarios ?? []);
         setEnquetes(data.Enquetes ?? []);
       } else {
-        console.error('Erro ao buscar dados:', response.status);
+        console.error('Erro ao buscar dadoos:', response.status);
       }
     } catch (error) {
       console.error('Erro na requisição:', error);

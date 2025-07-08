@@ -63,7 +63,7 @@ export default function PerfilScreen() {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const response = await fetch('http://localhost:8000/comunidade/score', {
+        const response = await fetch('http://localhost:8081/comunidade/score', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',

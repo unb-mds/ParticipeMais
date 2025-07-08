@@ -86,7 +86,7 @@ useEffect(()=> {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
+      const response = await fetch(`http://localhost:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ useEffect(()=> {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/planos/favoritas/`, {
+      const res = await fetch(`http://localhost:8000/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -127,7 +127,7 @@ useEffect(()=> {
   };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://172.20.10.9:8000/planos/toggle/${id}/`, {
+    const res = await fetch(`http://localhost:8000/planos/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -233,18 +233,6 @@ const palavrasChave = planopalavra?.palavras_chaves
             {/* <EtapasCalendar etapas={etapas} /> */}
 
             <Objetivos objetivos={objetivos} />
-
-            { propostas && propostas.length > 0 ? (
-              <>      
-              <Propostas propostas={propostas} />
-              </>) 
-              : 
-              (
-                <>
-              <Propostas propostas={propostas} />
-                </>)
-              }
-
             { oficinas && oficinas.length > 0 ? (
               <>
               <Oficina oficinas={oficinas} propostas={propostas} />
@@ -260,6 +248,18 @@ const palavrasChave = planopalavra?.palavras_chaves
                 <Oficina oficinas={oficinas} propostas={propostas} />
               </View>
             )}
+
+            { propostas && propostas.length > 0 ? (
+              <>      
+              <Propostas propostas={propostas} />
+              </>) 
+              : 
+              (
+                <>
+              <Propostas propostas={propostas} />
+                </>)
+              }
+
 
 
           </View>

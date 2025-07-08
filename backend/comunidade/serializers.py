@@ -1,5 +1,3 @@
-"""Serializers da aplicação comunidade."""
-
 from rest_framework import serializers
 from .models import Chat, Comentarios, Curtidas
 from rest_framework import serializers
@@ -38,15 +36,28 @@ class ComentariosSerializer(serializers.ModelSerializer):
 
     quantidade_curtidas = serializers.SerializerMethodField()
     nome_autor = serializers.CharField(source='autor.nome', read_only=True)
-
+    autor_papel = serializers.SerializerMethodField()
+    
+    curtido = serializers.SerializerMethodField()
+    
     class Meta:
         model = Comentarios
-        fields = ['id', 'conteudo', 'data_criacao', 'quantidade_curtidas', 'nome_autor']
+        fields = ['id', 'conteudo', 'data_criacao', 'quantidade_curtidas', 'nome_autor', 'autor_papel', 'curtido']
         read_only_fields = ['data_criacao', 'quantidade_curtidas', 'nome_autor']
 
     def get_quantidade_curtidas(self, obj):
         """Retorna a quantidade de curtidas no comentário."""
         return Curtidas.objects.filter(comentario=obj, curtido = True).count()
+    
+    
+    def get_autor_papel(self, obj):
+        """Retorna o nível do autor do comentário."""
+        return obj.autor.usuarioscore.classificacao
+        
+        
+    def get_curtido(self, obj):
+        user = self.context['request'].user
+        return Curtidas.objects.filter(usuario=user, comentario=obj, curtido=True).exists()
 
     def validate(self, attrs):
         """Valida o conteúdo do comentário."""
@@ -77,14 +88,16 @@ class ComentarioCarrosselSerializer(serializers.ModelSerializer):
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    """Serializador de perguntas com seus comentários."""
-
     comentarios = ComentariosSerializer(many=True, read_only=True)
     autor_nome = serializers.CharField(source='autor.nome', read_only=True)
+    total_curtidas = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ['id', 'pergunta', 'categoria', 'data_criacao', 'comentarios', 'autor_nome']
+        fields = ['id', 'pergunta', 'categoria', 'data_criacao', 'comentarios', 'autor_nome', 'total_curtidas']
+
+    def get_total_curtidas(self, obj):
+        return Curtidas.objects.filter(comentario__chat=obj, curtido=True).count()
 
     def validate(self, attrs):
         """Valida a pergunta."""

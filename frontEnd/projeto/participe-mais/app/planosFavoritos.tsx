@@ -46,7 +46,7 @@ export default function PlanosFavoritos({ navigation }: any) {
 
         if (!token) return;
 
-        const resFavoritos = await fetch('http://172.20.10.9:8000/planos/favoritas/', {
+        const resFavoritos = await fetch('http://localhost:8000/planos/favoritas/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -58,7 +58,7 @@ export default function PlanosFavoritos({ navigation }: any) {
         console.log('Resposta /favoritas status:', resFavoritos.status);
         console.log('DATA FAVORITOS:', dataFavoritos);
 
-        const resPlanos = await fetch('http://172.20.10.9:8000/planos/', {
+        const resPlanos = await fetch('http://localhost:8000/planos/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

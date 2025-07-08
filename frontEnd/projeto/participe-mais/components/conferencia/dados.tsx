@@ -4,7 +4,7 @@ import { Ionicons,MaterialIcons } from '@expo/vector-icons';
 
 type DadosProps = {
   estatisticas: {
-    total: number;
+    eixo: string;
     andamento: number;
     encerradas: number;
   };

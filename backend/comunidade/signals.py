@@ -28,4 +28,5 @@ def atualizar_pontuacao(usuario, pontos):
     """
     score, _ = UsuarioScore.objects.get_or_create(usuario=usuario)
     score.pontos += pontos
+    score.atualizar_nivel()
     score.save()

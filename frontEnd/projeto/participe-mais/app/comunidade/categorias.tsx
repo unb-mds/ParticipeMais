@@ -197,7 +197,10 @@ interface Enquete {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/conferencias',
+            params: { id: item.id.toString() },
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -214,7 +217,10 @@ interface Enquete {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/planos',
+            params: { id: item.id.toString() },
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}
@@ -231,7 +237,10 @@ interface Enquete {
           horizontal
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({
+            pathname: '/consultas',
+            params: { id: item.id.toString() },
+          })}>
               <ImageBackground
                 source={{ uri: item.image_url }}
                 style={[styles.cardImagem, { borderColor: corAleatoria() }]}

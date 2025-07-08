@@ -29,7 +29,31 @@ class Curtidas(models.Model):
     
     class Meta:
         unique_together = ('usuario', 'comentario')
+        
 class UsuarioScore(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    nivel = models.IntegerField(default=1)
+    classificacao = models.CharField(max_length=100, default="Nível 1: Iniciante Cívico")
     pontos = models.IntegerField(default=0)
+    
+    def atualizar_nivel(self):
+        """Atualiza o nível e classificação com base nos pontos."""
+        if self.pontos >= 1000:
+            self.nivel = 5
+            self.classificacao = "Nível 5: Mestre Cívico"
+        elif self.pontos >= 700:
+            self.nivel = 4
+            self.classificacao = "Nível 4: Líder Comunitário"
+        elif self.pontos >= 400:
+            self.nivel = 3
+            self.classificacao = "Nível 3: Colaborador Ativo"
+        elif self.pontos >= 200:
+            self.nivel = 2
+            self.classificacao = "Nível 2: Participante Engajado"
+        else:
+            self.nivel = 1
+            self.classificacao = "Nível 1: Iniciante Cívico"
+
+        self.save()
+
     
