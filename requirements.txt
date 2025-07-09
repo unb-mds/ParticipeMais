@@ -10,7 +10,7 @@ faiss-cpu==1.7.4
 # LangChain (versão modular + compatível)
 langchain==0.1.14
 langchain-community==0.0.30
-langchain-core==0.1.35
+langchain-core==0.1.37
 
 # Clusterização
 hdbscan==0.8.33
