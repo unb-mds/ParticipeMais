@@ -4,6 +4,8 @@ from rest_framework import serializers
 from conferencias.models import Conferencia
 from planos.models import Planos
 from consultas.models import Consultas
+from autenticacao.models import Usuario
+from comunidade.models import Chat  # ou onde estiver o modelo
 
 palavras_proibidas = ["palavrão1", "palavrão2"]
 
@@ -29,6 +31,11 @@ class ComunidadeSerializer(serializers.ModelSerializer):
     def get_quantidade_curtidas(self, obj):
         """Retorna a quantidade de curtidas em todos os comentários deste chat."""
         return Curtidas.objects.filter(comentario__chat=obj).count()
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nome']
 
 
 class ComentariosSerializer(serializers.ModelSerializer):
@@ -56,8 +63,12 @@ class ComentariosSerializer(serializers.ModelSerializer):
         
         
     def get_curtido(self, obj):
-        user = self.context['request'].user
-        return Curtidas.objects.filter(usuario=user, comentario=obj, curtido=True).exists()
+        request = self.context.get('request', None)
+        if request and request.user and request.user.is_authenticated:
+            user = request.user
+            return Curtidas.objects.filter(usuario=user, comentario=obj, curtido=True).exists()
+        return False
+
 
     def validate(self, attrs):
         """Valida o conteúdo do comentário."""
@@ -85,6 +96,11 @@ class ComentarioCarrosselSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comentarios
         fields = ['id', 'conteudo', 'autor_nome', 'chat_id', 'pergunta']
+
+class EnqueteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['id', 'pergunta', 'autor']
 
 
 class ChatSerializer(serializers.ModelSerializer):

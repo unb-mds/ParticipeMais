@@ -170,8 +170,8 @@ export default function ConferenciaDetalhadaScreen() {
 
   const dadosEstatisticos = {
     total: etapas.length || 0,
-    andamento: 57,
-    encerradas: 43,
+    andamento: 100,
+    encerradas: 0,
   };
 
   const palavrasChave = conferencia?.palavras_chaves
@@ -217,7 +217,7 @@ export default function ConferenciaDetalhadaScreen() {
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             {/* <EixosTematicos eixos={eixos} /> */}
             <Conferencias etapas={etapas} conferencias={conferencias} propostas={propostas} />
-            {etapas.length > 0 && <Dados estatisticas={estatisticas} palavrasChave={palavrasChave} />}
+            {etapas.length > 0 && <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />}
             
             { propostas && propostas.length > 0 ? (<> 
               

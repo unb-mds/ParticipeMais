@@ -10,7 +10,7 @@ export default function CategoriaDescricao({ categoria }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: corFundo }]}>
-      <Text style={styles.texto}>{textoDescricao}</Text>
+      <Text style={styles.texto}>Tudo sobre {categoria} em um só lugar. Propostas, planos e as discussões das conferências feitas pela população.</Text>
     </View>
   );
 }
@@ -22,31 +22,42 @@ function definirCorETexto(categoria: string) {
     case 'meio ambiente':
       return {
         corFundo: '#4CAF50',
-        textoDescricao: 'Tudo sobre meio ambiente em um só lugar. Propostas, planos e as discussões das conferências feitas pela população.',
       };
     case 'infraestrutura':
       return {
         corFundo: '#FF9800',
-        textoDescricao: 'Tudo sobre infraestrutura, obras, mobilidade e desenvolvimento urbano. Acompanhe planos e discussões relevantes.',
       };
-    case 'saúde':
+    case 'participação social':
       return {
-        corFundo: '#90CAF9',
-        textoDescricao: 'Informações sobre saúde pública, bem-estar e qualidade de vida. Veja planos, propostas e participe das discussões.',
+        corFundo: '#F44336',
       };
-    case 'educação':
+    case 'igualdade racial':
       return {
         corFundo: '#CE93D8',
-        textoDescricao: 'Espaço dedicado à educação. Acompanhe planos, propostas e debates sobre o futuro da educação no país.',
       };
+    case 'direito das mulheres':
+      return {
+        corFundo: '#4CAF50',
+      };
+    case 'direitos da pessoa idosa':
+      return {
+        corFundo: '#FF9800',
+      };
+    case 'desenvolvimento rural':
+      return {
+        corFundo: '#90CAF9',
+      };
+    case 'tecnologia':
+      return {
+        corFundo: '#CE93D8',
+      };
+
     default:
       return {
         corFundo: '#E0E0E0',
-        textoDescricao: 'Acompanhe propostas, planos e discussões desta categoria.',
       };
   }
 }
-
 
 
 const styles = StyleSheet.create({

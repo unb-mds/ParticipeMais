@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 from .models import *
+from autenticacao.models import *
 from .serializers import *
 from propostas.models import Categoria
 from propostas.serializers import CategoriaSerializer
@@ -34,13 +35,15 @@ class ComunidadeView(APIView):
         comunidades = Chat.objects.all().order_by('-data_criacao')
         comentarios = Comentarios.objects.all().order_by('-data_criacao')[:10]
         categorias = Categoria.objects.all()
-
-        serializer = ComunidadeSerializer(comunidades, many=True)
+        chat = Chat.objects.all()
+        users = Usuario.objects.filter(status=True)  # <-- adiciona filtro
+        print(users)
 
         return Response({
+            'usuarios_ativos': UsuarioSerializer(users, many=True).data,
             'quantidade_chat': comunidades.count(),
-            'enquetes': serializer.data,
-            "comentarios": ComentariosSerializer(comentarios, many=True, context={'request': request}).data,
+            'enquetes': ChatSerializer(chat, many=True, context={'request': request}).data,
+            "comentarios": ComentariosSerializer(comentarios, many=True, context={'request': request}).data, #########################################
             'categorias': CategoriaSerializer(categorias, many=True, context={'request': request}, fields=['id', 'nome']).data,
         }, status=status.HTTP_200_OK)
 
@@ -67,7 +70,9 @@ class ComentarioCarrossel(APIView):
     def get(self, request):
         comentarios = Comentarios.objects.select_related('chat', 'autor').order_by('-data_criacao')[:10]
         serializer = ComentarioCarrosselSerializer(comentarios, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            'comentarios': serializer.data
+        }, status=status.HTTP_200_OK)
 
 class ChatView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
@@ -126,7 +131,7 @@ class CurtidaView(APIView):
         }, status=status.HTTP_200_OK)
 
 class CategoriaView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, id):
         categoria = Categoria.objects.get(pk=id)

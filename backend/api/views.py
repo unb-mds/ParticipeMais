@@ -19,6 +19,8 @@ from consultas.models import Consultas
 from consultas.serializers import ConsultasSerializer
 from propostas.models import Propostas, Categoria
 from propostas.serializers import PropostaSerializer, CategoriaSerializer
+from comunidade.models import Chat, Comentarios
+from comunidade.serializers import ChatSerializer, EnqueteSerializer, ComentariosSerializer
 
 import datetime
 
@@ -39,45 +41,51 @@ class DescubraView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        """
-        Retorna 5 conferências, planos e consultas aleatórias, e 10 propostas aleatórias.
-        """
         conferencias = Conferencia.objects.order_by('?')[:5]
         planos = Planos.objects.order_by('?')[:5]
         consultas = Consultas.objects.order_by('?')[:5]
         propostas = Propostas.objects.order_by('?')[:10]
+        enquetes = Chat.objects.order_by('?')[:10]
+        comentarios = Comentarios.objects.order_by('?')[:10]
 
         data = {
             'conferencias': ConferenciaSerializer(
                 conferencias, 
                 many=True, 
-                context={'request': request},  # Para URLs absolutas
-                fields=['id', 'image_url']
+                context={'request': request}
             ).data,
             'planos': PlanosSerializer(
                 planos, 
                 many=True,
-                context={'request': request},  # Para URLs absolutas
-                fields=['id', 'image_url']
+                context={'request': request}
             ).data,
             'consultas': ConsultasSerializer(
                 consultas, 
                 many=True,
-                context={'request': request},  # Para URLs absolutas
-                fields=['id', 'image_url']
+                context={'request': request}
             ).data,
             'propostas': PropostaSerializer(
                 propostas,
                 many=True,
-                context={'request': request},  # Para URLs absolutas
-                fields=['id', 'titulo_proposta', 'autor']
-            ).data
+                context={'request': request}
+            ).data,
+            'enquetes': EnqueteSerializer(
+                enquetes,
+                many=True,
+                context={'request': request}
+            ).data,
+            'comentarios': ComentariosSerializer(
+                comentarios,
+                many=True,
+                context={'request': request}
+            ).data,
         }
 
         return Response({
             'status': 'success',
             'data': data
         })
+
 
 class ConferenciaViewSet(viewsets.ReadOnlyModelViewSet):
     """

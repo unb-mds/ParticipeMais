@@ -50,10 +50,9 @@ export default function Dados({ estatisticas, palavrasChave }: DadosProps) {
         {/* Labels */}
         <View style={styles.labelContainer}>
           <Text style={styles.label}>
-            <Text style={{ color: '#4CAF50' }}>●</Text> {andamento}% Em andamento
+            <Text style={{ color: '#4CAF50' }}>●</Text> {andamento}% Conferências planejadas
           </Text>
           <Text style={styles.label}>
-            <Text style={{ color: '#FFC107' }}>●</Text> {encerradas}% Encerradas
           </Text>
         </View>
 

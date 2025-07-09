@@ -15,6 +15,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
+import { useRoute } from '@react-navigation/native';
 
 
 const { width } = Dimensions.get('window');
@@ -26,99 +27,108 @@ interface Conferencia { id: number; image_url: string; titulo: string; }
 interface Plano { id: number; image_url: string; nome: string; }
 interface Consulta { id: number; image_url: string; nome: string; }
 interface Proposta { id: number; titulo_proposta: string; autor: string; }
+interface Comentarios { id: number; conteudo: string; autor: string; chat: number}
+interface Enquetes { id: number; pergunta: string; autor: string; }
 
-type ItemType = 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' | 'forum' | 'plano' | 'consulta';
+type ItemType = 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' | 'forum' | 'plano' | 'consulta' | 'comentarios';
 
 
 const CORES_QUADRADOS = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
 const gerarCorAleatoria = () => CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
+const router = useRouter()
 
 interface Item {
-  id: string;
+  id: string; // sempre string, você converte para number quando necessário
   tipo: ItemType;
   imagemUrl?: string;
-  pergunta?: string;
+
+  // Proposta
   titulo_proposta?: string;
   autor?: string;
-  comentario_usuario?: string;
+
+  // Comentário
+  conteudo?: string;
+  chat?: number;
+
+  // Enquete
+  pergunta?: string;
+
   cor?: string;
-  alternativas?: string[];
 }
 
-const QuadradoEnquete = ({ pergunta }: { pergunta: string }) => {
-  const [resposta, setResposta] = useState<'sim' | 'nao' | null>(null);
 
-  return (
-    <View style={[styles.quadrado, { backgroundColor: '#ffd', padding: 10 }]}>
-      <Text style={[styles.textoQuadrado, { marginBottom: 10 }]}>{pergunta}</Text>
+// const QuadradoEnquete = ({ pergunta }: { pergunta: string }) => {
+//   const [resposta, setResposta] = useState<'sim' | 'nao' | null>(null);
 
-      <View style={styles.botoesAvaliacao}>
-        {resposta !== 'nao' && (
-          <TouchableOpacity
-            style={[
-              styles.botaoSim,
-              resposta === 'sim' && { paddingHorizontal: 30, paddingVertical: 12 },
-            ]}
-            onPress={() => setResposta('sim')}
-          >
-            <Text style={[styles.textoSim, resposta === 'sim' && { fontSize: 16 }]}>Sim</Text>
-          </TouchableOpacity>
-        )}
+//   return (
+//     <View style={[styles.quadrado, { backgroundColor: '#ffd', padding: 10 }]}>
+//       <Text style={[styles.textoQuadrado, { marginBottom: 10 }]}>{pergunta}</Text>
 
-        {resposta !== 'sim' && (
-          <TouchableOpacity
-            style={[
-              styles.botaoNao,
-              resposta === 'nao' && { paddingHorizontal: 30, paddingVertical: 12 },
-            ]}
-            onPress={() => setResposta('nao')}
-          >
-            <Text style={[styles.textoNao, resposta === 'nao' && { fontSize: 16 }]}>Não</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-};
+//       <View style={styles.botoesAvaliacao}>
+//         {resposta !== 'nao' && (
+//           <TouchableOpacity
+//             style={[
+//               styles.botaoSim,
+//               resposta === 'sim' && { paddingHorizontal: 30, paddingVertical: 12 },
+//             ]}
+//             onPress={() => setResposta('sim')}
+//           >
+//             <Text style={[styles.textoSim, resposta === 'sim' && { fontSize: 16 }]}>Sim</Text>
+//           </TouchableOpacity>
+//         )}
 
-// Quadrado especial com três botões de resposta
-const QuadradoBotao = ({ alternativas, pergunta }: { alternativas: string[], pergunta: string }) => {
-  const [respostaSelecionada, setRespostaSelecionada] = useState<number | null>(null);
-  const [corSelecionada, setCorSelecionada] = useState<string>('');
+//         {resposta !== 'sim' && (
+//           <TouchableOpacity
+//             style={[
+//               styles.botaoNao,
+//               resposta === 'nao' && { paddingHorizontal: 30, paddingVertical: 12 },
+//             ]}
+//             onPress={() => setResposta('nao')}
+//           >
+//             <Text style={[styles.textoNao, resposta === 'nao' && { fontSize: 16 }]}>Não</Text>
+//           </TouchableOpacity>
+//         )}
+//       </View>
+//     </View>
+//   );
+// };
 
-  const coresAleatorias = ['#2670E8', '#4CAF50', '#FF9800', '#F44336', '#ce93d8'];
+// // Quadrado especial com três botões de resposta
+// const QuadradoBotao = ({ alternativas, pergunta }: { alternativas: string[], pergunta: string }) => {
+//   const [respostaSelecionada, setRespostaSelecionada] = useState<number | null>(null);
+//   const [corSelecionada, setCorSelecionada] = useState<string>('');
 
-  const votar = (index: number) => {
-    setRespostaSelecionada(index);
-    setCorSelecionada(coresAleatorias[Math.floor(Math.random() * coresAleatorias.length)]);
-  };
+//   const coresAleatorias = ['#2670E8', '#4CAF50', '#FF9800', '#F44336', '#ce93d8'];
 
-  return (
-    <View style={styles.quadradoBotao}>
-      <Text style={styles.textoQuadrado}>{pergunta}</Text>
-      {alternativas.map((alt, i) => {
-        const selecionado = respostaSelecionada === i;
-        return (
-          <TouchableOpacity
-            key={i}
-            style={[
-              styles.botaoRetangular,
-              selecionado && { backgroundColor: corSelecionada },
-            ]}
-            onPress={() => votar(i)}
-            disabled={respostaSelecionada !== null}
-          >
-            <Text style={[styles.textoQuadradoForum, { color: selecionado ? '#fff' : '#000' }]}>
-              {alt}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-};
+//   const votar = (index: number) => {
+//     setRespostaSelecionada(index);
+//     setCorSelecionada(coresAleatorias[Math.floor(Math.random() * coresAleatorias.length)]);
+//   };
 
-
+//   return (
+//     <View style={styles.quadradoBotao}>
+//       <Text style={styles.textoQuadrado}>{pergunta}</Text>
+//       {alternativas.map((alt, i) => {
+//         const selecionado = respostaSelecionada === i;
+//         return (
+//           <TouchableOpacity
+//             key={i}
+//             style={[
+//               styles.botaoRetangular,
+//               selecionado && { backgroundColor: corSelecionada },
+//             ]}
+//             onPress={() => votar(i)}
+//             disabled={respostaSelecionada !== null}
+//           >
+//             <Text style={[styles.textoQuadradoForum, { color: selecionado ? '#fff' : '#000' }]}>
+//               {alt}
+//             </Text>
+//           </TouchableOpacity>
+//         );
+//       })}
+//     </View>
+//   );
+// };
 
 const QuadradoProposta = ({ titulo_proposta, autor, cor }: { titulo_proposta: string, autor: string, cor: string }) => (
   <TouchableOpacity activeOpacity={0.7}>
@@ -130,29 +140,30 @@ const QuadradoProposta = ({ titulo_proposta, autor, cor }: { titulo_proposta: st
   </TouchableOpacity>
 );
 
-const QuadradoComentario = ({ comentario, autor, cor }: { comentario: string; autor: string; cor: string }) => (
-  <TouchableOpacity activeOpacity={0.7}>
-    <View style={[styles.quadrado, { backgroundColor: cor }]}>      
+const QuadradoComentario = ({ id, conteudo, autor, cor }: { id: number; conteudo: string; autor: string; cor: string }) => (
+  <TouchableOpacity activeOpacity={0.7} onPress={() => router.push({ pathname: '/enquete', params: { id } })}>
+    <View style={[styles.quadrado, { backgroundColor: cor }]}>
       <FontAwesome name="book" size={24} color="#fff" style={styles.iconeCanto} />
       <Text style={styles.nomeCantoComentario}>{autor}</Text>
-      <Text style={[styles.textoComentario, { fontSize: getTamanhoFonte(comentario) }]}>
-        {`"${comentario}"`}
+      <Text style={[styles.textoComentario, { fontSize: getTamanhoFonte(conteudo) }]}>
+        {`"${conteudo}"`}
       </Text>
     </View>
   </TouchableOpacity>
 );
 
-const QuadradoForum = ({ pergunta, autor, cor }: { pergunta: string; autor: string; cor: string }) => (
-  <TouchableOpacity activeOpacity={0.7}>
-    <View style={[styles.quadrado, { backgroundColor: cor, padding: 10 }]}>      
+const QuadradoEnquetes = ({ id, pergunta, autor_nome, cor }: { id: number; pergunta: string; autor_nome: string; cor: string }) => (
+  <TouchableOpacity activeOpacity={0.7} onPress={() => router.push({ pathname: '/enquete', params: { id } })}>
+    <View style={[styles.quadrado, { backgroundColor: cor, padding: 10 }]}>
       <Text style={[styles.textoQuadradoForum, { fontSize: getTamanhoFonte(pergunta) }]}>{pergunta}</Text>
       <View style={styles.viewForum}>
         <AntDesign name="user" size={24} color="white" />
-        <Text style={styles.textoAutorForum}>{autor} compartilhou</Text>
+        <Text style={styles.textoAutorForum}>{autor_nome} compartilhou</Text>
       </View>
     </View>
   </TouchableOpacity>
 );
+
 
 function getTamanhoFonte(texto: string = ''): number {
   if (!texto) return 14;
@@ -179,6 +190,8 @@ export default function DescubraSection() {
   const [planos, setPlanos] = useState<Plano[]>([]);
   const [consultas, setConsultas] = useState<Consulta[]>([]);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
+  const [comentarios, setComentarios] = useState<Comentarios[]>([]);
+  const [enquetes, setEnquetes] = useState<Enquetes[]>([]);
   const [loadingToken, setLoadingToken] = useState(true);
   const [token, setToken] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -214,9 +227,8 @@ export default function DescubraSection() {
 
   // Atualizar dados quando os dados da API mudarem
   useEffect(() => {
-    // console.log('Dados atualizados:', { conferencias, planos, consultas, propostas });
-    atualizarDados();
-  }, [conferencias, planos, consultas, propostas]);
+  atualizarDados();
+}, [conferencias, planos, consultas, propostas, enquetes]);
 
   // Buscar dados da API
 
@@ -238,6 +250,8 @@ export default function DescubraSection() {
         setPlanos(json.data.planos || []);
         setConsultas(json.data.consultas || []);
         setPropostas(json.data.propostas || []);
+        setEnquetes(json.data.enquetes || []);
+        setComentarios(json.data.comentarios || []);
         
       } else if (response.status === 401 || response.status === 403) {
         router.replace('/login');
@@ -255,20 +269,21 @@ export default function DescubraSection() {
 
   // Atualizar dados locais
   const atualizarDados = useCallback(() => {
-    const comentariosMock: Item[] = Array.from({ length: 5 }, (_, i) => ({
-      id: `comentario-${i}`,
-      tipo: 'comentario',
-      comentario_usuario: 'Exemplo de comentário',
-      autor: 'UsuárioX',
+    
+    const enquetesData: Item[] = enquetes.map(item => ({
+      id: `enquete-${item.id}`,
+      tipo: 'enquete',
+      pergunta: item.pergunta,
+      autor: item.autor,
       cor: gerarCorAleatoria(),
     }));
 
-
-    const forunsMock: Item[] = Array.from({ length: 1 }, (_, i) => ({
-      id: `forum-${i}`,
-      tipo: 'forum',
-      pergunta: 'O que você acha da arborização urbana?',
-      autor: 'ForistaX',
+    const comentariosData: Item[] = comentarios.map(item => ({
+      id: `comentario-${item.id}`,
+      tipo: 'comentario',
+      conteudo: item.conteudo,
+      chat: item.chat,
+      autor: item.autor,
       cor: gerarCorAleatoria(),
     }));
 
@@ -307,10 +322,11 @@ export default function DescubraSection() {
     const blocos: Item[] = shuffle([
       { id: 'botao-0', tipo: 'botao' },
       ...propostasData,
-      ...comentariosMock,
-      ...forunsMock,
+      ...comentariosData,
+      ...enquetesData,      // ← adicionado aqui
       ...imagensData,
     ]);
+
 
     setData(blocos);
   }, [conferencias, planos, consultas, propostas]);
@@ -323,89 +339,64 @@ export default function DescubraSection() {
 
   // Renderizar os itens
   const renderItem = useCallback(({ item }: { item: Item }) => {
-    const idNumerico = (item.id ?? '').toString().replace(/^\D+/g, '');
+  const idNumerico = parseInt((item.id ?? '').replace(/^\D+/g, ''));
 
-    switch (item.tipo) {
-      case 'proposta': 
-        return <QuadradoProposta titulo_proposta={item.titulo_proposta || ''} autor={item.autor || ''} cor={item.cor || '#ccc'} />;
+  switch (item.tipo) {
+    case 'proposta': 
+      return (
+        <QuadradoProposta
+          titulo_proposta={item.titulo_proposta || ''}
+          autor={item.autor || ''}
+          cor={item.cor || '#ccc'}
+        />
+      );
 
-      case 'comentario': 
-        return <QuadradoComentario comentario={item.comentario_usuario || ''} autor={item.autor || ''} cor={item.cor || '#ccc'} />;
+    case 'comentario': 
+      return (
+        <QuadradoComentario
+          id={idNumerico}
+          conteudo={item.conteudo || ''}
+          autor={item.autor || ''}
+          cor={item.cor || '#ccc'}
+        />
+      );
 
-      case 'forum': 
-        return <QuadradoForum pergunta={item.pergunta || ''} autor={item.autor || ''} cor={item.cor || '#ccc'} />;
+    case 'enquete': 
+      return (
+        <QuadradoEnquetes
+          id={idNumerico}
+          pergunta={item.pergunta || ''}
+          autor_nome={item.autor || ''}
+          cor={item.cor || '#ccc'}
+        />
+      );
 
-      case 'enquete': 
-        return (
-          <TouchableOpacity activeOpacity={0.7}>
-            <View style={[styles.quadrado, { backgroundColor: '#ffd' }]}> 
-              <Text style={styles.textoQuadrado}>Enquete</Text>
-            </View>
-          </TouchableOpacity>
-        );
+    case 'conferencia':
+    case 'plano':
+    case 'consulta':
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            if (idNumerico) {
+              router.push({ pathname: `../${item.tipo}s`, params: { id: String(idNumerico) } });
+            } else {
+              console.warn('ID numérico inválido:', item.id);
+            }
+          }}
+        >
+          <ImageBackground
+            source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
+            style={styles.quadrado}
+            imageStyle={{ borderRadius: 12 }}
+          />
+        </TouchableOpacity>
+      );
 
+    default:
+      return null;
+  }
+}, [router]);
 
-
-      case 'conferencia':
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              if (idNumerico) {
-                router.push({ pathname: '../conferencias', params: { id: idNumerico } });
-              } else {
-                console.warn('ID numérico inválido:', item.id);
-              }
-            }}
-          >
-            <ImageBackground
-              source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
-              style={styles.quadrado}
-              imageStyle={{ borderRadius: 12 }}
-            />
-          </TouchableOpacity>
-        );
-
-      case 'plano':
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              if (idNumerico) {
-                router.push({ pathname: '../planos', params: { id: idNumerico } });
-              } else {
-                console.warn('ID numérico inválido:', item.id);
-              }
-            }}
-          >
-            <ImageBackground
-              source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
-              style={styles.quadrado}
-              imageStyle={{ borderRadius: 12 }}
-            />
-          </TouchableOpacity>
-        );
-      case 'consulta':
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              if (idNumerico) {
-                router.push({ pathname: '../consultas', params: { id: idNumerico } });
-              } else {
-                console.warn('ID numérico inválido:', item.id);
-              }
-            }}
-          >
-            <ImageBackground
-              source={{ uri: item.imagemUrl || 'https://via.placeholder.com/150' }}
-              style={styles.quadrado}
-              imageStyle={{ borderRadius: 12 }}
-            />
-          </TouchableOpacity>
-        );
-
-      default:
-        return null;
-    }
-  }, [router]);
 
   if (loadingToken) {
     return (
@@ -449,8 +440,6 @@ export default function DescubraSection() {
     </Animated.View>
   );
 }
-
-// Estilos (mantidos iguais)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -460,12 +449,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     overflow: 'hidden',
   },
+
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
   },
+
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -473,38 +464,45 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
   },
+
   errorText: {
     fontSize: 16,
     color: '#F44336',
     marginBottom: 20,
     textAlign: 'center',
   },
+
   retryButton: {
     backgroundColor: '#2670E8',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
   },
+
   retryButtonText: {
     color: 'white',
     fontSize: 16,
   },
+
   gridContent: {
     alignItems: 'center',
     paddingBottom: 8,
   },
+
   titulo: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
     fontFamily: 'Raleway_700Bold',
   },
+
   headerStyle: {
     alignSelf: 'flex-start',
     marginTop: 14,
     marginLeft: 14,
     marginBottom: 12,
   },
+
   quadrado: {
     width: tamanhoQuadrado,
     height: tamanhoQuadrado,
@@ -518,6 +516,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
+
   textoQuadrado: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -525,15 +524,62 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_700Bold',
     textAlign: 'center',
   },
-  botaoRetangular: {
-    width: 150,
-    height: 25,
-    borderRadius: 12,
-    margin: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ccc',
+
+  textoQuadradoForum: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Raleway_700Bold',
+    padding: 6,
   },
+
+  textoAutorForum: {
+    fontSize: 12,
+    color: '#fff',
+    marginTop: 4,
+  },
+
+  textoComentario: {
+    fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Raleway_400Regular',
+    padding: 6,
+  },
+
+  nomeCantoComentario: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#fff',
+    fontFamily: 'Raleway_700Bold',
+  },
+
+  nomeCantoProp: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#fff',
+    fontFamily: 'Raleway_700Bold',
+  },
+
+  iconeCanto: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
+
+  viewForum: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+
   quadradoBotao: {
     width: tamanhoQuadrado,
     height: tamanhoQuadrado,
@@ -550,104 +596,67 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
-  textoQuadradoForum: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    textAlign: 'center',
-    fontFamily: 'Raleway_700Bold',
-    padding: 6,
-  },
-  viewForum: {
-    flexDirection: 'row',
-    gap: 10,
+
+  botaoRetangular: {
+    width: 150,
+    height: 25,
+    borderRadius: 12,
+    margin: 4,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ccc',
   },
-  textoAutorForum: {
+
+  botoesAvaliacao: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+  },
+
+  botaoSim: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#8BC34A',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+
+  botaoNao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF5722',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+
+  textoSim: {
+    color: '#000',
     fontSize: 12,
-    color: '#fff',
-    marginTop: 4
-  },
-  iconeCanto: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-  },
-  nomeCantoComentario: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#fff',
     fontFamily: 'Raleway_700Bold',
   },
-  nomeCantoProp: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    fontWeight: 'bold',
+
+  textoNao: {
+    color: '#000',
     fontSize: 12,
-    color: '#fff',
     fontFamily: 'Raleway_700Bold',
   },
-  textoComentario: {
-    fontSize: 14,
+
+  conteiner_quadrado: {
+    backgroundColor: 'white',
+    margin: 10,
+    minHeight: QUADRADO_GRANDE_SIZE,
+    width: QUADRADO_GRANDE_SIZE,
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+
+  Comentario: {
+    fontSize: 12,
     color: '#fff',
     textAlign: 'center',
-    fontFamily: 'Raleway_400Regular',
+    fontFamily: 'Raleway_400Bold',
     padding: 6,
   },
-  conteiner_quadrado: {
-  backgroundColor: 'white',
-  margin: 10,
-  minHeight: QUADRADO_GRANDE_SIZE,
-  width: QUADRADO_GRANDE_SIZE,
-  alignSelf: 'center',
-  overflow: 'hidden',
-},
-
-Comentario: {
-  fontSize: 12,
-  color: '#fff',
-  textAlign: 'center',
-  fontFamily: 'Raleway_400Bold',
-  padding: 6,
-},
-
-botoesAvaliacao: {
-  flexDirection: 'row',
-  justifyContent: 'center',
-  gap: 10,
-},
-
-botaoSim: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: '#8BC34A',
-  paddingHorizontal: 10,
-  paddingVertical: 6,
-  borderRadius: 8,
-},
-
-botaoNao: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: '#FF5722',
-  paddingHorizontal: 10,
-  paddingVertical: 6,
-  borderRadius: 8,
-},
-
-textoSim: {
-  color: '#000',
-  fontSize: 12,
-  fontFamily: 'Raleway_700Bold',
-},
-
-textoNao: {
-  color: '#000',
-  fontSize: 12,
-  fontFamily: 'Raleway_700Bold',
-},
 });

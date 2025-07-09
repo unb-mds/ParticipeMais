@@ -33,17 +33,21 @@ export default function Categoria() {
   };
 
   interface Enquete {
-    enquete: string;
+    id: number;
+    pergunta: string;
     categoria: string;
-    curtidas: number;
-    numeroComentario: number;
+    data_criacao: string;
+    autor_nome: string;
+    comentarios: Comentario[];
+    total_curtidas: number
   }
 
-  interface Comentario {
+    interface Comentario {
     id: number;
-    autor: string;
-    comentario: string;
-    categoria: string;
+    chat_id: number;
+    autor_nome: string;
+    pergunta: string;
+    conteudo: string;
   }
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export default function Categoria() {
           router.replace('/login');
         }
       } catch {
-        router.replace('/login');
+        router.replace('/');
       }
     };
     obterToken();
@@ -165,17 +169,6 @@ const buscarTodosOsChats = async (chatIds: number[]) => {
     console.error('Erro ao buscar chats:', err);
   }
 };
-
-interface Enquete {
-  id: number;
-  pergunta: string;
-  categoria: string;
-  data_criacao: string;
-  autor_nome: string;
-  comentarios: Comentario[];
-  total_curtidas: number
-}
-
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -304,17 +297,20 @@ interface Enquete {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.carrossel}
-            keyExtractor={(item, index) => `${item.autor}-${index}`}
+            keyExtractor={(item, index) => `${item.autor_nome}-${index}`}
             data={comentarios}
             renderItem={({ item }) => (
-              <TouchableOpacity>
-                <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(item.categoria) }]}>
+              <TouchableOpacity onPress={() => router.push({
+                pathname: '/enquete', 
+                params: { id: item.id }
+              })}>
+                <View style={[styles.bloco_comentarios, { backgroundColor: corDaCategoria(titulo) }]}>
                   <View style={styles.dados_comentarios}>
                     <View style={styles.autorHeader}>
                       <FontAwesome5 name="user-circle" size={14} color="#fff" style={{ marginRight: 6 }} />
-                      <Text style={styles.autorComentario}>{item.autor}</Text>
+                      <Text style={styles.autorComentario}>{item.autor_nome}</Text>
                     </View>
-                    <Text style={styles.comentarioTexto}>{`"${item.comentario}"`}</Text>
+                    <Text style={styles.comentarioTexto}>{`"${item.conteudo}"`}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
