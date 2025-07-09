@@ -3,6 +3,8 @@ from django.urls import path
 from api.views import ConferenciaViewSet
 from .views import *
 
+app_name = 'conferencias'  
+
 router = DefaultRouter()
 router.register(r'', ConferenciaViewSet, basename='conferencias')
 
@@ -16,5 +18,4 @@ urlpatterns = [
     path('<int:pk>/etapas/<int:jk>/', EtapaDireta.as_view(), name='essa_etapa'),
     path('toggle/<int:conferencia_id>/', ToggleConferenciaView.as_view(), name='toggle_conferencia'),
     path('favoritas/', ConferenciasFavoritasView.as_view(), name='conferencias_favoritas'),
-
 ]

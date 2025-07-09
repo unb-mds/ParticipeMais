@@ -2,10 +2,13 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from .models import Usuario
+from rest_framework.test import APIClient
+
 
 class AutenticacaoTests(APITestCase):
 
     def setUp(self):
+        self.client = APIClient()
         self.cadastro_url = reverse('cadastro')
         self.login_url = reverse('login')
         self.perfil_url = reverse('perfil')

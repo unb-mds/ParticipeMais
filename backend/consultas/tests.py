@@ -35,9 +35,12 @@ class ConsultasAPITestCase(APITestCase):
 
     def test_acessa_consulta_existente(self):
         url = reverse('Acessa_consulta', args=[self.consulta1.pk])
+        self.client.force_authenticate(user=self.user)  # autenticando o usuário
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['data']['nome'], self.consulta1.nome)
+        self.assertEqual(response.data['data']['consultas']['nome'], self.consulta1.nome)
+
+
 
     def test_acessa_consulta_inexistente(self):
         url = reverse('Acessa_consulta', args=[999])

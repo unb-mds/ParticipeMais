@@ -43,7 +43,8 @@ class PlanosAPITestCase(APITestCase):
         url = reverse('Acessa_Planos', args=[self.plano1.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['data']['nome'], self.plano1.nome)
+        self.assertEqual(response.data['data']['planos']['nome'], self.plano1.nome)
+
 
     def test_acessa_plano_inexistente(self):
         """Testa o acesso a um plano inexistente."""

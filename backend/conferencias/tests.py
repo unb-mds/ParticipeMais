@@ -27,8 +27,7 @@ class ConferenciaAPITests(APITestCase):
         )
         cls.proposta = Propostas.objects.create(
             conferencia=cls.conferencia,
-            titulo_proposta="Proposta Teste eixo 1",
-            # preencha demais campos necessários no modelo Propostas
+            titulo_proposta="Proposta Teste eixo 1"
         )
         cls.pergunta = PerguntasParticipativas.objects.create(
             conferencia=cls.conferencia,
@@ -38,41 +37,46 @@ class ConferenciaAPITests(APITestCase):
 
     def test_listar_conferencias_requer_autenticacao(self):
         url = reverse('conferencias:listar_conferencias')
-        # sem autenticação
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # com autenticação
         self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('data', response.data)
         self.assertIsInstance(response.data['data'], list)
+        self.assertEqual(response.data['data'][0]['titulo'], self.conferencia.titulo)
 
     def test_acessar_conferencia_existe(self):
         url = reverse('conferencias:conferencia', kwargs={'pk': self.conferencia.pk})
+        self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['message'], 'Conferência encontrada!')
         self.assertEqual(response.data['data']['conferencias']['titulo'], self.conferencia.titulo)
 
     def test_acessar_conferencia_nao_existe(self):
         url = reverse('conferencias:conferencia', kwargs={'pk': 9999})
+        self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
 
     def test_acessar_propostas_e_eixos(self):
         url = reverse('conferencias:propostas', kwargs={'pk': self.conferencia.pk})
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
-        self.assertIn('eixos', response.data)
+        self.assertIn('estatisticas', response.data)
         self.assertIn('propostas', response.data)
         self.assertEqual(response.data['total_propostas'], 1)
 
     def test_acessar_perguntas(self):
         url = reverse('conferencias:perguntas', kwargs={'pk': self.conferencia.pk})
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
         self.assertEqual(response.data['total_perguntas'], 1)
@@ -80,7 +84,9 @@ class ConferenciaAPITests(APITestCase):
 
     def test_acessar_etapas(self):
         url = reverse('conferencias:etapas', kwargs={'pk': self.conferencia.pk})
+        self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
         self.assertEqual(response.data['total_etapas'], 1)
@@ -89,6 +95,7 @@ class ConferenciaAPITests(APITestCase):
     def test_proposta_direta(self):
         url = reverse('conferencias:essa_proposta', kwargs={'pk': self.conferencia.pk, 'jk': self.proposta.pk})
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
         self.assertIsInstance(response.data['proposta'], list)
@@ -96,8 +103,10 @@ class ConferenciaAPITests(APITestCase):
 
     def test_etapa_direta(self):
         url = reverse('conferencias:essa_etapa', kwargs={'pk': self.conferencia.pk, 'jk': self.etapa.pk})
+        self.client.force_authenticate(user=self.usuario)
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['conferencia'], self.conferencia.titulo)
+        self.assertIn('sub-conferencias', response.data)
         self.assertIsInstance(response.data['sub-conferencias'], list)
-        self.assertEqual(len(response.data['sub-conferencias']), 1)

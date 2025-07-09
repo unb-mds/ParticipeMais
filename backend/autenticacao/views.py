@@ -95,7 +95,7 @@ class Login(APIView):
                 max_age=3600
             )
             return response
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class Logout(APIView):
     """

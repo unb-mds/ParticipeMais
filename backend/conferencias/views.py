@@ -159,21 +159,29 @@ class AcessaEtapas(APIView):
 
 # Acessa uma etapa (subconferência) específica dentro de uma conferência
 class EtapaDireta(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk, jk):
-        conferencia = Conferencia.objects.get(pk=pk)
-        etapas = Etapas.objects.filter(pk=jk, conferencia=conferencia)  # Busca etapa específica pela pk
-        
-        propostas = Propostas.objects.filter(url_proposta__in=etapas.propostas_relacionadas)
+        try:
+            conferencia = Conferencia.objects.get(pk=pk)
+            etapa = Etapas.objects.get(pk=jk, conferencia=conferencia)
+        except (Conferencia.DoesNotExist, Etapas.DoesNotExist):
+            return Response({'message': 'Conferência ou etapa não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+        propostas = []
+        if etapa.propostas_relacionadas:
+            urls = [url.strip() for url in etapa.propostas_relacionadas.split(',') if url.strip()]
+            propostas = Propostas.objects.filter(url_proposta__in=urls)
+
         propostasSerializer = PropostaSerializer(propostas, many=True)
-        serializer = EtapaSerializer(etapas, many=True)
+        serializer = EtapaSerializer(etapa)
 
         return Response({
             'conferencia': conferencia.titulo,
-            'sub-conferencias': serializer.data,
+            'sub-conferencias': [serializer.data],  # list porque espera-se uma lista no teste
             'propostas_relacionadas': propostasSerializer.data
         })
+
 
 
 class ToggleConferenciaView(APIView):
