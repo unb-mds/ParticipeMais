@@ -1,6 +1,5 @@
 ---
 
-markdown
 # 🕸️ Web Scraper – Projeto Brasil Participativo
 
 Este repositório contém os scrapers desenvolvidos para coletar dados de **Conferências**, **Consultas Públicas** e **Planos** da plataforma [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/).
