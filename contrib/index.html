@@ -1,442 +1,480 @@
-
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="pt-BR" class="no-js">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="prev" href="..">
+    <link rel="icon" href="../assets/images/favicon.png">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    <title>Contribuidores - Participe+</title>
     
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-      
-        <link rel="prev" href="..">
-      
-      
-      
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    <!-- Fontes e Estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
     
-    
+    <style>
+      :root {
+        --md-text-font: "Inter", sans-serif;
+        --md-code-font: "Roboto Mono", monospace;
+        --primary-color: #1A83EC;
+        --secondary-color: #1268c7;
+        --light-color: #f8fafc;
+        --dark-color: #333;
+        --gray-color: #666;
+      }
       
-        <title>Contribuidores - Participe+</title>
+      body {
+        font-family: var(--md-text-font);
+        color: var(--dark-color);
+        background-color: #f9fafb;
+        scroll-behavior: smooth;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
       
-    
-    
-      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      /* Header */
+      .md-header {
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
       
+      .md-header__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        height: 60px;
+      }
       
-
-
-    
-    
+      .md-header__button.md-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-right: auto;
+      }
       
-    
-    
+      .md-header__button.md-logo img {
+        height: 40px;
+        width: auto;
+      }
       
+      .md-header__button.md-logo span {
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+        font-family: 'Raleway', sans-serif;
+      }
+      
+      /* Navigation */
+      .nav-tabs {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 1.5rem;
+      }
+      
+      .md-tabs__link {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+      }
+      
+      .md-tabs__link:hover {
+        color: white;
+      }
+      
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem 1rem;
+        color: white;
+      }
+      
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      
+      .hero-content p {
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+      
+      /* Team Section */
+      .team-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .team-member {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-align: center;
+        border-left: 4px solid var(--primary-color);
+      }
+      
+      .team-member:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      .team-member img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 1rem;
+        border: 3px solid var(--primary-color);
+      }
+      
+      .team-member h5 {
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+        color: var(--dark-color);
+      }
+      
+      .team-member p {
+        color: var(--gray-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .github-icon {
+        color: var(--dark-color);
+        transition: color 0.3s ease;
+      }
+      
+      .team-member:hover .github-icon {
+        color: var(--primary-color);
+      }
+      
+      /* Connect Section */
+      .connect-section {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin: 3rem 0;
+        border-left: 4px solid var(--primary-color);
+      }
+      
+      .connect-list {
+        list-style: none;
+        padding: 0;
+      }
+      
+      .connect-list li {
+        margin-bottom: 1rem;
+        position: relative;
+        padding-left: 2rem;
+      }
+      
+      .connect-list li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        width: 1rem;
+        height: 1rem;
+        background-color: var(--primary-color);
+        border-radius: 4px;
+        opacity: 0.7;
+      }
+      
+      .connect-list a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      
+      .connect-list a:hover {
+        text-decoration: underline;
+      }
+      
+      .button {
+        display: inline-flex;
+        align-items: center;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      
+      .button:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+      }
+      
+      /* Footer */
+      .footer {
+        background: var(--primary-color);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+      }
+      
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+      }
+      
+      .footer-links a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+      }
+      
+      .footer-links a:hover {
+        color: white;
+        text-decoration: underline;
+      }
+      
+      /* Responsiveness */
+      @media (max-width: 768px) {
+        .md-header__inner {
+          flex-direction: column;
+          height: auto;
+          padding: 1rem;
+        }
         
+        .nav-tabs {
+          margin-top: 1rem;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
         
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&display=swap">
-    
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap">
-    
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap">
-    
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap">
-    
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap">
-    
-      <link rel="stylesheet" href="../stylesheets/style.css">
-    
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-    
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+        
+        .hero-content p {
+          font-size: 1rem;
+        }
+        
+        .team-container {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+      }
+    </style>
   </head>
   
-  
-    <body dir="ltr">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#integrantes" class="md-skip">
-          Skip to content
+  <body dir="ltr">
+    <header class="md-header md-header--shadow md-header--lifted" data-md-component="header" style="display: flex; justify-content:center;">
+    <nav aria-label="Header" style="display: flex; justify-content: space-between;">
+      <div style="margin-right: 100px;">
+        <a href="../" class="md-header__button md-logo" aria-label="Participe+">
+          <img src="../img/logo.png" alt="logo" />
+          <span>Participe+</span>
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
-<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Participe+" class="md-header__button md-logo" aria-label="Participe+" data-md-component="logo">
-      
-  <img src="../img/logo.png" alt="logo">
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Participe+
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              Contribuidores
-            
-          </span>
-        </div>
       </div>
-    </div>
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-    
-  </nav>
-  
-    
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
-        
-  
-  
-    
-  
-  Home
 
-      </a>
-    </li>
-  
+      <div>
+        <ul class="nav-tabs">
+          <li><a href="../" class="md-tabs__link">Home</a></li>
+          <li><a href="../#objetivo" class="md-tabs__link">Objetivo</a></li>
+          <li><a href="../#tecnologias" class="md-tabs__link">Tecnologias</a></li>
+          <li><a href="../#entregas" class="md-tabs__link">Entregas</a></li>
+          <li><a href="../#decisoes" class="md-tabs__link">Decisões</a></li>
+          <li><a href="../#xp" class="md-tabs__link">Práticas XP</a></li>
+          <li><a href="../#licoes" class="md-tabs__link">Lições</a></li>
+          <li><a href="../contrib/" class="md-tabs__link">Contribuidores</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+    
+    <main class="md-main" data-md-component="main">
+      <div class="md-main__inner md-grid">
+        <div class="md-content" data-md-component="content">
+          <article class="md-content__inner md-typeset">
+            <!-- Hero Section -->
+            <section class="hero-section">
+              <div class="hero-content">
+                <h1 style="color: #f8fafc;">Nossa Equipe</h1>
+                <p>Conheça os talentosos desenvolvedores por trás do Participe+</p>
+              </div>
+            </section>
 
-      
-        
-  
-  
-  
-    
-  
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Contribuidores
-
-      </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
-</nav>
-    
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
+            <!-- Team Section -->
+            <section id="integrantes">
+              <h2>Integrantes</h2>
+              <p>Estudantes da Universidade de Brasília dedicados a construir uma democracia mais participativa</p>
               
+              <div class="team-container">
+                <div class="team-member">
+                  <a href="https://github.com/y123yuri" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/165211307?v=4" alt="Yuri Andrade" />
+                    <h5>Yuri Andrade</h5>
+                    <p>Frontend e Scrum Master</p>
+                    <p><i class="fab fa-github github-icon"></i> y123yuri</p>
+                  </a>
+                </div>
                 
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-  
-
-
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Participe+" class="md-nav__button md-logo" aria-label="Participe+" data-md-component="logo">
-      
-  <img src="../img/logo.png" alt="logo">
-
-    </a>
-    Participe+
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Contribuidores
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    Contribuidores
-    
-  </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#conecte-se-com-nosso-projeto" class="md-nav__link">
-    <span class="md-ellipsis">
-      📬 Conecte-se com nosso projeto
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
+                <div class="team-member">
+                  <a href="https://github.com/camposs04" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/161164304?v=4" alt="Julia Campos" />
+                    <h5>Julia Campos</h5>
+                    <p>Machine Learning e PO</p>
+                    <p><i class="fab fa-github github-icon"></i> camposs04</p>
+                  </a>
+                </div>
+                
+                <div class="team-member">
+                  <a href="https://github.com/GGDornelas" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/165059250?v=4" alt="Giovanni Dornelas" />
+                    <h5>Giovanni Dornelas</h5>
+                    <p>Frontend</p>
+                    <p><i class="fab fa-github github-icon"></i> GGDornelas</p>
+                  </a>
+                </div>
+                
+                <div class="team-member">
+                  <a href="https://github.com/phenric26" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/141793385?v=4" alt="Pedro Henrique" />
+                    <h5>Pedro Henrique</h5>
+                    <p>Backend</p>
+                    <p><i class="fab fa-github github-icon"></i> phenric26</p>
+                  </a>
+                </div>
+                
+                <div class="team-member">
+                  <a href="https://github.com/Szervinsk" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/165739040?v=4" alt="Matheus Szervisk" />
+                    <h5>Matheus Szervisk</h5>
+                    <p>Backend</p>
+                    <p><i class="fab fa-github github-icon"></i> Szervinsk</p>
+                  </a>
+                </div>
+                
+                <div class="team-member">
+                  <a href="https://github.com/jpnunes2210" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/165056944?v=4" alt="Joao Paulo" />
+                    <h5>Joao Paulo</h5>
+                    <p>Frontend</p>
+                    <p><i class="fab fa-github github-icon"></i> jpnunes2210</p>
+                  </a>
+                </div>
+                
+                <div class="team-member">
+                  <a href="https://github.com/SchneiderCode1" target="_blank" rel="noopener noreferrer">
+                    <img src="https://avatars.githubusercontent.com/u/165057013?v=4" alt="Schneider Code" />
+                    <h5>Schneider Code</h5>
+                    <p>Backend</p>
+                    <p><i class="fab fa-github github-icon"></i> SchneiderCode1</p>
+                  </a>
                 </div>
               </div>
-            
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
-                
-                  
-  
+            </section>
 
-
-
-
-<h1 id="integrantes">Integrantes</h1>
-<div class="team-container">
-  <div class="team-member">
-    <a href="https://github.com/y123yuri" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/165211307?v=4" alt="Foto Thales Euflauzino" />
-      <h5>Yuri<br>Andrade</h5>
-      <p>Frontend e Scrum Master</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/camposs04" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/161164304?v=4" alt="Foto Víctor Schmidt" />
-      <h5>Julia<br>Campos</h5>
-      <p>Machine Learning e PO</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/GGDornelas" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/165059250?v=4" alt="Foto Maria Helena" />
-      <h5>Giovanni<br>Dornelas</h5>
-      <p>Frontend</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/phenric26" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/141793385?v=4" alt="Foto Maria Helena" />
-      <h5>Pedro<br>Henrique</h5>
-      <p>Backend</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/Szervinsk" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/165739040?v=4" alt="Foto Maria Helena" />
-      <h5>Matheus<br>Szervisk</h5>
-      <p>Backend</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/jpnunes2210" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/165056944?v=4" alt="Foto Maria Helena" />
-      <h5>Joao<br>Paulo</h5>
-      <p>Frontend</p>
-    </a>
-  </div>
-  <div class="team-member">
-    <a href="https://github.com/SchneiderCode1" target="_blank" rel="noopener noreferrer">
-      <img src="https://avatars.githubusercontent.com/u/165057013?v=4" alt="Foto Maria Helena" />
-      <h5>Schneider<br>Code</h5>
-      <p>Backend</p>
-    </a>
-  </div>
-</div>
-
-<h2 id="conecte-se-com-nosso-projeto">📬 Conecte-se com nosso projeto</h2>
-<ul>
-<li>📄 <a href="https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=66-2748&amp;t=baWnNwY1SmsYkpHb-0">Veja o protótipo no Figma</a></li>
-<li>🐙 <a href="https://github.com/unb-mds/ParticipeMais">Acesse o código no GitHub</a></li>
-<li>🎓 Criado por estudantes da Universidade de Brasília</li>
-</ul>
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-  
-
-
-
-                
-              </article>
-            </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+            <!-- Connect Section -->
+            <section id="conecte-se-com-nosso-projeto" class="connect-section">
+              <h2>📬 Conecte-se com nosso projeto</h2>
+              <ul class="connect-list">
+                <li>
+                  <strong>📄 Protótipo:</strong> 
+                  <a href="https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=66-2748&t=baWnNwY1SmsYkpHb-0" target="_blank" rel="noopener noreferrer">
+                    Veja nosso design no Figma
+                  </a>
+                </li>
+                <li>
+                  <strong>🐙 Código-fonte:</strong> 
+                  <a href="https://github.com/unb-mds/ParticipeMais" target="_blank" rel="noopener noreferrer">
+                    Acesse o repositório no GitHub
+                  </a>
+                </li>
+                <li>
+                  <strong>🎓 Instituição:</strong> Projeto desenvolvido por estudantes da Universidade de Brasília
+                </li>
+              </ul>
+              
+              <div style="text-align: center; margin-top: 2rem;">
+                <a href="https://github.com/unb-mds/ParticipeMais" target="_blank" rel="noopener noreferrer" class="button" style="color: white;">
+                  <i class="fab fa-github" style="margin-right: 10px;"></i>   Contribua no GitHub
+                </a>
+              </div>
+            </section>
+          </article>
         </div>
-        
-      </main>
-      
-        <footer class="custom-footer">
-  <div class="footer-container">
-    <p>&copy; 2025 Participe+. Todos os direitos reservados.</p>
-    <div class="footer-links">
-      <a href="https://github.com/unb-mds/ParticipeMais" target="_blank">GitHub</a>
-      <a href="/contrib/">Contribuidores</a>
-      <a href="#">Política de Privacidade</a>
-    </div>
-  </div>
-</footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+        <img src="../img/logo.png" alt="Participe+" width="50" height="50" />
+        <p>&copy; 2025 Participe+. Todos os direitos reservados.</p>
+        <div class="footer-links">
+          <a href="https://github.com/unb-mds/ParticipeMais" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="./">
+            <i class="fas fa-users"></i> Contribuidores
+          </a>
+          <a href="#">
+            <i class="fas fa-lock"></i> Política de Privacidade
+          </a>
+        </div>
+      </div>
+    </footer>
     
-    
-    
-      
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "toc.integrate", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
-    
-    
-      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
-      
-        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-      
-        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-      
-    
+    <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+    <script>
+      // Simple animation for team members
+      document.addEventListener('DOMContentLoaded', function() {
+        const teamMembers = document.querySelectorAll('.team-member');
+        teamMembers.forEach((member, index) => {
+          member.style.opacity = 0;
+          member.style.transform = 'translateY(20px)';
+          member.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+              }
+            });
+          });
+          
+          observer.observe(member);
+        });
+      });
+    </script>
   </body>
 </html>
