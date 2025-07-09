@@ -1,3 +1,4 @@
+````markdown
 # 🧠 Projeto Participa+ — Clusterização de Propostas com NLP + IA
 
 Este módulo aplica **Processamento de Linguagem Natural (NLP)** e **Inteligência Artificial** para organizar, agrupar e classificar propostas públicas extraídas do portal [Brasil Participativo](https://brasilparticipativo.presidencia.gov.br/).  
