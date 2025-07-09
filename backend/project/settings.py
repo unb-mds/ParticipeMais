@@ -25,9 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+@gdz3wj=z+y93nic@(e67k*s8lm8zz!(2psqs)z)mnmb@89#g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.15', '172.20.10.9', '192.168.0.16', 'localhost'] # se quiser adicionar o ipv4 do seu computador
+ALLOWED_HOSTS = ['3.86.198.106', 'localhost', '127.0.0.1', '98.84.77.124']
+ # se quiser adicionar o ipv4 do seu computador
 
 AUTH_USER_MODEL = 'autenticacao.Usuario'
 
@@ -104,6 +105,8 @@ SIMPLE_JWT = {
 }
 
 WSGI_APPLICATION = 'project.wsgi.application'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/app/backend/static'
 
 
 # Database
