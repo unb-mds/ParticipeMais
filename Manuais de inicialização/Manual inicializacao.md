@@ -11,6 +11,27 @@ Antes de começar, é necessário ter instalado:
 - [Django](https://www.djangoproject.com/) (`pip install django`)
 - [PostgreSQL](https://www.postgresql.org/download/)
 
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/seu-projeto.git
+cd seu-projeto/backend
+```
+
+2. Crie um ambiente virtual:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
+
+3. Instale as dependências:
+
+```bash
+pip install -r requirements.txt
+```
+
 ---
 
 ## Instalação do Node.js
@@ -174,7 +195,17 @@ Após realizar as migrações com sucesso, é necessário executar o script que 
 No terminal, rode:
 
 ```bash
-python jogadados.py
+python backend/jogadados.py
+```
+
+```bash
+python backend/classificar_categorias.py
+```
+
+```bash
+python backend/keywords_conf.py
+```
+
 
 ## ✅ Pronto!
 
