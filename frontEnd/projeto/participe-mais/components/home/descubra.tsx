@@ -35,7 +35,6 @@ type ItemType = 'proposta' | 'botao' | 'comentario' | 'enquete' | 'conferencia' 
 
 const CORES_QUADRADOS = ['#2670E8', '#4CAF50', '#FF5722', '#FFC700', '#F44336'];
 const gerarCorAleatoria = () => CORES_QUADRADOS[Math.floor(Math.random() * CORES_QUADRADOS.length)];
-const router = useRouter()
 
 interface Item {
   id: string; // sempre string, você converte para number quando necessário
