@@ -36,6 +36,8 @@ class CadastroView(APIView):
         """
         Cria um novo usuário e retorna tokens.
         """
+        
+        print(request.data)
         serializer_class = UsuarioSerializer(data=request.data)
         if serializer_class.is_valid():
             usuario = serializer_class.save()
