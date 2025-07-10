@@ -1,706 +1,895 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR" class="no-js">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="next" href="contrib/" />
-  <link rel="icon" href="assets/images/favicon.png" />
-  <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14" />
-  <title>Participe+</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css" />
-  <link rel="stylesheet" href="stylesheets/style.css" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --md-text-font: "Inter", sans-serif;
-      --md-code-font: "Roboto Mono", monospace;
-      --primary-color: #1A83EC;
-      --secondary-color: #1268c7;
-      --light-color: #f8fafc;
-      --dark-color: #333;
-      --gray-color: #666;
-    }
-    
-    body {
-      font-family: var(--md-text-font);
-      color: var(--dark-color);
-      background-color: #f9fafb;
-      scroll-behavior: smooth;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-    }
-    
-    /* Header */
-    .md-header {
-      background-color: var(--primary-color);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .md-header__inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      display: flex;
-      align-items: center;
-      height: 60px;
-    }
-    
-    .md-header__button.md-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      margin-right: auto;
-    }
-    
-    .md-header__button.md-logo img {
-      height: 40px;
-      width: auto;
-    }
-    
-    .md-header__button.md-logo span {
-      color: white;
-      font-weight: 600;
-      font-size: 1.2rem;
-      font-family: 'Raleway', sans-serif;
-    }
-    
-    /* Navigation */
-    .nav-tabs {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      gap: 1.5rem;
-    }
-    
-    .md-tabs__link {
-      color: rgba(255,255,255,0.9);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: color 0.3s ease;
-    }
-    
-    .md-tabs__link:hover {
-      color: white;
-    }
-    
-    /* Hero Section */
-    .hero-section {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      min-height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem 1rem;
-      color: white;
-    }
-    
-    .hero-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .hero-content h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    
-    .hero-content h2 {
-      font-size: 1.2rem;
-      font-weight: 400;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    
-    .button {
-      display: inline-flex;
-      align-items: center;
-      background: white;
-      color: var(--primary-color);
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    
-    .button:hover {
-      background: rgba(255,255,255,0.9);
-      transform: translateY(-2px);
-    }
-    
-    .button i {
-      margin-left: 0.5rem;
-    }
-    
-    /* Main Content */
-    main {
-      padding: 2rem 0;
-    }
-    
-    section {
-      max-width: 900px;
-      margin: 0 auto 3rem;
-      padding: 0 1.5rem;
-    }
-    
-    h1, h2, h3 {
-      font-family: 'Raleway', sans-serif;
-      color: var(--primary-color);
-      margin-top: 0;
-    }
-    
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 3px solid var(--primary-color);
-    }
-    
-    h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--secondary-color);
-    }
-    
-    p {
-      margin-bottom: 1rem;
-    }
-    
-    /* Cards */
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 1.5rem;
-      border-left: 4px solid var(--primary-color);
-    }
-    
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary-color);
-    }
-    
-    .icon {
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    /* Grid Layout */
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-    
-    @media (min-width: 768px) {
-      .grid-cols-2 {
-        grid-template-columns: repeat(2, 1fr);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="next" href="contrib/" />
+    <link rel="icon" href="assets/images/favicon.png" />
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14" />
+    <title>Participe+</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css" />
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Raleway:wght@400;600;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --md-text-font: "Inter", sans-serif;
+        --md-code-font: "Roboto Mono", monospace;
+        --primary-color: #1a83ec;
+        --secondary-color: #1268c7;
+        --light-color: #f8fafc;
+        --dark-color: #333;
+        --gray-color: #666;
       }
-      .grid-cols-3 {
-        grid-template-columns: repeat(3, 1fr);
+
+      body {
+        font-family: var(--md-text-font);
+        color: var(--dark-color);
+        background-color: #f9fafb;
+        scroll-behavior: smooth;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
       }
-    }
-    
-    /* Lists */
-    ul.list-disc {
-      padding-left: 1.5rem;
-      list-style-type: disc;
-    }
-    
-    ul.list-disc li {
-      margin-bottom: 0.5rem;
-    }
-    
-    /* Footer */
-    .footer {
-      background: var(--primary-color);
-      color: white;
-      padding: 2rem 0;
-      text-align: center;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-    
-    .footer img {
-      height: 50px;
-      width: auto;
-      margin-bottom: 1rem;
-    }
-    
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 1rem 0;
-      flex-wrap: wrap;
-    }
-    
-    .footer-links a {
-      color: rgba(255,255,255,0.9);
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    
-    .footer-links a:hover {
-      color: white;
-    }
-    
-    .footer-links i {
-      margin-right: 0.5rem;
-    }
-    
-    /* Responsiveness */
-    @media (max-width: 768px) {
+
+      /* Header */
+      .md-header {
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
       .md-header__inner {
-        flex-direction: column;
-        height: auto;
-        padding: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        height: 60px;
       }
-      
+
+      .md-header__button.md-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-right: auto;
+      }
+
+      .md-header__button.md-logo img {
+        height: 40px;
+        width: auto;
+      }
+
+      .md-header__button.md-logo span {
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+        font-family: "Raleway", sans-serif;
+      }
+
+      /* Navigation */
       .nav-tabs {
-        margin-top: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 1.5rem;
       }
-      
+
+      .md-tabs__link {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+      }
+
+      .md-tabs__link:hover {
+        color: white;
+      }
+
+      /* Hero Section */
       .hero-section {
-        min-height: 300px;
-        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
+        );
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem 1rem;
+        color: white;
       }
-      
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
       .hero-content h1 {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
       }
-      
+
       .hero-content h2 {
-        font-size: 1rem;
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
       }
-      
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        background: white;
+        color: var(--primary-color);
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .button:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+      }
+
+      .button i {
+        margin-left: 0.5rem;
+      }
+
+      /* Main Content */
+      main {
+        padding: 2rem 0;
+      }
+
       section {
+        max-width: 900px;
+        margin: 0 auto 3rem;
+        padding: 0 1.5rem;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Raleway", sans-serif;
+        color: var(--primary-color);
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid var(--primary-color);
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--secondary-color);
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      /* Cards */
+      .card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        color: var(--primary-color);
+      }
+
+      .icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Grid Layout */
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .grid-cols-2 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-cols-3 {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* Lists */
+      ul.list-disc {
+        padding-left: 1.5rem;
+        list-style-type: disc;
+      }
+
+      ul.list-disc li {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--primary-color);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 0 1rem;
       }
-    }
-  </style>
-</head>
-<body>
-  <header class="md-header md-header--shadow md-header--lifted" data-md-component="header" style="display: flex; justify-content:center;">
-    <nav aria-label="Header" style="display: flex; justify-content: space-between;">
-      <div style="margin-right: 100px;">
-        <a href="../" class="md-header__button md-logo" aria-label="Participe+">
-          <img src="../img/logo.png" alt="logo" />
-          <span>Participe+</span>
-        </a>
-      </div>
 
-      <div>
-        <ul class="nav-tabs">
-          <li><a href="#home" class="md-tabs__link">Home</a></li>
-          <li><a href="#objetivo" class="md-tabs__link">Objetivo</a></li>
-          <li><a href="#tecnologias" class="md-tabs__link">Tecnologias</a></li>
-          <li><a href="#entregas" class="md-tabs__link">Entregas</a></li>
-          <li><a href="#decisoes" class="md-tabs__link">Decisões</a></li>
-          <li><a href="#xp" class="md-tabs__link">Práticas XP</a></li>
-          <li><a href="#licoes" class="md-tabs__link">Lições</a></li>
-          <li><a href="contrib/" class="md-tabs__link">Contribuidores</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  
-  <main class="md-main" data-md-component="main">
-    <div class="md-main__inner md-grid">
-      <div class="md-content" data-md-component="content">
-        <article class="md-content__inner md-typeset">
-          <section id="home" class="hero-section">
-            <div class="hero-content">
-              <h1 style="color: var(--light-color)">Participe+</h1>
-              <h2 style="color: var(--light-color)">
-                Explore, participe e influencie as políticas públicas do Brasil com o poder da IA e uma comunidade engajada.
-              </h2>
-              <a href="#objetivo" class="button" style="color: #1268c7;">
-                Saiba mais <i class="fas fa-arrow-down"></i>
-              </a>
-            </div>
-          </section>
-          
-          <section id="objetivo">
-            <h1>Contextos e Objetivos do projeto</h1>
-            <div class="card">
-              <div class="icon">
-                <i class="fas fa-bullseye"></i>
-              </div>
-              <p>
-              Esta release apresenta a plataforma <strong>Participe+</strong>, uma adaptação mobile do site <strong>brasilparticipativo.gov.br</strong>, com o objetivo de estreitar os laços entre a sociedade civil e os órgãos governamentais.</p>  
-              <p>Através de funcionalidades como conferências, planos e consultas públicas, o aplicativo facilita o acesso e a interação dos cidadãos com as decisões políticas. Utilizando tecnologias de <strong>machine learning</strong> e estratégias de <strong>clusterização</strong>, a plataforma promove uma participação mais ágil, acessível e eficaz no processo democrático.
-            </p>
+      .footer img {
+        height: 50px;
+        width: auto;
+        margin-bottom: 1rem;
+      }
 
-            </div>
-          </section>
-          
-          <section id="tecnologias">
-            <h2>Tecnologias Utilizadas</h2>
-            <div class="grid grid-cols-3">
-              <div class="card">
-                <div class="icon">
-                  <i class="fab fa-react"></i>
-                </div>
-                <h3>React Native + Expo Router</h3>
-                <p>Framework moderno para desenvolvimento mobile multiplataforma com excelente performance e experiência do usuário.</p>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fab fa-python"></i>
-                </div>
-                <h3>Django REST Framework</h3>
-                <p>Backend robusto e seguro para construção de APIs RESTful com autenticação e serialização avançadas.</p>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-lock"></i>
-                </div>
-                <h3>JWT + AsyncStorage</h3>
-                <p>Sistema de autenticação seguro com tokens JWT e armazenamento local assíncrono para melhor experiência do usuário.</p>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-database"></i>
-                </div>
-                <h3>PostgreSQL</h3>
-                <p>Banco de dados relacional robusto e confiável para armazenamento seguro dos dados da aplicação.</p>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-book"></i>
-                </div>
-                <h3>MkDocs + Material Theme</h3>
-                <p>Documentação elegante e responsiva com tema material design para melhor legibilidade e navegação.</p>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fab fa-github"></i>
-                </div>
-                <h3>GitHub Pages</h3>
-                <p>Hospedagem gratuita e confiável para a documentação do projeto com integração contínua.</p>
-              </div>
-            </div>
-          </section>
-          
-          <section id="falamais">
-            <h1>Quais problemas o aplicativo visou resolver?</h1>
-            <div class="card">
-              <div class="icon">
-                <i class="fas fa-bullseye"></i>
-              </div>
-              <p>
-              Um dos principais problemas encontrados no site original foi a <strong>falta de organização</strong>. O <strong>acesso aos dados</strong> era confuso e exigiu um grande esforço da equipe para estabelecer um <strong>padrão de coleta</strong>. Diante disso, com o objetivo de facilitar o acesso às informações, realizamos uma <strong>clusterização</strong> dos dados e os <strong>categorizamos</strong> em temáticas como <strong>saúde</strong>, <strong>educação</strong> e outras áreas de interesse, tornando o conteúdo mais compreensível.
-              </p>
-              
-              
-            <p> 
-              Além disso, considerando o <strong>curto período de participação</strong> disponível para os usuários interagirem com as propostas, desenvolvemos nossa própria área de <strong>fóruns</strong> e <strong>enquetes</strong>, possibilitando a <strong>comunicação</strong> entre os usuários sobre os temas que considerarem mais relevantes.
-            </p>
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+      }
 
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
 
-            </div>
-          </section>
+      .footer-links a:hover {
+        color: white;
+      }
 
+      .footer-links i {
+        margin-right: 0.5rem;
+      }
 
-          <section id="entregas">
-            <h2>O que foi entregue neste release</h2>
-            <div class="grid grid-cols-2 gap-6">
-              
+      /* Responsiveness */
+      @media (max-width: 768px) {
+        .md-header__inner {
+          flex-direction: column;
+          height: auto;
+          padding: 1rem;
+        }
+
+        .nav-tabs {
+          margin-top: 1rem;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .hero-section {
+          min-height: 300px;
+          padding: 1.5rem;
+        }
+
+        .hero-content h1 {
+          font-size: 1.8rem;
+        }
+
+        .hero-content h2 {
+          font-size: 1rem;
+        }
+
+        section {
+          padding: 0 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header
+      class="md-header md-header--shadow md-header--lifted"
+      data-md-component="header"
+      style="display: flex; justify-content: center">
+      <nav
+        aria-label="Header"
+        style="display: flex; justify-content: space-between">
+        <div style="margin-right: 100px">
+          <a
+            href="../"
+            class="md-header__button md-logo"
+            aria-label="Participe+">
+            <img src="../img/logo.png" alt="logo" />
+            <span>Participe+</span>
+          </a>
+        </div>
+
+        <div>
+          <ul class="nav-tabs">
+            <li><a href="#home" class="md-tabs__link">Home</a></li>
+            <li><a href="#objetivo" class="md-tabs__link">Objetivo</a></li>
+            <li>
+              <a href="#tecnologias" class="md-tabs__link">Tecnologias</a>
+            </li>
+            <li><a href="#entregas" class="md-tabs__link">Entregas</a></li>
+            <li><a href="#decisoes" class="md-tabs__link">Decisões</a></li>
+            <li><a href="#xp" class="md-tabs__link">Práticas XP</a></li>
+            <li><a href="#licoes" class="md-tabs__link">Lições</a></li>
+            <li><a href="contrib/" class="md-tabs__link">Contribuidores</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="md-main" data-md-component="main">
+      <div class="md-main__inner md-grid">
+        <div class="md-content" data-md-component="content">
+          <article class="md-content__inner md-typeset">
+            <section id="home" class="hero-section">
+              <div class="hero-content">
+                <h1 style="color: var(--light-color)">Participe+</h1>
+                <h2 style="color: var(--light-color)">
+                  Participe, opine e transforme sua cidade! <br> Aqui você tem voz ativa!
+                </h2>
+                <a href="#objetivo" class="button" style="color: #1268c7">
+                  Saiba mais <i class="fas fa-arrow-down"></i>
+                </a>
+              </div>
+            </section>
+
+            <section id="objetivo">
+              <h1>Contextos e Objetivos do projeto</h1>
               <div class="card">
                 <div class="icon">
-                  <i class="fas fa-plug"></i>
+                  <i class="fas fa-bullseye"></i>
                 </div>
-                <h3>Integração Completa</h3>
+                <p>
+                  Esta release apresenta a plataforma
+                  <strong>Participe+</strong>, uma adaptação mobile do site
+                  <strong>brasilparticipativo.gov.br</strong>, com o objetivo de
+                  estreitar os laços entre a sociedade civil e os órgãos
+                  governamentais.
+                </p>
+                <p>
+                  Através de funcionalidades como conferências, planos e
+                  consultas públicas, o aplicativo facilita o acesso e a
+                  interação dos <strong>cidadãos, organizações e servidores públicos</strong> com as decisões políticas. 
+                  Utilizando tecnologias de <strong>machine learning</strong> e estratégias
+                  de <strong>clusterização</strong>, a plataforma promove uma
+                  participação mais ágil, acessível e eficaz no processo
+                  democrático.
+                </p>
+              </div>
+            </section>
+
+            <section id="tecnologias">
+              <h2>Tecnologias Utilizadas</h2>
+              <div class="grid grid-cols-3">
+                <div class="card">
+                  <div class="icon">
+                    <i class="fab fa-react"></i>
+                  </div>
+                  <h3>React Native + Expo Router</h3>
+                  <p>
+                    Framework moderno para desenvolvimento mobile
+                    multiplataforma com excelente performance e experiência do
+                    usuário.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fab fa-python"></i>
+                  </div>
+                  <h3>Django REST Framework</h3>
+                  <p>
+                    Backend robusto e seguro para construção de APIs RESTful com
+                    autenticação e serialização avançadas.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-lock"></i>
+                  </div>
+                  <h3>JWT + AsyncStorage</h3>
+                  <p>
+                    Sistema de autenticação seguro com tokens JWT e
+                    armazenamento local assíncrono para melhor experiência do
+                    usuário.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-database"></i>
+                  </div>
+                  <h3>PostgreSQL</h3>
+                  <p>
+                    Banco de dados relacional robusto e confiável para
+                    armazenamento seguro dos dados da aplicação.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-book"></i>
+                  </div>
+                  <h3>MkDocs + Material Theme</h3>
+                  <p>
+                    Documentação elegante e responsiva com tema material design
+                    para melhor legibilidade e navegação.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fab fa-github"></i>
+                  </div>
+                  <h3>GitHub Pages</h3>
+                  <p>
+                    Hospedagem gratuita e confiável para a documentação do
+                    projeto com integração contínua.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section id="falamais">
+              <h1>Quais problemas o aplicativo visou resolver?</h1>
+              <div class="card">
+                <div class="icon">
+                  <i class="fas fa-bullseye"></i>
+                </div>
+                <p>
+                  Um dos principais problemas encontrados no site original foi a
+                  <strong>falta de organização</strong>. O
+                  <strong>acesso aos dados</strong> era confuso e exigiu um
+                  grande esforço da equipe para estabelecer um
+                  <strong>padrão de coleta</strong>. Diante disso, com o
+                  objetivo de facilitar o acesso às informações, realizamos uma
+                  <strong>clusterização</strong> dos dados e os
+                  <strong>categorizamos</strong> em temáticas como
+                  <strong>saúde</strong>, <strong>educação</strong> e outras
+                  áreas de interesse, tornando o conteúdo mais compreensível.
+                </p>
+
+                <p>
+                  Além disso, considerando o
+                  <strong>curto período de participação</strong> disponível para
+                  os usuários interagirem com as propostas, desenvolvemos nossa
+                  própria área de <strong>fóruns</strong> e
+                  <strong>enquetes</strong>, possibilitando a
+                  <strong>comunicação</strong> entre os usuários sobre os temas
+                  que considerarem mais relevantes.
+                </p>
+              </div>
+            </section>
+
+            <section id="entregas">
+              <h2>O que foi entregue nesta release</h2>
+              <div class="grid grid-cols-2 gap-6">
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-plug"></i>
+                  </div>
+                  <h3>Integração Completa</h3>
+                  <ul class="list-disc">
+                    <li>
+                      Conexão entre <strong>frontend</strong> e
+                      <strong>backend</strong>
+                    </li>
+                    <li>
+                      Sincronização em tempo real para enquetes e discussões
+                    </li>
+                    <li>
+                      Visualização de dados de
+                      <strong>participação cidadã</strong>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-compass"></i>
+                  </div>
+                  <h3>Feed "Descubra!"</h3>
+                  <p>
+                    Implementamos um <strong>feed dinâmico</strong> que reúne
+                    conteúdos como conferências, planos, consultas, enquetes,
+                    comentários e propostas. Tudo apresentado de forma
+                    interativa e com <strong>acesso rápido</strong>.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-route"></i>
+                  </div>
+                  <h3>Roteamento Autenticado</h3>
+                  <p>
+                    Desenvolvemos um sistema de
+                    <strong>autenticação via JWT</strong> com proteção de rotas
+                    e <strong>navegação segura</strong> dentro do app.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                  </div>
+                  <h3>Sistema de Agenda</h3>
+                  <p>
+                    Modal interativo para <strong>oficinas públicas</strong>,
+                    com agendamento de participação e integração com propostas
+                    associadas.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-lightbulb"></i>
+                  </div>
+                  <h3>Sistema de Pontos (Score)</h3>
+                  <p>
+                    Com foco em <strong>gamificação</strong>, criamos um
+                    <strong>sistema de pontuação</strong> para estimular a
+                    participação. Os usuários acumulam pontos ao
+                    <strong>cumprirem missões específicas</strong> como votar em
+                    enquetes, comentar ou propor ideias.
+                  </p>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-comments"></i>
+                  </div>
+                  <h3>Fóruns e Enquetes</h3>
+                  <p>
+                    Adicionamos áreas de <strong>fóruns temáticos</strong> e
+                    <strong>enquetes públicas</strong>, permitindo que os
+                    usuários debatam ideias, compartilhem opiniões e
+                    <strong>interajam em tempo real</strong> sobre assuntos de
+                    interesse coletivo.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section id="backend">
+              <h2>Ainda sobre ferramentas</h2>
+              <div class="card">
+                <div class="icon">
+                  <i class="fas fa-server"></i>
+                </div>
+                <p>
+                  Este projeto utiliza <strong>Django</strong> com
+                  <strong>Django REST Framework</strong> para construir uma
+                  <strong>API RESTful robusta</strong>, capaz de fornecer dados
+                  em <code>JSON</code> para o app mobile. Utilizamos
+                  autenticação <strong>JWT</strong> segura, banco de dados
+                  <strong>PostgreSQL</strong>, e ferramentas de
+                  <strong>scraping</strong> para coletar e organizar informações
+                  públicas do portal
+                  <a
+                    href="https://brasilparticipativo.presidencia.gov.br"
+                    target="_blank"
+                    >Brasil Participativo</a
+                  >.
+                </p>
                 <ul class="list-disc">
-                  <li>Conexão entre <strong>frontend</strong> e <strong>backend</strong></li>
-                  <li>Sincronização em tempo real para enquetes e discussões</li>
-                  <li>Visualização de dados de <strong>participação cidadã</strong></li>
+                  <li>
+                    <strong>Autenticação:</strong> JWT + recuperação de senha
+                  </li>
+                  <li>
+                    <strong>APIs públicas:</strong> conferências, planos,
+                    enquetes, comentários
+                  </li>
+                  <li>
+                    <strong>Gamificação:</strong> sistema de pontos por
+                    participação
+                  </li>
+                  <li>
+                    <strong>Organização modular:</strong> apps separados por
+                    domínio (ex: <code>comunidade</code>,
+                    <code>conferencias</code>)
+                  </li>
+                </ul>
+                <a
+                  class="button"
+                  href="https://github.com/unb-mds/ParticipeMais"
+                  target="_blank"
+                  style="margin-top: 1rem; display: inline-block">
+                  Ver código no GitHub <i class="fab fa-github"></i>
+                </a>
+              </div>
+
+              <div class="card">
+                <h3>📡 Exemplos de Endpoints</h3>
+                <ul class="list-disc">
+                  <li><code>POST /auth/login/</code> – autenticação via JWT</li>
+                  <li>
+                    <code>GET /conferencias/</code> – lista de conferências
+                    públicas
+                  </li>
+                  <li>
+                    <code>GET /planos/?tema=educacao</code> – filtra planos por
+                    tema
+                  </li>
+                  <li>
+                    <code>GET /comunidade/comentarios/</code> – comentários e
+                    discussões
+                  </li>
+                  <li>
+                    <code>POST /comunidade/enquetes/votar/</code> – voto
+                    autenticado
+                  </li>
                 </ul>
               </div>
 
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-compass"></i>
-                </div>
-                <h3>Feed "Descubra!"</h3>
-                <p>Implementamos um <strong>feed dinâmico</strong> que reúne conteúdos como conferências, planos, consultas, enquetes, comentários e propostas. Tudo apresentado de forma interativa e com <strong>acesso rápido</strong>.</p>
+                <h3>Fluxo de Dados</h3>
+                <p>
+                  O sistema foi projetado para processar dados com
+                  confiabilidade e performance:
+                </p>
+                <ul class="list-disc">
+                  <li>
+                    <strong>Scraping:</strong> coleta dados do site oficial
+                    mensalmente
+                  </li>
+                  <li>
+                    <strong>Banco:</strong> PostgreSQL armazena informações de
+                    forma relacional
+                  </li>
+                  <li>
+                    <strong>API REST:</strong> Django entrega dados em JSON ao
+                    app
+                  </li>
+                  <li>
+                    <strong>Frontend:</strong> React Native renderiza
+                    dinamicamente os dados
+                  </li>
+                </ul>
+                <p style="margin-top: 1rem">
+                  <img
+                    src="img/Overview Participe+.png"
+                    alt="Fluxograma Backend"
+                    style="
+                      max-width: 100%;
+                      border-radius: 6px;
+                      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                    " />
+                </p>
               </div>
+            </section>
 
+            <section id="decisoes">
+              <h2>Decisões Técnicas Importantes</h2>
               <div class="card">
                 <div class="icon">
-                  <i class="fas fa-route"></i>
+                  <i class="fas fa-lightbulb"></i>
                 </div>
-                <h3>Roteamento Autenticado</h3>
-                <p>Desenvolvemos um sistema de <strong>autenticação via JWT</strong> com proteção de rotas e <strong>navegação segura</strong> dentro do app.</p>
-              </div>
-
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <h3>Sistema de Agenda</h3>
-                <p>Modal interativo para <strong>oficinas públicas</strong>, com agendamento de participação e integração com propostas associadas.</p>
+                <h3>Superando Desafios de Performance</h3>
+                <p>
+                  Foi superado o desafio crítico de exibir
+                  <strong>blocos dinâmicos mistos</strong> com desempenho
+                  otimizado e estilo unificado utilizando:
+                </p>
+                <ul class="list-disc">
+                  <li><code>useMemo</code> para memoização de componentes</li>
+                  <li>Virtualização de listas para renderização eficiente</li>
+                  <li>Componentes especializados com props bem definidas</li>
+                  <li>Estilização consistente com ThemeProvider</li>
+                </ul>
+                <p>
+                  Essa abordagem resultou em uma melhoria de 40% na performance
+                  de renderização e uma experiência do usuário mais fluida.
+                </p>
               </div>
 
               <div class="card">
                 <div class="icon">
                   <i class="fas fa-lightbulb"></i>
                 </div>
-                <h3>Sistema de Pontos (Score)</h3>
+                <h3>Uso de APIs</h3>
                 <p>
-                  Com foco em <strong>gamificação</strong>, criamos um <strong>sistema de pontuação</strong> para estimular a participação. Os usuários acumulam pontos ao <strong>cumprirem missões específicas</strong> como votar em enquetes, comentar ou propor ideias.
+                  Além disso, integramos o frontend com um
+                  <strong>backend Django REST Framework</strong>, criando uma
+                  <strong>API robusta</strong> que entrega e recebe dados em
+                  <code>JSON</code>. As requisições autenticadas garantem
+                  segurança e controle de acesso. No lado do app, realizamos o
+                  <strong>parse dos dados</strong> recebidos, tratando e
+                  categorizando as informações antes de renderizá-las
+                  dinamicamente em tela.
                 </p>
               </div>
+            </section>
 
+            <section id="xp">
+              <h2>Práticas XP, Qualidade e Testes</h2>
+              <div class="grid grid-cols-3">
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <h3>Extreme Programming</h3>
+                  <ul class="list-disc">
+                    <li>Programação em par constante</li>
+                    <li>Feedback rápido e iterativo</li>
+                    <li>Integração contínua (CI/CD)</li>
+                    <li>Desenvolvimento orientado a testes</li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-tasks"></i>
+                  </div>
+                  <h3>Pipeline Automatizado</h3>
+                  <ul class="list-disc">
+                    <li>GitHub Actions para CI/CD</li>
+                    <li>Testes automatizados em cada PR</li>
+                    <li>Deploy contínuo em staging</li>
+                    <li>Verificação de qualidade de código</li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <div class="icon">
+                    <i class="fas fa-code-branch"></i>
+                  </div>
+                  <h3>Estatísticas do Projeto</h3>
+                  <ul class="list-disc">
+                    <li>+400 commits significativos</li>
+                    <li>65+ issues resolvidas</li>
+                    <li>20+ Pull Requests revisados</li>
+                    <li>95% de cobertura de testes</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <section id="licoes">
+              <h2>Lições Aprendidas</h2>
               <div class="card">
                 <div class="icon">
-                  <i class="fas fa-comments"></i>
+                  <i class="fas fa-graduation-cap"></i>
                 </div>
-                <h3>Fóruns e Enquetes</h3>
-                <p>
-                  Adicionamos áreas de <strong>fóruns temáticos</strong> e <strong>enquetes públicas</strong>, permitindo que os usuários debatam ideias, compartilhem opiniões e <strong>interajam em tempo real</strong> sobre assuntos de interesse coletivo.
-                </p>
-              </div>
-
-            </div>
-          </section>
-
-          
-    <section id="backend">
-  <h2>Ainda sobre ferramentas</h2>
-  <div class="card">
-    <div class="icon">
-      <i class="fas fa-server"></i>
-    </div>
-    <p>
-      Este projeto utiliza <strong>Django</strong> com <strong>Django REST Framework</strong> para construir uma <strong>API RESTful robusta</strong>, capaz de fornecer dados em <code>JSON</code> para o app mobile. Utilizamos autenticação <strong>JWT</strong> segura, banco de dados <strong>PostgreSQL</strong>, e ferramentas de <strong>scraping</strong> para coletar e organizar informações públicas do portal <a href="https://brasilparticipativo.presidencia.gov.br" target="_blank">Brasil Participativo</a>.
-    </p>
-    <ul class="list-disc">
-      <li><strong>Autenticação:</strong> JWT + recuperação de senha</li>
-      <li><strong>APIs públicas:</strong> conferências, planos, enquetes, comentários</li>
-      <li><strong>Gamificação:</strong> sistema de pontos por participação</li>
-      <li><strong>Organização modular:</strong> apps separados por domínio (ex: <code>comunidade</code>, <code>conferencias</code>)</li>
-    </ul>
-    <a class="button" href="https://github.com/unb-mds/ParticipeMais" target="_blank" style="margin-top: 1rem; display: inline-block;">
-      Ver código no GitHub <i class="fab fa-github"></i>
-    </a>
-  </div>
-
-  <div class="card">
-    <h3>📡 Exemplos de Endpoints</h3>
-    <ul class="list-disc">
-      <li><code>POST /auth/login/</code> – autenticação via JWT</li>
-      <li><code>GET /conferencias/</code> – lista de conferências públicas</li>
-      <li><code>GET /planos/?tema=educacao</code> – filtra planos por tema</li>
-      <li><code>GET /comunidade/comentarios/</code> – comentários e discussões</li>
-      <li><code>POST /comunidade/enquetes/votar/</code> – voto autenticado</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3> Fluxo de Dados</h3>
-    <p>O sistema foi projetado para processar dados com confiabilidade e performance:</p>
-    <ul class="list-disc">
-      <li><strong>Scraping:</strong> coleta dados do site oficial mensalmente</li>
-      <li><strong>Banco:</strong> PostgreSQL armazena informações de forma relacional</li>
-      <li><strong>API REST:</strong> Django entrega dados em JSON ao app</li>
-      <li><strong>Frontend:</strong> React Native renderiza dinamicamente os dados</li>
-    </ul>
-    <p style="margin-top: 1rem;">
-      <img src="img/Overview Participe+.png" alt="Fluxograma Backend" style="max-width:100%; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
-    </p>
-  </div>
-</section>  
-
-
-          <section id="decisoes">
-            <h2>Decisões Técnicas Importantes</h2>
-            <div class="card">
-              <div class="icon">
-                <i class="fas fa-lightbulb"></i>
-              </div>
-              <h3>Superando Desafios de Performance</h3>
-              <p>Foi superado o desafio crítico de exibir <strong>blocos dinâmicos mistos</strong> com desempenho otimizado e estilo unificado utilizando:</p>
-              <ul class="list-disc">
-                <li><code>useMemo</code> para memoização de componentes</li>
-                <li>Virtualização de listas para renderização eficiente</li>
-                <li>Componentes especializados com props bem definidas</li>
-                <li>Estilização consistente com ThemeProvider</li>
-              </ul>
-              <p>Essa abordagem resultou em uma melhoria de 40% na performance de renderização e uma experiência do usuário mais fluida.</p>
-            </div>
-
-            <div class="card">
-            <div class="icon">
-              <i class="fas fa-lightbulb"></i>
-            </div>
-            <h3>Uso de APIs</h3>
-            <p>
-              Além disso, integramos o frontend com um <strong>backend Django REST Framework</strong>, criando uma <strong>API robusta</strong> que entrega e recebe dados em <code>JSON</code>. As requisições autenticadas garantem segurança e controle de acesso. No lado do app, realizamos o <strong>parse dos dados</strong> recebidos, tratando e categorizando as informações antes de renderizá-las dinamicamente em tela.
-            </p>
-          </div>
-          </section>
-          
-          <section id="xp">
-            <h2>Práticas XP, Qualidade e Testes</h2>
-            <div class="grid grid-cols-3">
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <h3>Extreme Programming</h3>
+                <h3>Conhecimento Adquirido</h3>
                 <ul class="list-disc">
-                  <li>Programação em par constante</li>
-                  <li>Feedback rápido e iterativo</li>
-                  <li>Integração contínua (CI/CD)</li>
-                  <li>Desenvolvimento orientado a testes</li>
+                  <li>
+                    <strong>Integração eficaz</strong> entre frontend mobile e
+                    backend Django
+                  </li>
+                  <li>
+                    <strong>Componentização</strong> e organização modular do
+                    código
+                  </li>
+                  <li>
+                    <strong>Refinamento contínuo</strong> da lógica de
+                    autenticação
+                  </li>
+                  <li>
+                    <strong>Padronização visual</strong> com sistemas de design
+                  </li>
+                  <li>
+                    <strong>Gestão de estado</strong> em aplicações complexas
+                  </li>
                 </ul>
-              </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-tasks"></i>
+
+                <blockquote>
+                  <p>
+                    "Mais do que código, construímos pontes entre o cidadão e a
+                    democracia. Cada linha escrita é um passo para uma sociedade
+                    mais participativa e inclusiva."
+                  </p>
+                  <footer>— Equipe Participe+</footer>
+                </blockquote>
+
+                <div style="text-align: center; margin-top: 2rem">
+                  <a
+                    href="contrib/"
+                    class="button"
+                    style="
+                      background-color: var(--primary-color);
+                      color: white;
+                    ">
+                    Conheça nossos contribuidores
+                    <i class="fas fa-arrow-right"></i>
+                  </a>
                 </div>
-                <h3>Pipeline Automatizado</h3>
-                <ul class="list-disc">
-                  <li>GitHub Actions para CI/CD</li>
-                  <li>Testes automatizados em cada PR</li>
-                  <li>Deploy contínuo em staging</li>
-                  <li>Verificação de qualidade de código</li>
-                </ul>
               </div>
-              
-              <div class="card">
-                <div class="icon">
-                  <i class="fas fa-code-branch"></i>
-                </div>
-                <h3>Estatísticas do Projeto</h3>
-                <ul class="list-disc">
-                  <li>+400 commits significativos</li>
-                  <li>65+ issues resolvidas</li>
-                  <li>20+ Pull Requests revisados</li>
-                  <li>95% de cobertura de testes</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-          
-          <section id="licoes">
-            <h2>Lições Aprendidas</h2>
-            <div class="card">
-              <div class="icon">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
-              <h3>Conhecimento Adquirido</h3>
-              <ul class="list-disc">
-                <li><strong>Integração eficaz</strong> entre frontend mobile e backend Django</li>
-                <li><strong>Componentização</strong> e organização modular do código</li>
-                <li><strong>Refinamento contínuo</strong> da lógica de autenticação</li>
-                <li><strong>Padronização visual</strong> com sistemas de design</li>
-                <li><strong>Gestão de estado</strong> em aplicações complexas</li>
-              </ul>
-              
-              <blockquote>
-                <p>"Mais do que código, construímos pontes entre o cidadão e a democracia. Cada linha escrita é um passo para uma sociedade mais participativa e inclusiva."</p>
-                <footer>— Equipe Participe+</footer>
-              </blockquote>
-              
-              <div style="text-align: center; margin-top: 2rem;">
-                <a href="contrib/" class="button" style="background-color: var(--primary-color); color: white;">
-                  Conheça nossos contribuidores <i class="fas fa-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </section>
-        </article>
+            </section>
+          </article>
+        </div>
       </div>
-    </div>
-  </main>
-  
-  <footer class="footer">
-    <div class="container" style="font-size: 1.5em;">
-      <img src="../img/logo.png" alt="Participe+" />
-      <p>&copy; 2025 Participe+. Todos os direitos reservados.</p>
-      <div class="footer-links">
-        <a href="https://github.com/unb-mds/ParticipeMais" target="_blank">
-          <i class="fab fa-github"></i> GitHub
-        </a>
-        <a href="contrib/">
-          <i class="fas fa-users"></i> Contribuidores
-        </a>
-        <a href="#">
-          <i class="fas fa-lock"></i> Política de Privacidade
-        </a>
+    </main>
+
+    <footer class="footer">
+      <div class="container" style="font-size: 1.5em">
+        <img src="../img/logo.png" alt="Participe+" />
+        <p>&copy; 2025 Participe+. Todos os direitos reservados.</p>
+        <div class="footer-links">
+          <a href="https://github.com/unb-mds/ParticipeMais" target="_blank">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="contrib/"> <i class="fas fa-users"></i> Contribuidores </a>
+          <a href="#"> <i class="fas fa-lock"></i> Política de Privacidade </a>
+        </div>
       </div>
-    </div>
-  </footer>
-  
-  <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
-  <script>
-    // Simple animation for sections when scrolling
-    document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = 1;
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      }, {
-        threshold: 0.1
-      });
-      
-      document.querySelectorAll('section').forEach(section => {
-        section.style.opacity = 0;
-        section.style.transform = 'translateY(20px)';
-        section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-        observer.observe(section);
-      });
-      
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          e.preventDefault();
-          
-          const targetId = this.getAttribute('href');
-          if (targetId === '#') return;
-          
-          const targetElement = document.querySelector(targetId);
-          if (targetElement) {
-            window.scrollTo({
-              top: targetElement.offsetTop - 80,
-              behavior: 'smooth'
+    </footer>
+
+    <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+    <script>
+      // Simple animation for sections when scrolling
+      document.addEventListener("DOMContentLoaded", function () {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = "translateY(0)";
+              }
             });
+          },
+          {
+            threshold: 0.1,
           }
+        );
+
+        document.querySelectorAll("section").forEach((section) => {
+          section.style.opacity = 0;
+          section.style.transform = "translateY(20px)";
+          section.style.transition =
+            "opacity 0.6s ease-out, transform 0.6s ease-out";
+          observer.observe(section);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute("href");
+            if (targetId === "#") return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: "smooth",
+              });
+            }
+          });
         });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
