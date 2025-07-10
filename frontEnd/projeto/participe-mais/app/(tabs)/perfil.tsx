@@ -25,7 +25,11 @@ export default function PerfilScreen() {
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [score, setScore] = useState<{ xp: number; nivel: number } | null>(null);
   const [nivel, setNivel] = useState<number>(0);
+  const [abaAtiva, setAbaAtiva] = useState<'descubra' | 'comunidade' | 'pesquisar'>('descubra')
+  const [nome, setNome] = useState<string>('Usuário');
+  const [loading, setLoading] = useState(true);
   const campos = ['nome', 'email', 'senha'] as const;
+  
   type Campo = typeof campos[number];
 
   const [dados, setDados] = useState({ nome: '', email: '', senha: '' });
@@ -63,24 +67,27 @@ export default function PerfilScreen() {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const response = await fetch('http://localhost:8081/comunidade/score', {
+        const token = await AsyncStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8000/comunidade/score/', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        if (response.ok) {
-          const json = await response.json();
-          if (json?.data?.score) {
-            setScore(json.data.score);
-          } else {
-            console.warn('Estrutura inesperada na resposta:', json);
-            setScore({ xp: 0, nivel: 1 });
-          }
+        const data = await response.json();
+
+        // aqui usamos o mesmo formato da ScoreScreen
+        if (data?.pontos !== undefined) {
+          setScore({ xp: data.pontos, nivel: 1 }); // nivel opcional
+          setNome(data.usuario);
+        } else {
+          console.warn('Resposta inesperada:', data);
         }
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error('Erro ao buscar score:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -115,7 +122,7 @@ export default function PerfilScreen() {
     }
   };
 
-  if (usuarioCarregado && !nomeUsuario) {
+  if (usuarioCarregado && !dados.nome) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={styles.header}>Faça login para acessar o perfil</Text>
