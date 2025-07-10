@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import {
   FontAwesome,
   MaterialIcons,
@@ -17,9 +17,9 @@ import {
   MaterialCommunityIcons,
   FontAwesome5,
   FontAwesome6,
-} from '@expo/vector-icons';
+} from "@expo/vector-icons";
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 interface Categoria {
   id: number;
@@ -52,25 +52,27 @@ interface Usuarios {
 export default function ComunidadePage() {
   const router = useRouter();
 
-  const [token, setToken] = useState<string>('');
+  const [token, setToken] = useState<string>("");
   const [quantidadeChat, setQuantidadeChat] = useState<number | null>(null);
   const [usuarios, setUsuarios] = useState<Usuarios[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [comentariosEnquetes, setComentariosEnquetes] = useState<Comentario[]>([]);
+  const [comentariosEnquetes, setComentariosEnquetes] = useState<Comentario[]>(
+    []
+  );
   const [enquetes, setEnquetes] = useState<Enquete[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const obterToken = async () => {
       try {
-        const tokenSalvo = await AsyncStorage.getItem('accessToken');
+        const tokenSalvo = await AsyncStorage.getItem("accessToken");
         if (tokenSalvo) {
           setToken(tokenSalvo);
         } else {
-          router.replace('/login');
+          router.replace("/login");
         }
       } catch (error) {
-        router.replace('/login');
+        router.replace("/login");
       }
     };
     obterToken();
@@ -85,10 +87,10 @@ export default function ComunidadePage() {
 
   const fetchComunidades = async () => {
     try {
-      const response = await fetch('http://localhost:8000/comunidade/', {
+      const response = await fetch("http://172.20.10.9:8000/comunidade/", {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -100,10 +102,10 @@ export default function ComunidadePage() {
         setCategorias(data.categorias ?? []);
         setEnquetes(data.enquetes ?? []);
       } else {
-        console.error('Erro ao buscar dados:', response.status);
+        console.error("Erro ao buscar dados:", response.status);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      console.error("Erro na requisição:", error);
     } finally {
       setLoading(false);
     }
@@ -111,31 +113,38 @@ export default function ComunidadePage() {
 
   const fetchComentarios = async () => {
     try {
-      const response = await fetch('http://localhost:8000/comunidade/carrosel/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        "http://172.20.10.9:8000/comunidade/carrosel/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
         setComentariosEnquetes(data.comentarios ?? []);
       } else {
-        console.error('Erro ao buscar dados:', response.status);
+        console.error("Erro ao buscar dados:", response.status);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      console.error("Erro na requisição:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <ActivityIndicator size="large" style={{ marginTop: 40 }} />;
+  if (loading)
+    return <ActivityIndicator size="large" style={{ marginTop: 40 }} />;
 
   return (
     <View style={styles.container}>
-      <BlocoListaDadosComunidade usuarios={usuarios} comentarios={quantidadeChat} />
+      <BlocoListaDadosComunidade
+        usuarios={usuarios}
+        comentarios={quantidadeChat}
+      />
       <BlocoEnqueteCategoria dados={categorias} />
       <BlocoEnqueteComentarios dados={comentariosEnquetes} />
       <BlocoEnqueteComentariosColuna dados={enquetes} />
@@ -151,7 +160,11 @@ function BlocoListaDadosComunidade({
   comentarios: number | null;
 }) {
   if (!usuarios || comentarios === null) {
-    return <Text style={styles.emptyText}>Dados de usuários ou comentários não encontrados.</Text>;
+    return (
+      <Text style={styles.emptyText}>
+        Dados de usuários ou comentários não encontrados.
+      </Text>
+    );
   }
 
   return (
@@ -163,14 +176,6 @@ function BlocoListaDadosComunidade({
       <View style={styles.containerUsuarios}>
         <Text style={styles.title_comentarios_usuario}>Usuários ativos</Text>
         <Text style={styles.numero_universal_usuarios}>{usuarios.length}</Text>
-        {usuarios.slice(0, 5).map((usuario, idx) => (
-          <Text key={idx} style={{ color: '#333', fontSize: 12 }}>
-            {usuario.nome}
-          </Text>
-        ))}
-        {usuarios.length > 5 && (
-          <Text style={{ color: '#555', fontSize: 12 }}>e mais {usuarios.length - 5}...</Text>
-        )}
       </View>
     </View>
   );
@@ -179,7 +184,8 @@ function BlocoListaDadosComunidade({
 function BlocoEnqueteCategoria({ dados }: { dados: Categoria[] }) {
   const router = useRouter();
 
-  if (!dados.length) return <Text style={styles.emptyText}>Nenhuma categoria encontrada.</Text>;
+  if (!dados.length)
+    return <Text style={styles.emptyText}>Nenhuma categoria encontrada.</Text>;
 
   return (
     <FlatList
@@ -192,12 +198,17 @@ function BlocoEnqueteCategoria({ dados }: { dados: Categoria[] }) {
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: '/comunidade/categorias',
+              pathname: "/comunidade/categorias",
               params: { id: item.id.toString() },
             })
           }
         >
-          <View style={[styles.bloco_enquete, { backgroundColor: corDaCategoria(item.nome) }]}>
+          <View
+            style={[
+              styles.bloco_enquete,
+              { backgroundColor: corDaCategoria(item.nome) },
+            ]}
+          >
             {getIconByCategoria(item.nome)}
             <View style={{ marginLeft: 8 }}>
               <Text style={styles.titulo_carrossel}>{item.nome}</Text>
@@ -213,12 +224,16 @@ function BlocoEnqueteCategoria({ dados }: { dados: Categoria[] }) {
 function BlocoEnqueteComentarios({ dados }: { dados: Comentario[] }) {
   const router = useRouter();
 
-  if (!dados.length) return <Text style={styles.emptyText}>Nenhum comentário encontrado.</Text>;
+  if (!dados.length)
+    return <Text style={styles.emptyText}>Nenhum comentário encontrado.</Text>;
 
   return (
     <>
       <View style={styles.viewAlinhador}>
-        <Text style={styles.titulo_enquete}>Acesse as enquetes pelos comentários!</Text>
+        <Text style={styles.titulo_enquete}>Comentários das enquetes</Text>
+        <Text style={{ fontSize: 16 }}>
+          Acesse as enquetes pelos comentários!
+        </Text>
       </View>
       <FlatList
         horizontal
@@ -230,14 +245,23 @@ function BlocoEnqueteComentarios({ dados }: { dados: Comentario[] }) {
           <TouchableOpacity
             onPress={() =>
               router.push({
-                pathname: '/enquete',
-                params: { id: item.id },
+                pathname: "/enquete",
+                params: { id: item.chat_id },
               })
             }
           >
-            <View style={[styles.bloco_comentarios, { backgroundColor: '#fff' }]}>
-              <Text style={styles.autorComentario}>{item.autor_nome}</Text>
-              <Text style={styles.comentarioTexto}>{`"${item.conteudo}"`}</Text>
+            <View style={styles.bloco_comentarios}>
+              <View style={styles.container_view_enquentes_ladin}> 
+              <View style={styles.bolinhaAutor}>
+                <Text style={styles.inicialAutor}>
+                  {item.autor_nome?.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+                <Text style={styles.autorComentario}>{item.autor_nome}</Text>
+              </View>
+              <View style={styles.conteudoComentarioContainer}>
+                <Text style={styles.comentarioTexto}>"{item.conteudo}"</Text>
+              </View>
             </View>
           </TouchableOpacity>
         )}
@@ -249,12 +273,16 @@ function BlocoEnqueteComentarios({ dados }: { dados: Comentario[] }) {
 function BlocoEnqueteComentariosColuna({ dados }: { dados: Enquete[] }) {
   const router = useRouter();
 
-  if (!dados.length) return <Text style={styles.emptyText}>Nenhuma enquete encontrada.</Text>;
+  if (!dados.length)
+    return <Text style={styles.emptyText}>Nenhuma enquete encontrada.</Text>;
 
   return (
     <>
       <View style={styles.viewAlinhador}>
         <Text style={styles.titulo_enquete}>Todas as enquetes</Text>
+        <Text style={{ fontSize: 16 }}>
+          Deslize para o lado para ver mais enquetes!
+        </Text>
       </View>
       <FlatList
         data={dados}
@@ -267,7 +295,7 @@ function BlocoEnqueteComentariosColuna({ dados }: { dados: Enquete[] }) {
             key={`${item.categoria}-${index}`}
             onPress={() =>
               router.push({
-                pathname: '/enquete',
+                pathname: "/enquete",
                 params: { id: item.id },
               })
             }
@@ -280,24 +308,29 @@ function BlocoEnqueteComentariosColuna({ dados }: { dados: Enquete[] }) {
             >
               <View style={styles.dados_enquete}>
                 <View style={styles.container_view_enquentes}>
-                  <Text style={styles.comentarioTextoEnquete}>{item.pergunta}</Text>
+                  <Text style={styles.comentarioTextoEnquete}>
+                    {item.pergunta}
+                  </Text>
                 </View>
                 <View style={styles.container_view_enquentes}>
-                  <MaterialCommunityIcons
-                    name="cards-heart-outline"
-                    size={14}
-                    color="black"
-                    style={styles.iconInline}
-                  />
-                  <Text> {item.total_curtidas} curtidas</Text>
-                  <Text> - </Text>
-                  <MaterialIcons
-                    name="chat-bubble-outline"
-                    size={12}
-                    color="#black"
-                    style={styles.iconInline}
-                  />
-                  <Text> {item.comentarios.length} comentários</Text>
+                  <View style={styles.container_view_enquentes_ladin}>
+                    <MaterialCommunityIcons
+                      name="cards-heart-outline"
+                      size={14}
+                      color="black"
+                      style={styles.iconInline}
+                    />
+                    <Text> {item.total_curtidas} curtidas</Text>
+                  </View>
+                  <View style={styles.container_view_enquentes_ladin}>
+                    <MaterialIcons
+                      name="chat-bubble-outline"
+                      size={12}
+                      color="#black"
+                      style={styles.iconInline}
+                    />
+                    <Text> {item.comentarios.length} comentários</Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -311,225 +344,260 @@ function BlocoEnqueteComentariosColuna({ dados }: { dados: Enquete[] }) {
 // ---------------------- ESTILOS E HELPERS ----------------------------
 
 function corDaCategoria(categoria: string): string {
-  if (!categoria) return '#e0e0e0';
+  if (!categoria) return "#e0e0e0";
   const mapaCores: Record<string, string> = {
-    'meio ambiente': '#4CAF50',
-    infraestrutura: '#FF9800',
-    saúde: '#2670E8',
-    educação: '#ce93d8',
-    'direito das mulheres': '#FF1493',
-    'igualdade racial': '#CD853F',
-    'direitos da pessoa idosa': '#F0E68C',
-    'desenvolvimento rural': '#006400',
-    tecnologia: '#8B008B',
-    'participação social': '#F44336',
+    "meio ambiente": "#4CAF50",
+    infraestrutura: "#FF9800",
+    saúde: "#2670E8",
+    educação: "#ce93d8",
+    "direito das mulheres": "#FF1493",
+    "igualdade racial": "#CD853F",
+    "direitos da pessoa idosa": "#F0E68C",
+    "desenvolvimento rural": "#006400",
+    tecnologia: "#8B008B",
+    "participação social": "#F44336",
   };
-  return mapaCores[categoria?.toLowerCase?.() || ''] || '#e0e0e0';
+  return mapaCores[categoria?.toLowerCase?.() || ""] || "#e0e0e0";
 }
 
 function corDaCategoriaNumero(categoria: string): string {
-  if (!categoria) return '#e0e0e0';
+  if (!categoria) return "#e0e0e0";
   const mapaCores: Record<string, string> = {
-    '5': '#4CAF50',
-    '9': '#FF9800',
-    '7': '#2670E8',
-    '8': '#ce93d8',
-    '1': '#FF1493',
-    '2': '#CD853F',
-    '3': '#F0E68C',
-    '4': '#006400',
-    '10': '#8B008B',
-    '6': '#F44336',
+    "5": "#4CAF50",
+    "9": "#FF9800",
+    "7": "#2670E8",
+    "8": "#ce93d8",
+    "1": "#FF1493",
+    "2": "#CD853F",
+    "3": "#F0E68C",
+    "4": "#006400",
+    "10": "#8B008B",
+    "6": "#F44336",
   };
-  return mapaCores[categoria || ''] || '#e0e0e0';
+  return mapaCores[categoria || ""] || "#e0e0e0";
 }
 
-function getIconByCategoria(categoria: string, cor: string = '#fff') {
+function getIconByCategoria(categoria: string, cor: string = "#fff") {
   if (!categoria) {
     return <Ionicons name="alert-circle-outline" size={24} color={cor} />;
   }
   switch (categoria.toLowerCase()) {
-    case 'meio ambiente':
+    case "meio ambiente":
       return <Ionicons name="leaf-outline" size={24} color={cor} />;
-    case 'educação':
+    case "educação":
       return <MaterialIcons name="school" size={24} color={cor} />;
-    case 'saúde':
+    case "saúde":
       return <Ionicons name="medkit" size={24} color={cor} />;
-    case 'infraestrutura':
-      return <MaterialCommunityIcons name="wheel-barrow" size={24} color={cor} />;
-    case 'participação social':
+    case "infraestrutura":
+      return (
+        <MaterialCommunityIcons name="wheel-barrow" size={24} color={cor} />
+      );
+    case "participação social":
       return <FontAwesome name="group" size={24} color={cor} />;
-    case 'direito das mulheres':
+    case "direito das mulheres":
       return <Ionicons name="woman" size={24} color={cor} />;
-    case 'tecnologia':
+    case "tecnologia":
       return <FontAwesome6 name="user-gear" size={24} color={cor} />;
-    case 'desenvolvimento rural':
+    case "desenvolvimento rural":
       return <FontAwesome6 name="cow" size={24} color={cor} />;
-    case 'direitos da pessoa idosa':
+    case "direitos da pessoa idosa":
       return <MaterialIcons name="elderly" size={24} color={cor} />;
-    case 'igualdade racial':
+    case "igualdade racial":
       return <FontAwesome5 name="equals" size={24} color={cor} />;
     default:
       return <Ionicons name="alert-circle-outline" size={24} color={cor} />;
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 32,
-    backgroundColor: '#F9F9F9',
-    gap: 32,
+    paddingBottom: 48,
+    backgroundColor: "#F9F9F9",
+    gap: 24, // reduzido de 32 para 24 para espaçamento mais compacto
   },
   viewAlinhador: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 8,
+    marginBottom: 4,
   },
   titulo_enquete: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#444',
-    marginBottom: 6,
+    fontWeight: "700",
+    color: "#444",
+    marginBottom: 4,
   },
   emptyText: {
-    textAlign: 'center',
-    color: '#aaa',
+    textAlign: "center",
+    color: "#aaa",
     fontSize: 14,
-    fontStyle: 'italic',
-    marginVertical: 12,
+    fontStyle: "italic",
+    marginVertical: 8,
   },
 
-  // Bloco total de dados (comentários e usuários)
   lista_comunidade_container: {
-    flexDirection: 'row',
-    gap: 16,
+    flexDirection: "row",
+    gap: 12,
+    minHeight: 100,
   },
   containerComentarios: {
     flex: 1,
-    backgroundColor: '#2670E8',
+    backgroundColor: "#2670E8",
     borderRadius: 12,
-    padding: 20,
-    justifyContent: 'center',
+    padding: 16,
+    justifyContent: "center",
   },
   containerUsuarios: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
-    justifyContent: 'center',
+    borderColor: "#ddd",
+    justifyContent: "center",
   },
   title_comentarios: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 14,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   title_comentarios_usuario: {
-    color: '#333',
-    fontWeight: '600',
+    color: "#333",
+    fontWeight: "600",
     fontSize: 14,
-    marginBottom: 6,
+    marginBottom: 4,
   },
+  carrossel: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  gap: 12,
+  paddingHorizontal: 12,
+  paddingTop: 8,
+  paddingBottom: 16,
+  minHeight: 140,
+},
+
+bolinhaAutor: {
+  width: 36,
+  height: 36,
+  borderRadius: 18,
+  backgroundColor: "#ccc",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "row",
+  display: "flex"
+},
+
+inicialAutor: {
+  color: "#fff",
+  fontWeight: "bold",
+  fontSize: 16,
+},
+
+conteudoComentarioContainer: {
+  flex: 1,
+  marginTop: 10,
+},
+
   numero_universal: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
   },
   numero_universal_usuarios: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#000",
   },
 
-  // Categorias (carrossel horizontal)
-  carrossel: {
-    gap: 12,
-    paddingHorizontal: 8,
-  },
   bloco_enquete: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
     borderRadius: 12,
-    minWidth: 180,
-    gap: 10,
+    minWidth: 170,
+    gap: 8,
   },
   titulo_carrossel: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 13,
   },
   contador: {
-    color: '#fff',
-    fontSize: 12,
+    color: "#fff",
+    fontSize: 11,
   },
 
-  // Comentários das enquetes (carrossel horizontal)
   bloco_comentarios: {
-    backgroundColor: '#4CAF50',
-    padding: 14,
-    borderRadius: 12,
-    minWidth: 220,
-    maxWidth: 260,
+    padding: 10,
     marginVertical: 4,
-  },
-  autorComentario: {
-    color: '#000',
-    fontWeight: '600',
-    marginBottom: 4,
+    marginHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    width: SCREEN_WIDTH * 0.7,
+    height: 150,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
   },
   comentarioTexto: {
-    color: '#000',
-    fontStyle: 'italic',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 15,
+    color: "#333",
+    fontStyle: "italic",
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  autorComentario: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "right",
+    fontWeight: "500",
+    marginLeft: 10,
   },
 
-  // Carrossel horizontal para enquetes
   carrosselEnquete: {
     paddingHorizontal: 8,
-    gap: 12,
+    gap: 10,
+    minHeight: 180,
   },
-
-  // Card de enquete no carrossel horizontal
   cardComentarioHorizontal: {
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
-    width: SCREEN_WIDTH * 0.8,
+    width: SCREEN_WIDTH * 0.78,
     marginRight: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  // Lista vertical foi substituída pelo carrossel horizontal, mas mantive para referência
-  listaVertical: {
-    gap: 16,
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   comentarioTextoEnquete: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 15,
-    marginBottom: 4,
-    color: '#333',
+    marginBottom: 2,
+    color: "#333",
   },
   dados_enquete: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginRight: 50,
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 4,
   },
   container_view_enquentes: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 6,
+    flexDirection: "column",
+    marginTop: 4,
+    gap: 4,
+  },
+  container_view_enquentes_ladin: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 4,
   },
   iconInline: {
-    marginHorizontal: 4,
+    marginRight: 4,
   },
 });

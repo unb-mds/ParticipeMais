@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, InteractionManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -59,9 +59,9 @@ export default function ConferenciaDetalhadaScreen() {
   const [etapas, setEtapas] = useState<Etapas[]>([]);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
   const [estatisticas, setEstatisticas] = useState<any[]>([]);
+  const [estatisticasEtapas, setEstatisticasEtapas] = useState<number>(0);
   const [totalPropostas, setTotalPropostas] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingPropostas, setLoadingPropostas] = useState<boolean>(false);
   const [favorito, setFavorito] = useState<boolean>(false);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/${id}/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -99,6 +99,7 @@ export default function ConferenciaDetalhadaScreen() {
         const data = json.data;
         setConferencias(Array.isArray(data.conferencias) ? data.conferencias : [data.conferencias]);
         setEtapas(data.etapas || []);
+        setEstatisticasEtapas(data.estatisticasEtapas || 0);
         setLoading(false);
       } else {
         router.replace('/login');
@@ -110,10 +111,9 @@ export default function ConferenciaDetalhadaScreen() {
   };
 
   const fetchPropostas = async () => {    
-    setLoadingPropostas(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/conferencias/${id}/propostas/`,
+        `http://172.20.10.9:8000/conferencias/${id}/propostas/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -123,28 +123,25 @@ export default function ConferenciaDetalhadaScreen() {
       );
 
       if (!response.ok) {
-        throw new Error('Erro ao carregar mais propostas');
+        throw new Error('Erro ao carregar mais propostass');
       }
 
       const json = await response.json();
       
       if (Array.isArray(json.propostas)) {
         setPropostas(json.propostas || []);
-        setTotalPropostas(json.total || 0);
+        setTotalPropostas(json.total_propostas);
         setEstatisticas(json.estatisticas || []);
 
         console.log(json)
       }
     } catch (error) {
       console.error('Erro ao carregar mais propostas:', error);
-    } finally {
-      setLoadingPropostas(false);
-    }
-  };
+    }};
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/favoritas/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -156,7 +153,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -167,12 +164,6 @@ export default function ConferenciaDetalhadaScreen() {
   };
 
   const conferencia = conferencias[0];
-
-  const dadosEstatisticos = {
-    total: etapas.length || 0,
-    andamento: 100,
-    encerradas: 0,
-  };
 
   const palavrasChave = conferencia?.palavras_chaves
   ? conferencia.palavras_chaves
@@ -217,7 +208,7 @@ export default function ConferenciaDetalhadaScreen() {
             <EtapasCalendar etapas={etapas} conferencias={conferencias} />
             {/* <EixosTematicos eixos={eixos} /> */}
             <Conferencias etapas={etapas} conferencias={conferencias} propostas={propostas} />
-            {etapas.length > 0 && <Dados estatisticas={dadosEstatisticos} palavrasChave={palavrasChave} />}
+            {etapas.length > 0 && <Dados estatistica={estatisticasEtapas} palavrasChave={palavrasChave} />}
             
             { propostas && propostas.length > 0 ? (<> 
               
@@ -225,11 +216,7 @@ export default function ConferenciaDetalhadaScreen() {
             
               {/* 📈 Dados */}
               <DadosPizza
-                estatisticas={[
-                  { eixo: 'Eixo 1', percentual: 50, cor: '#2670E8' },
-                  { eixo: 'Eixo 2', percentual: 30, cor: '#4CAF50' },
-                  { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
-                ]}
+                estatisticas={estatisticas}
                 total={totalPropostas}
                 palavrasChave={palavrasChave}
               />

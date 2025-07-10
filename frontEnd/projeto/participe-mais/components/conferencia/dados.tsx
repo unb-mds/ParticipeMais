@@ -1,18 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons,MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 type DadosProps = {
-  estatisticas: {
-    eixo: string;
-    andamento: number;
-    encerradas: number;
-  };
+  estatistica: number;
   palavrasChave: string[];
 };
 
-export default function Dados({ estatisticas, palavrasChave }: DadosProps) {
-  const { total, andamento, encerradas } = estatisticas;
+export default function Dados({ estatistica, palavrasChave }: DadosProps) {
+  const total = estatistica; // Você pode mudar para o valor que quiser
+  const andamento = Math.min((estatistica / total) * 100, 100);
+  const encerradas = 100 - andamento;
 
   return (
     <View style={styles.card}>
@@ -31,28 +29,19 @@ export default function Dados({ estatisticas, palavrasChave }: DadosProps) {
 
         {/* Barra proporcional */}
         <View style={styles.barraContainer}>
-          <View style={[styles.barraBase]}>
-            <View
-              style={[
-                styles.barraAndamento,
-                { width: `${andamento}%` },
-              ]}
-            />
-            <View
-              style={[
-                styles.barraEncerradas,
-                { width: `${encerradas}%` },
-              ]}
-            />
+          <View style={styles.barraBase}>
+            <View style={[styles.barraAndamento, { width: `${andamento}%` }]} />
+            <View style={[styles.barraEncerradas, { width: `${encerradas}%` }]} />
           </View>
         </View>
 
         {/* Labels */}
         <View style={styles.labelContainer}>
           <Text style={styles.label}>
-            <Text style={{ color: '#4CAF50' }}>●</Text> {andamento}% Conferências planejadas
+            <Text style={{ color: '#4CAF50' }}>●</Text> {Math.round(andamento)}% Conferências planejadas
           </Text>
           <Text style={styles.label}>
+            <Text style={{ color: '#FFC107' }}>●</Text> {Math.round(encerradas)}% Encerradas
           </Text>
         </View>
 
@@ -62,8 +51,8 @@ export default function Dados({ estatisticas, palavrasChave }: DadosProps) {
       {/* Palavras-chave */}
       <View style={styles.innerCard}>
         <View style={styles.sectionHeader}>
-        <MaterialIcons name="abc" size={16} color="black" />      
-    <Text style={styles.sectionTitle}>Palavras-chave</Text>
+          <MaterialIcons name="abc" size={16} color="black" />
+          <Text style={styles.sectionTitle}>Palavras-chave</Text>
         </View>
 
         <View style={styles.tags}>

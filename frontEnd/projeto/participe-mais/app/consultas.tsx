@@ -86,7 +86,7 @@ export default function ConsultaScreen() {
   
   const fetchConsultas = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/consultas/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/consultas/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -115,29 +115,9 @@ export default function ConsultaScreen() {
     }
   };
 
-  // const etapas = [
-  //   { nome: 'Etapa Digital', data: '2025-05-07', ativo: true },
-  //   { nome: 'Audiências Públicas', data: '2025-06-01', ativo: true },
-  //   { nome: 'Análise Técnica', data: '2025-06-15', ativo: false },
-  //   { nome: 'Encerramento', data: '2025-07-01', ativo: false },
-  // ];
-
-  const eixos = [
-    { titulo: 'Eixo 1 – Saúde', descricao: 'Ações voltadas à saúde pública.' },
-    { titulo: 'Eixo 2 – Educação', descricao: 'Fortalecer a educação básica e superior.' },
-    { titulo: 'Eixo 3 – Meio Ambiente', descricao: 'Sustentabilidade e proteção ambiental.' },
-  ];
-
-  const dadosEstatisticos = {
-    total: 789,
-    andamento: 65,
-    encerradas: 35,
-  };
-
-
   const verificarFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/favoritas/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/favoritas/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -151,7 +131,7 @@ export default function ConsultaScreen() {
 };
 const toggleFavorito = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/consultas/toggle/${id}/`, {
+    const res = await fetch(`http://172.20.10.9:8000/consultas/toggle/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -245,9 +225,6 @@ useEffect(() => {
             {/* 📅 Etapas */}
             <EtapasCalendar etapas={etapas} conferencias={null}/>
 
-            {/* 🎯 Eixos Temáticos */}
-            <EixosTematicos eixos={eixos} />
-
             { consulta.sobre && (
               <View style={styles.linkContainer}>
                 <View style={styles.linkHeader}>
@@ -267,11 +244,7 @@ useEffect(() => {
             
               {/* 📈 Dados */}
               <DadosPizza
-                estatisticas={[
-                  { eixo: 'Eixo 1', percentual: 50, cor: '#2670E8' },
-                  { eixo: 'Eixo 2', percentual: 30, cor: '#4CAF50' },
-                  { eixo: 'Eixo 3', percentual: 20, cor: '#FFC107' },
-                ]}
+                estatisticas={[]}
                 total={1527}
                 palavrasChave={palavrasChave}
               />

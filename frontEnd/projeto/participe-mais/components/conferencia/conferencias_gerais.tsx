@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,14 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Octicons,Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
 import ConferenciaModal from './conferenciamodal';
 import { Conferencia, Etapas, Proposta } from '../../app/conferencias';
 
 interface ConferenciasProps {
   etapas: Etapas[];
   conferencias: Conferencia[];
-  propostas: Proposta[]; 
+  propostas: Proposta[];
 }
 
 export default function Conferencias({ etapas, conferencias, propostas }: ConferenciasProps) {
@@ -28,14 +28,16 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
     setModalVisible(true);
   };
 
-  // Filtra as etapas com base no texto de busca
-  const etapasFiltradas = etapas.filter((item) =>
-    item.titulo_etapa.includes(search)
-  );
+  // Filtra as etapas de forma case-insensitive e com trim
+  const etapasFiltradas = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return etapas;
+    return etapas.filter(item =>
+      item.titulo_etapa.toLowerCase().includes(query)
+    );
+  }, [search, etapas]);
 
   return (
-<>
-  {etapasFiltradas.length > 0 ? (
     <View style={styles.container}>
       {/* Título */}
       <View style={styles.tituloComIcone}>
@@ -52,6 +54,8 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
             style={styles.input}
             value={search}
             onChangeText={setSearch}
+            autoCorrect={false}
+            autoCapitalize="none"
           />
         </View>
         <TouchableOpacity style={styles.filtroButton}>
@@ -59,77 +63,81 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
         </TouchableOpacity>
       </View>
 
-      {/* Linha de separação */}
+      {/* Linha */}
       <View style={styles.linha} />
 
-      {/* Lista com altura fixa e scroll interno */}
-      <View style={styles.listaContainer}>
-        <ScrollView
-          showsVerticalScrollIndicator={true}
-          contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
-        >
-            <View>
-              {etapasFiltradas.map((item) => {
-                const estaExpandido = expandido === item.id;
-                return (
-                  <TouchableOpacity
-                    key={item.id}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      if (estaExpandido) abrirModal(item);
-                    }}
-                    style={styles.card}
-                  >
-                    <View style={styles.headerCard}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.tituloCard}> {item.titulo_etapa}</Text>
-                        <View style={styles.origemContainer}>
-                          <MaterialCommunityIcons
-                            name="office-building"
-                            size={14}
-                            color="#2670E8"
-                          />
-                          <Text style={styles.origemCard}>{item.titulo_etapa}</Text>
+      {etapasFiltradas.length > 0 ? (
+        <View style={styles.listaContainer}>
+          <ScrollView
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
+          >
+            {etapasFiltradas.map((item) => {
+              const estaExpandido = expandido === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    if (estaExpandido) abrirModal(item);
+                  }}
+                  style={styles.card}
+                >
+                  <View style={styles.headerCard}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tituloCard}>{item.titulo_etapa}</Text>
+                      <View style={styles.origemContainer}>
+                        <MaterialCommunityIcons
+                          name="office-building"
+                          size={14}
+                          color="#2670E8"
+                        />
+                        <Text style={styles.origemCard}>{item.titulo_etapa}</Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => setExpandido(estaExpandido ? null : item.id)}
+                      style={styles.expandButton}
+                    >
+                      <Ionicons
+                        name={estaExpandido ? 'chevron-up' : 'chevron-down'}
+                        size={20}
+                        color="#000"
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.linhaDentro} />
+
+                  {estaExpandido && (
+                    <>
+                      <Text style={styles.descricao}>
+                        {item.descricao_etapa.length > 90
+                          ? item.descricao_etapa.slice(0, 90) + '...'
+                          : item.descricao_etapa}
+                      </Text>
+
+                      <View style={styles.tags}>
+                        <View style={styles.tagStatus}>
+                          <Text style={styles.tagText}>
+                            {item.status ? 'Ativa' : 'Inativa'}
+                          </Text>
                         </View>
                       </View>
-                      <TouchableOpacity
-                        onPress={() => setExpandido(estaExpandido ? null : item.id)}
-                        style={styles.expandButton}
-                      >
-                        <Ionicons
-                          name={estaExpandido ? 'chevron-up' : 'chevron-down'}
-                          size={20}
-                          color="#000"
-                        />
-                      </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.linhaDentro} />
-
-                    {estaExpandido && (
-                      <>
-                        <Text style={styles.descricao}>
-                          {item.descricao_etapa.length > 90
-                            ? item.descricao_etapa.slice(0, 90) + '...'
-                            : item.descricao_etapa}
-                        </Text>
-
-                        <View style={styles.tags}>
-                          <View style={styles.tagStatus}>
-                            <Text style={styles.tagText}>
-                              {item.status ? 'Ativa' : 'Inativa'}
-                            </Text>
-                          </View>
-                        </View>
-                      </>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-        </ScrollView>
-
-      </View>
+                    </>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : (
+        <View style={styles.listaContainerSemNada}>
+          <Text style={{ textAlign: 'center', color: '#999', fontSize: 14 }}>
+            Nenhuma conferências encontrada.
+          </Text>
+        </View>
+      )}
 
       <ConferenciaModal
         visible={modalVisible}
@@ -138,24 +146,9 @@ export default function Conferencias({ etapas, conferencias, propostas }: Confer
         propostas={propostas}
       />
     </View>
-  ) : (
-    <View style={styles.container}>
-      {/* Título */}
-      <View style={styles.tituloComIcone}>
-        <Octicons name="location" size={24} color="black" />
-        <Text style={styles.tituloTexto}>Conferências Gerais</Text>
-      </View>
-      
-      <View style={styles.linha} />
-
-      <Text style={{ textAlign: 'center', color: '#999' }}>
-        Não há conferências disponíveis no momento.
-      </Text>
-    </View>
-  )}
-</>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -217,6 +210,10 @@ const styles = StyleSheet.create({
   },
   listaContainer: {
     height: 300,
+    backgroundColor: '#fff',
+  },
+  listaContainerSemNada: {
+    height: 25,
     backgroundColor: '#fff',
   },
   card: {

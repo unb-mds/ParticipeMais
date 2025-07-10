@@ -72,7 +72,7 @@ export default function Categoria() {
 
   const fetchCategoria = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/comunidade/categorias/${id}/`, {
+      const response = await fetch(`http://172.20.10.9:8000/comunidade/categorias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const criarNovaEnquete = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/comunidade/criachat/', {
+    const response = await fetch('http://172.20.10.9:8000/comunidade/criachat/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -146,7 +146,7 @@ const buscarTodosOsChats = async (chatIds: number[]) => {
     const resultados: Enquete[] = [];
 
     for (const chatId of chatIds) {
-      const res = await fetch(`http://localhost:8000/comunidade/chat/${chatId}/`, {
+      const res = await fetch(`http://172.20.10.9:8000/comunidade/chat/${chatId}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

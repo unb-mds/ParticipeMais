@@ -34,6 +34,9 @@ const niveis = [
 export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
   const router = useRouter();
   const [score, setScore] = useState<{ xp: number; nivel: number } | null>(null);
+  
+  const [nome, setNome] = useState<string>('Usuário');
+  const [loading, setLoading] = useState(true);
 
   const nivelAtualIndex = niveis.findLastIndex(n => (score?.xp ?? 0) >= n.minimo);
   const nivelNome = niveis[nivelAtualIndex]?.nome || 'Desconhecido';
@@ -43,24 +46,27 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const response = await fetch('http://localhost:8000/comunidade/score', {
+        const token = await AsyncStorage.getItem('accessToken');
+        const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
           headers: {
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        if (response.ok) {
-        const json = await response.json();
+        const data = await response.json();
 
-        if (json?.data?.score) {
-          setScore(json.data.score);
+        // aqui usamos o mesmo formato da ScoreScreen
+        if (data?.pontos !== undefined) {
+          setScore({ xp: data.pontos, nivel: 1 }); // nivel opcional
+          setNome(data.usuario);
         } else {
-          console.warn('Estrutura inesperada na resposta:', json);
-          setScore({ xp: 0, nivel: 1 }); // ou null, dependendo do que for melhor
+          console.warn('Resposta inesperada:', data);
         }
-      }
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error('Erro ao buscar score:', error);
+      } finally {
+        setLoading(false);
       }
     };
 

@@ -1,69 +1,87 @@
-"""
-Serializers para autenticação do ParticipeMais.
-"""
-
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+
 from .models import Usuario, Notification
 from conferencias.models import Conferencia
 from planos.models import Planos
 from consultas.models import Consultas
 
 class PerfilSerializer(serializers.ModelSerializer):
-    """
-    Serializer para o modelo Perfil.
-    """
     class Meta:
         model = Usuario
         fields = ['cidade', 'qtd_propostas', 'qtd_comentarios', 'qtd_likes']
         read_only_fields = ['qtd_propostas', 'qtd_comentarios', 'qtd_likes']
+
 class UsuarioSerializer(serializers.ModelSerializer):
-    """
-    Serializer para o modelo Usuario.
-    Serializa os campos básicos e trata a criação com senha criptografada.
-    """
+    senha = serializers.CharField(write_only=True, required=True, label="Senha")
+    senha2 = serializers.CharField(write_only=True, required=True, label="Confirmação da senha")
+
     conferencias = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Conferencia.objects.all(), required=False
+        many=True, queryset=Conferencia.objects.none(), required=False
     )
     planos = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Planos.objects.all(), required=False
+        many=True, queryset=Planos.objects.none(), required=False
     )
     consultas = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Consultas.objects.all(), required=False
+        many=True, queryset=Consultas.objects.none(), required=False
     )
+
     idPerfilUser = PerfilSerializer(read_only=True)
+
     class Meta:
         model = Usuario
-        fields = ['id', 'nome', 'email', 'data_nascimento', 'password', 'idPerfilUser','conferencias','planos','consultas']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = [
+            'id', 'nome', 'email', 'data_nascimento', 'senha', 'senha2',
+            'idPerfilUser', 'conferencias', 'planos', 'consultas'
+        ]
+        extra_kwargs = {
+            'senha': {'write_only': True},
+            'senha2': {'write_only': True},
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['conferencias'].queryset = Conferencia.objects.all()
+        self.fields['planos'].queryset = Planos.objects.all()
+        self.fields['consultas'].queryset = Consultas.objects.all()
+
+    def validate(self, data):
+        email = data.get('email')
+        if Usuario.objects.filter(email=email).exists():
+            raise serializers.ValidationError({"email": "Este e-mail já está em uso."})
+        
+        if data.get('senha') != data.get('senha2'):
+            raise serializers.ValidationError({"senha2": "As senhas não coincidem."})
+        
+        validate_password(data.get('senha'))
+        return data
 
     def create(self, validated_data):
-        """
-        Cria um novo usuário com senha criptografada.
-        """
         conferencias = validated_data.pop('conferencias', [])
         planos = validated_data.pop('planos', [])
         consultas = validated_data.pop('consultas', [])
-        password = validated_data.pop('password', None)
+        senha = validated_data.pop('senha')
+        validated_data.pop('senha2')
+
         usuario = Usuario(**validated_data)
-        if password is not None:
-            usuario.set_password(password)
-            usuario.save()
+        usuario.set_password(senha)
+        usuario.save()
 
         usuario.conferencias.set(conferencias)
         usuario.planos.set(planos)
         usuario.consultas.set(consultas)
 
         return usuario
-    
-    
+
+
     def update(self, instance, validated_data):
         conferencias = validated_data.pop('conferencias', None)
         planos = validated_data.pop('planos', None)
         consultas = validated_data.pop('consultas', None)
-        password = validated_data.pop('password', None)
-        if password is not None:
-            instance.set_password(password)
+        senha = validated_data.pop('password', None)
+
+        if senha:
+            instance.set_password(senha)
             instance.save()
 
         if conferencias is not None:
@@ -72,9 +90,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
             instance.planos.set(planos)
         if consultas is not None:
             instance.consultas.set(consultas)
-            
-        return super().update(instance, validated_data)
 
+        return super().update(instance, validated_data)
 
 class LoginSerializer(serializers.Serializer):
     """

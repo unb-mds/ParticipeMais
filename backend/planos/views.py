@@ -11,6 +11,10 @@ from .models import Planos, Oficinas
 from .serializers import PlanosSerializer, Oficinas_serializer
 from autenticacao.models import Usuario  
 
+from collections import Counter     
+import random
+import re
+
 # Rota para listar todos os planos existentes
 class ListaPlanos(APIView):
     """Lista todos os planos disponíveis."""
@@ -43,11 +47,48 @@ class AcessaPlano(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
-        propostas = Propostas.objects.filter(plano=planos)[:250]
+        propostas = Propostas.objects.filter(plano=planos)
         propostas_serializer = PropostaSerializer(propostas, many=True, context={'request': request} )
         
         oficinas = Oficinas.objects.filter(plano=planos)[:250]
         oficinas_serializer = Oficinas_serializer(oficinas, many=True, context={'request': request})
+
+        total = propostas.count()
+
+        # Conta a ocorrência de eixos com base no título das propostas
+        eixo_counter = Counter()
+        for proposta in propostas:
+            texto = proposta.titulo_proposta.lower()
+            match = re.search(r"eixo\s*([1-6])", texto)
+            if match:
+                eixo = match.group(1)
+                eixo_counter[eixo] += 1
+            else:
+                eixo_counter["Não informado"] += 1
+
+        percentuais_eixos = {
+            f"Eixo {eixo}": round((qtd / total) * 100, 2) if total else 0
+            for eixo, qtd in eixo_counter.items()
+        }
+
+        CORES_EIXOS = {
+            "Eixo 1": "#2670E8",
+            "Eixo 2": "#4CAF50",
+            "Eixo 3": "#FFC107",
+            "Eixo 4": "#000000",
+            "Eixo 5": "#9C27B0",
+            "Eixo 6": "#00BCD4",
+            "Não informado": "#9E9E9E",
+        }
+
+        estatisticas = [
+            {
+                "eixo": eixo,
+                "percentual": percentual,
+                "cor": CORES_EIXOS.get(eixo, "#000000"),
+            }
+            for eixo, percentual in percentuais_eixos.items()
+        ]
 
         plano = PlanosSerializer(planos, context={'request': request})
         return Response({
@@ -55,7 +96,9 @@ class AcessaPlano(APIView):
             'data': {
                 'planos': plano.data,
                 'propostas': propostas_serializer.data,
-                'oficinas': oficinas_serializer.data
+                'oficinas': oficinas_serializer.data,
+                'total_propostas': total,
+                'estatisticas': estatisticas,
             }
         })
 

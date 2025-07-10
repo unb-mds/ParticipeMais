@@ -14,6 +14,7 @@ type DadosPizzaProps = {
 };
 
 export default function DadosPizza({ estatisticas, total, palavrasChave }: DadosPizzaProps) {
+
   const radius = 60;
   const innerRadius = 40;
   const center = 60;
@@ -51,44 +52,54 @@ export default function DadosPizza({ estatisticas, total, palavrasChave }: Dados
         <Text style={{ color: '#2670E8' }}>DADOS</Text> - Propostas Gerais
       </Text>
 
-      {/* Dados Estatísticos */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Ionicons name="stats-chart-outline" size={16} color="#000" />
-          <Text style={styles.sectionTitle}>Dados estatísticos</Text>
-        </View>
+      {estatisticas && estatisticas.length > 0 && (
+  <>
+    {/* Header */}
+    <Text style={styles.titulo}>
+      <Ionicons name="document-text-outline" size={16} color="#2670E8" />{' '}
+      <Text style={{ color: '#2670E8' }}>DADOS</Text> - Propostas Gerais
+    </Text>
 
-        <View style={styles.estatisticasContainer}>
-          {/* Labels */}
-          <View style={{ flex: 1, gap: 4 }}>
-            {estatisticas.map((item, index) => (
-              <Text key={index} style={styles.label}>
-                <Text style={{ color: item.cor }}>●</Text> {item.percentual}% {item.eixo}
-              </Text>
-            ))}
-          </View>
+    {/* Dados Estatísticos */}
+    <View style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <Ionicons name="stats-chart-outline" size={16} color="#000" />
+        <Text style={styles.sectionTitle}>Dados estatísticos</Text>
+      </View>
 
-          {/* Gráfico Doughnut */}
-          <View style={{ alignItems: 'center' }}>
-            <Svg width={120} height={120}>
-              <G>
-                {arcs.map((arc, index) => (
-                  <Path key={index} d={arc.path} fill={arc.color} />
-                ))}
-                {/* Circulo do meio (furo) */}
-                <Circle cx={center} cy={center} r={innerRadius} fill="#fff" />
-              </G>
-            </Svg>
-            <MaterialCommunityIcons
-              name="account-voice"
-              size={24}
-              color="#000"
-              style={styles.iconCenter}
-            />
-            <Text style={styles.totalText}>Total: {total} propostas</Text>
-          </View>
+      <View style={styles.estatisticasContainer}>
+        <View style={{ flex: 1, gap: 4 }}>
+          {estatisticas.map((item, index) => (
+            <Text key={index} style={styles.label}>
+              <Text style={{ color: item.cor }}>●</Text> {item.percentual}% {item.eixo}
+            </Text>
+          ))}
         </View>
       </View>
+    </View>
+
+    {/* Gráfico Doughnut */}
+    <View style={{ alignItems: 'center' }}>
+      <Svg width={120} height={120}>
+        <G>
+          {arcs.map((arc, index) => (
+            <Path key={index} d={arc.path} fill={arc.color} />
+          ))}
+          {/* Circulo do meio (furo) */}
+          <Circle cx={center} cy={center} r={innerRadius} fill="#fff" />
+        </G>
+      </Svg>
+      <MaterialCommunityIcons
+        name="account-voice"
+        size={24}
+        color="#000"
+        style={styles.iconCenter}
+      />
+      <Text style={styles.totalText}>Total: {total} propostas</Text>
+    </View>
+  </>
+)}
+
 
       {/* Palavras-chave */}
       <View style={styles.section}>
@@ -153,12 +164,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 8,
   },
-    label: {
-    fontSize: 14,  // aumenta o tamanho
-    color: '#000', // deixa mais forte, preto
-    fontWeight: 'bold', // deixa negrito
-    },
-
+  label: {
+    fontSize: 14,
+    color: '#000',
+    fontWeight: 'bold',
+  },
   totalText: {
     fontSize: 10,
     color: '#555',

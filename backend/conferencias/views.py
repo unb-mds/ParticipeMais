@@ -7,10 +7,10 @@ from .models import PerguntasParticipativas
 from propostas.models import Propostas
 from .serializers import *
 from collections import Counter     
+import random
 import re
 from autenticacao.models import Usuario  
 from .models import Conferencia      
-import random
 
 # Lista todas as conferências cadastradas
 class ListaConferencias(APIView):
@@ -37,31 +37,34 @@ class AcessaConferencia(APIView):
 
         conferencia_serializer = ConferenciaSerializer(conferencia, context={'request': request})
 
-        # Verifica se a conferência tem etapas associadas
         etapas = Etapas.objects.filter(conferencia=conferencia)
         etapas_serializer = EtapaSerializer(etapas, many=True, context={'request': request})
+
         favoritado = conferencia in request.user.conferencias.all()
+
+        estatisticasEtapas = etapas.count()
 
         return Response({
             'message': 'Conferência encontrada!',
             'data': {
                 'conferencias': conferencia_serializer.data,
                 'etapas': etapas_serializer.data,
-                'favoritado': favoritado,     
+                'favoritado': favoritado,
+                'estatisticasEtapas': estatisticasEtapas  # renomeei para manter igual ao frontend
             }
         })
 
 
+
 # Lista propostas de uma conferência específica + percentual por eixo (extraído do título)
 class AcessaPropostas(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
     pagination_class = LimitOffsetPagination
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)  # Busca conferência pelo ID
         propostas = list(Propostas.objects.filter(conferencia_id=pk))  # Converte para lista para embaralhar
         total = len(propostas)
-        print(total)
 
         # Conta a ocorrência de eixos com base no título das propostas
         eixo_counter = Counter()
@@ -115,7 +118,7 @@ class AcessaPropostas(APIView):
             
 # Acessa uma proposta específica dentro de uma conferência
 class PropostaDireta(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request, pk, jk):
         conferencia = Conferencia.objects.get(pk=pk)  # Conferência do contexto
@@ -129,7 +132,7 @@ class PropostaDireta(APIView):
 
 # Lista todas as perguntas participativas de uma conferência
 class AcessaPerguntas(APIView):
-    permission_classes = [permissions.AllowAny]  # Permite acesso público
+    permission_classes = [permissions.IsAuthenticated]  # Permite acesso público
 
     def get(self, request, pk):
         conferencia = Conferencia.objects.get(pk=pk)

@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 
 interface LoginResponse {
@@ -25,6 +25,7 @@ interface LoginResponse {
 
 interface ErrorResponse {
   detail?: string;
+  message?: string;
   [key: string]: any;
 }
 
@@ -33,16 +34,15 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [isVerificandoLogin, setIsVerificandoLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [mensagem, setMensagem] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const verificarLogin = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        // Descomente se quiser redirecionar automaticamente usuários logados
-        // if (token) {
-        //   router.replace('/perfil');
-        // }
+        // if (token) router.replace('/perfil');
       } catch (error) {
         console.error('Erro ao verificar login:', error);
       } finally {
@@ -55,18 +55,16 @@ export default function Login() {
 
   const handleLogin = async () => {
     if (!email || !senha) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      setMensagem('Por favor, preencha todos os campos.');
+      setModalVisible(true);
       return;
     }
 
     setIsLoading(true);
-    
     try {
-      const response = await fetch('http://localhost:8000/auth/login/', {
+      const response = await fetch('http://172.20.10.9:8000/auth/login/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: senha }),
       });
 
@@ -74,8 +72,6 @@ export default function Login() {
 
       if (response.ok) {
         const successData = data as LoginResponse;
-        
-        // Armazena os tokens e dados do usuário
         await Promise.all([
           AsyncStorage.setItem('accessToken', successData.access),
           AsyncStorage.setItem('refreshToken', successData.refresh),
@@ -83,16 +79,20 @@ export default function Login() {
           AsyncStorage.setItem('usuario', JSON.stringify(successData.user)),
         ]);
 
-        Alert.alert('Sucesso', successData.message || 'Login realizado com sucesso');
         router.replace('/');
+        setMensagem('Login realizado com sucesso!');
+        console.log(`Login realizado com sucesso para o usuario ${successData.user.nome}`)
+        setModalVisible(true);
+        
       } else {
-        const errorData = data as ErrorResponse;
-        const mensagemErro = errorData.detail || 'Credenciais inválidas';
-        Alert.alert('Erro', mensagemErro);
+        const erro = data as ErrorResponse;
+        setMensagem(erro.detail || erro.message || 'Erro ao fazer login.');
+        console.log('Falha ao realizar login, erro ao receber os dados via API')
+        setModalVisible(true);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
-      Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.');
+      setMensagem('Erro na requisição. Tente novamente mais tarde.');
+      setModalVisible(true);
     } finally {
       setIsLoading(false);
     }
@@ -107,10 +107,7 @@ export default function Login() {
   }
 
   return (
-    <ScrollView 
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Image
         source={require("@/assets/images/icon.png")}
         style={styles.logo}
@@ -128,7 +125,6 @@ export default function Login() {
         placeholderTextColor="#999"
         keyboardType="email-address"
         autoCapitalize="none"
-        autoCorrect={false}
       />
 
       <Text style={styles.label}>Senha:</Text>
@@ -160,11 +156,28 @@ export default function Login() {
         <TouchableOpacity onPress={() => router.push('/esqueci')}>
           <Text style={styles.link}>Esqueceu sua senha?</Text>
         </TouchableOpacity>
-        
         <TouchableOpacity onPress={() => router.push('/cadastro')}>
           <Text style={styles.link}>Criar uma conta</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal de erro */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Erro</Text>
+            <Text style={styles.modalMessage}>{mensagem}</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -249,5 +262,45 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontFamily: "Raleway_700Bold",
+  },
+
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 24,
+    width: '100%',
+    maxWidth: 340,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: 'Raleway_700Bold',
+    marginBottom: 12,
+    color: '#D32F2F',
+  },
+  modalMessage: {
+    fontSize: 14,
+    fontFamily: 'Raleway_400Regular',
+    color: '#444',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  modalButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontFamily: 'Raleway_700Bold',
   },
 });

@@ -95,7 +95,10 @@ class Login(APIView):
                 max_age=3600
             )
             return response
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'errors': serializer.errors,
+            'message': 'Credenciais inválidas, email ou senha não conferem'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 class Logout(APIView):
     """
