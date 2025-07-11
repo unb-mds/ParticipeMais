@@ -46,7 +46,7 @@ E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse 
 
 ### 📁 Manual de Inicialização
 
-Para facilitar a configuração e execução do projeto **Participe+**, dentro da pasta [Manuais de inicializacao](./Manuais%20de%20inicializacao) está disponível um guia completo com todas as instruções para rodar o sistema.
+Para facilitar a configuração e execução do projeto **Participe+**, dentro da pasta [Manuais de inicializacao](https://github.com/unb-mds/ParticipeMais/tree/main/Manuais%20de%20inicializa%C3%A7%C3%A3o) está disponível um guia completo com todas as instruções para rodar o sistema.
 
 Nesse manual você encontrará:
 
