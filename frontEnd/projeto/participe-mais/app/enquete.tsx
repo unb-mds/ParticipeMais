@@ -42,7 +42,7 @@ export default function Enquete() {
 
   const buscarChat = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/comunidade/chat/${id}/`, {
+      const res = await fetch(`http://98.84.77.124:8000/comunidade/chat/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const handlePostar = async () => {
   if (novoComentario.trim() === '') return;
 
   try {
-    const res = await fetch(`http://172.20.10.9:8000/comunidade/chat/${id}/`, {
+    const res = await fetch(`http://98.84.77.124:8000/comunidade/chat/${id}/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const handlePostar = async () => {
 
 const handleCurtir = async (comentarioId: number) => {
   try {
-    const res = await fetch(`http://172.20.10.9:8000/comunidade/chat/${id}/comentarios/${comentarioId}/curtir/`, {
+    const res = await fetch(`http://98.84.77.124:8000/comunidade/chat/${id}/comentarios/${comentarioId}/curtir/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

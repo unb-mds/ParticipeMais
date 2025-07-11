@@ -86,7 +86,7 @@ export default function PerfilScreen() {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         const response = await fetch(
-          "http://172.20.10.9:8000/comunidade/score/",
+          "http://98.84.77.124:8000/comunidade/score/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export default function PerfilScreen() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://172.20.10.9:8000/auth/logout/", {
+      const response = await fetch("http://98.84.77.124:8000/auth/logout/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

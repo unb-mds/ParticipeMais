@@ -87,7 +87,7 @@ export default function ComunidadePage() {
 
   const fetchComunidades = async () => {
     try {
-      const response = await fetch("http://172.20.10.9:8000/comunidade/", {
+      const response = await fetch("http://98.84.77.124:8000/comunidade/", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function ComunidadePage() {
   const fetchComentarios = async () => {
     try {
       const response = await fetch(
-        "http://172.20.10.9:8000/comunidade/carrosel/",
+        "http://98.84.77.124:8000/comunidade/carrosel/",
         {
           headers: {
             Authorization: `Bearer ${token}`,

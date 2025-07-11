@@ -47,7 +47,7 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
     const fetchScore = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        const response = await fetch('http://172.20.10.9:8000/comunidade/score/', {
+        const response = await fetch('http://98.84.77.124:8000/comunidade/score/', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',

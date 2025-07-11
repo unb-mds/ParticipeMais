@@ -87,7 +87,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/${id}/`, {
+      const res = await fetch(`http://98.84.77.124:8000/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export default function ConferenciaDetalhadaScreen() {
   const fetchPropostas = async () => {    
     try {
       const response = await fetch(
-        `http://172.20.10.9:8000/conferencias/${id}/propostas/`,
+        `http://98.84.77.124:8000/conferencias/${id}/propostas/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -141,8 +141,10 @@ export default function ConferenciaDetalhadaScreen() {
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/favoritas/`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`http://98.84.77.124:8000/conferencias/favoritas/`, {
+        headers: { Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json', 
+      },
       });
       const data = await res.json();
       setFavorito(data.favoritos.includes(Number(id)));
@@ -153,9 +155,11 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`http://98.84.77.124:8000/conferencias/toggle/${id}/`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',  },
+
       });
       if (res.ok) setFavorito(prev => !prev);
     } catch (err) {

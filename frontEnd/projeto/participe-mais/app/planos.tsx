@@ -91,7 +91,7 @@ export default function PlanoScreen() {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://172.20.10.9:8000/planos/${id}/`, {
+      const response = await fetch(`http://98.84.77.124:8000/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -120,9 +120,10 @@ export default function PlanoScreen() {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/planos/favoritas/`, {
+      const res = await fetch(`http://98.84.77.124:8000/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
         },
       });
       const data = await res.json();
@@ -134,10 +135,11 @@ export default function PlanoScreen() {
   };
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://172.20.10.9:8000/planos/toggle/${id}/`, {
+      const res = await fetch(`http://98.84.77.124:8000/planos/toggle/${id}/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
         },
       });
 

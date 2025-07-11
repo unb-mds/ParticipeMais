@@ -48,9 +48,10 @@ const [favoritos, setFavoritos] = useState<any[]>([]);
 
       if (!token) return;
 
-      const resFavoritos = await fetch('http://172.20.10.9:8000/consultas/favoritas/', {
+      const resFavoritos = await fetch('http://98.84.77.124:8000/consultas/favoritas/', {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
       });
 
@@ -60,9 +61,10 @@ const [favoritos, setFavoritos] = useState<any[]>([]);
       console.log('Resposta /favoritas status:', resFavoritos.status);
       console.log('DATA FAVORITOS:', dataFavoritos);
 
-      const resConsultas = await fetch('http://172.20.10.9:8000/consultas/', {
+      const resConsultas = await fetch('http://98.84.77.124:8000/consultas/', {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
       });
 
