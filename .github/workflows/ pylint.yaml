@@ -25,7 +25,7 @@ jobs:
 
     - name: Analysing the code with pylint (min score 7.0)
       run: |
-          export DJANGO_SETTINGS_MODULE=backend.project.settings
+          export DJANGO_SETTINGS_MODULE=project.settings
           export PYTHONPATH=.
           echo "Running Pylint..."
           find . -type f -name "*.py" ! -path "./WebScraper/*" > pyfiles.txt
