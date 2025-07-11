@@ -37,7 +37,19 @@ export default function TabLayout() {
           position: 'absolute',
           borderColor: '#999',           // cinza médio para o contorno
 
-          },
+          },  android: {
+    bottom: 0,
+    height: 125,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    backgroundColor: '#ffffff',
+    paddingBottom: 10,
+    paddingTop: 15,
+    elevation: 10, // sombra para Android
+    position: 'absolute',
+    borderTopWidth: 1,
+    borderColor: '#999',
+  },
           
           default: {}, // em outras plataformas, usa padrão
         }),

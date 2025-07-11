@@ -87,7 +87,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const fetchConferencias = async () => {
     try {
-      const res = await fetch(`http://98.84.77.124:8000/conferencias/${id}/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/conferencias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function ConferenciaDetalhadaScreen() {
         setEstatisticasEtapas(data.estatisticasEtapas || 0);
         setLoading(false);
       } else {
-        router.replace('/login');
+        router.replace('/');
       }
     } catch (error) {
       console.error('Erro ao carregar conferências:', error);
@@ -113,7 +113,7 @@ export default function ConferenciaDetalhadaScreen() {
   const fetchPropostas = async () => {    
     try {
       const response = await fetch(
-        `http://98.84.77.124:8000/conferencias/${id}/propostas/`,
+        `https://14becbe8f935.ngrok-free.app/conferencias/${id}/propostas/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ export default function ConferenciaDetalhadaScreen() {
 
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://98.84.77.124:8000/conferencias/favoritas/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/conferencias/favoritas/`, {
         headers: { Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json', 
       },
@@ -155,11 +155,10 @@ export default function ConferenciaDetalhadaScreen() {
 
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://98.84.77.124:8000/conferencias/toggle/${id}/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/conferencias/toggle/${id}/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',  },
-
       });
       if (res.ok) setFavorito(prev => !prev);
     } catch (err) {

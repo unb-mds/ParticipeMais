@@ -58,7 +58,7 @@ export default function Notificacoes() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://98.84.77.124:8000/comunidade/score/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/comunidade/score/', {
         // caso queira rodar pelo celular, troque o campo pelo seu ipv4 e adicionei no settings do django no ALLOWED_HOSTS ['seu ip']
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,7 +82,7 @@ export default function Notificacoes() {
 
   const fetchNotificacoes = async () => {
     try {
-      const response = await fetch('http://98.84.77.124:8000/auth/notifications/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/auth/notifications/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

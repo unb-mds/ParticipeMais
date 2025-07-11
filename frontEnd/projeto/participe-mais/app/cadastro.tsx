@@ -69,7 +69,7 @@ export default function TelaCadastro() {
   }
 
   try {
-    const response = await fetch("http://98.84.77.124:8000/auth/cadastro/", {
+    const response = await fetch("https://14becbe8f935.ngrok-free.app/auth/cadastro/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

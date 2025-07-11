@@ -86,7 +86,7 @@ export default function PerfilScreen() {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         const response = await fetch(
-          "http://98.84.77.124:8000/comunidade/score/",
+          "https://14becbe8f935.ngrok-free.app/comunidade/score/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export default function PerfilScreen() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://98.84.77.124:8000/auth/logout/", {
+      const response = await fetch("https://14becbe8f935.ngrok-free.app/auth/logout/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

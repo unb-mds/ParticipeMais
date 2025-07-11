@@ -48,7 +48,7 @@ const [favoritos, setFavoritos] = useState<any[]>([]);
 
       if (!token) return;
 
-      const resFavoritos = await fetch('http://98.84.77.124:8000/consultas/favoritas/', {
+      const resFavoritos = await fetch('https://14becbe8f935.ngrok-free.app/consultas/favoritas/', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const [favoritos, setFavoritos] = useState<any[]>([]);
       console.log('Resposta /favoritas status:', resFavoritos.status);
       console.log('DATA FAVORITOS:', dataFavoritos);
 
-      const resConsultas = await fetch('http://98.84.77.124:8000/consultas/', {
+      const resConsultas = await fetch('https://14becbe8f935.ngrok-free.app/consultas/', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'

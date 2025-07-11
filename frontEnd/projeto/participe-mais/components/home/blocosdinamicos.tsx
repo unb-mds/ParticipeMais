@@ -87,7 +87,7 @@ export default function ComunidadePage() {
 
   const fetchComunidades = async () => {
     try {
-      const response = await fetch("http://98.84.77.124:8000/comunidade/", {
+      const response = await fetch("https://14becbe8f935.ngrok-free.app/comunidade/", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -101,6 +101,7 @@ export default function ComunidadePage() {
         setQuantidadeChat(data.quantidade_chat ?? null);
         setCategorias(data.categorias ?? []);
         setEnquetes(data.enquetes ?? []);
+        console.log(data.enquetes)
       } else {
         console.error("Erro ao buscar dados:", response.status);
       }
@@ -114,7 +115,7 @@ export default function ComunidadePage() {
   const fetchComentarios = async () => {
     try {
       const response = await fetch(
-        "http://98.84.77.124:8000/comunidade/carrosel/",
+        "https://14becbe8f935.ngrok-free.app/comunidade/carrosel/",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -188,6 +189,9 @@ function BlocoEnqueteCategoria({ dados }: { dados: Categoria[] }) {
     return <Text style={styles.emptyText}>Nenhuma categoria encontrada.</Text>;
 
   return (
+    <>
+      <Text style={styles.titulo_enquete}>Acesse diretamente pelas categorias!</Text>
+
     <FlatList
       data={dados}
       horizontal
@@ -212,12 +216,11 @@ function BlocoEnqueteCategoria({ dados }: { dados: Categoria[] }) {
             {getIconByCategoria(item.nome)}
             <View style={{ marginLeft: 8 }}>
               <Text style={styles.titulo_carrossel}>{item.nome}</Text>
-              <Text style={styles.contador}>Sem dados de chat</Text>
             </View>
           </View>
         </TouchableOpacity>
       )}
-    />
+    /></>
   );
 }
 
@@ -474,9 +477,8 @@ const styles = StyleSheet.create({
   alignItems: "flex-start",
   gap: 12,
   paddingHorizontal: 12,
-  paddingTop: 8,
   paddingBottom: 16,
-  minHeight: 140,
+  minHeight: 30,
 },
 
 bolinhaAutor: {
@@ -537,7 +539,7 @@ conteudoComentarioContainer: {
     borderRadius: 10,
     backgroundColor: "#fff",
     shadowColor: "#000",
-    width: SCREEN_WIDTH * 0.7,
+    width: SCREEN_WIDTH * 0.5,
     height: 150,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
@@ -567,7 +569,7 @@ conteudoComentarioContainer: {
   cardComentarioHorizontal: {
     padding: 14,
     borderRadius: 12,
-    width: SCREEN_WIDTH * 0.78,
+    width: SCREEN_WIDTH * 0.48,
     marginRight: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

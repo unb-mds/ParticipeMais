@@ -91,7 +91,7 @@ export default function PlanoScreen() {
 
   const fetchPlanos = async () => {
     try {
-      const response = await fetch(`http://98.84.77.124:8000/planos/${id}/`, {
+      const response = await fetch(`https://14becbe8f935.ngrok-free.app/planos/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ export default function PlanoScreen() {
   };
   const verificarFavorito = async () => {
     try {
-      const res = await fetch(`http://98.84.77.124:8000/planos/favoritas/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/planos/favoritas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function PlanoScreen() {
   };
   const toggleFavorito = async () => {
     try {
-      const res = await fetch(`http://98.84.77.124:8000/planos/toggle/${id}/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/planos/toggle/${id}/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

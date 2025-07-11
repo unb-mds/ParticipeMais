@@ -62,7 +62,7 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://98.84.77.124:8000/auth/login/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/auth/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: senha }),

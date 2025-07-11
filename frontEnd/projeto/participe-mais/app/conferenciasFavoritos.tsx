@@ -49,7 +49,7 @@ export default function ConferenciasFavoritos({ navigation }: any) {
 
       if (!token) return;
 
-      const resFavoritos = await fetch('http://98.84.77.124:8000/conferencias/favoritas/', {
+      const resFavoritos = await fetch('https://14becbe8f935.ngrok-free.app/conferencias/favoritas/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ export default function ConferenciasFavoritos({ navigation }: any) {
       console.log('Resposta /favoritas status:', resFavoritos.status);
       console.log('DATA FAVORITOS:', dataFavoritos);
 
-      const resConferencias = await fetch('http://98.84.77.124:8000/conferencias/', {
+      const resConferencias = await fetch('https://14becbe8f935.ngrok-free.app/conferencias/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView, Text } from 'react-native'; 
+import { StyleSheet, View, SafeAreaView, ScrollView, Text,Platform  } from 'react-native'; 
 import Cabecalho from '@/components/home/cabecalho';
 import BlocoDinamico from '@/components/home/blocosdinamicos';
 import DescubraSection from '@/components/home/descubra'; 
@@ -67,6 +67,8 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={[styles.baseWrapper, Platform.OS === 'android' && styles.androidScaleWrapper]}>
+
       <Cabecalho
         user={nomeUsuario || 'usuario'}
         abaAtiva={abaAtiva}
@@ -99,11 +101,20 @@ export default function HomeScreen() {
         )}
       </Animated.View>
     </View>
+        </View>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  baseWrapper: {
+  flex: 1, // Sempre presente
+},
+androidScaleWrapper: {
+  transform: [{ scale: 0.90 }],
+},
+
   container: {
     flex: 1,
     backgroundColor: '#fff',

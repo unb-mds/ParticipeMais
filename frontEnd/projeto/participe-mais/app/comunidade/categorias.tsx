@@ -72,7 +72,7 @@ export default function Categoria() {
 
   const fetchCategoria = async () => {
     try {
-      const response = await fetch(`http://98.84.77.124:8000/comunidade/categorias/${id}/`, {
+      const response = await fetch(`https://14becbe8f935.ngrok-free.app/comunidade/categorias/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const criarNovaEnquete = async () => {
   }
 
   try {
-    const response = await fetch('http://98.84.77.124:8000/comunidade/criachat/', {
+    const response = await fetch('https://14becbe8f935.ngrok-free.app/comunidade/criachat/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -146,7 +146,7 @@ const buscarTodosOsChats = async (chatIds: number[]) => {
     const resultados: Enquete[] = [];
 
     for (const chatId of chatIds) {
-      const res = await fetch(`http://98.84.77.124:8000/comunidade/chat/${chatId}/`, {
+      const res = await fetch(`https://14becbe8f935.ngrok-free.app/comunidade/chat/${chatId}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

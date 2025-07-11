@@ -84,7 +84,7 @@ export default function PesquisaSection({ filtros }: PesquisaSectionProps) {
 
   const fetchPesquisa = async () => {
     try {
-      const response = await fetch("http://98.84.77.124:8000/pesquisar/lista", {
+      const response = await fetch("https://14becbe8f935.ngrok-free.app/pesquisar/lista", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

@@ -93,7 +93,7 @@ useEffect(() => {
         return;
       }
 
-      const response = await fetch('http://98.84.77.124:8000/agenda/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/agenda/', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ useEffect(() => {
       return;
     }
 
-    const response = await fetch('http://98.84.77.124:8081/agenda/', {
+    const response = await fetch('https://14becbe8f935.ngrok-free.app/agenda/', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -167,7 +167,7 @@ useEffect(() => {
     });
 
     if (!response.ok) {
-      throw new Error(`Erro ao adicionar: ${response.status}`);
+      throw new Error(`Erro ao adicionar, data incorreta: ${response.status}`);
     }
 
     // Sucesso

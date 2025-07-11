@@ -237,7 +237,7 @@ export default function DescubraSection() {
       setRefreshing(true);
       setError(null);
       
-      const response = await fetch('http://98.84.77.124:8000/descubra/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/descubra/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

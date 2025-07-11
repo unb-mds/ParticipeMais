@@ -70,7 +70,7 @@ export default function ScoreScreen() {
 
   const fetchScore = async () => {
     try {
-      const response = await fetch('http://98.84.77.124:8000/comunidade/score/', {
+      const response = await fetch('https://14becbe8f935.ngrok-free.app/comunidade/score/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
