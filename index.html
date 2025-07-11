@@ -191,43 +191,6 @@
         margin-bottom: 1rem;
       }
 
-      /* Cards */
-      .card {
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 1.5rem;
-        border-left: 4px solid var(--primary-color);
-      }
-
-      .card h3 {
-        margin-top: 0;
-        color: var(--primary-color);
-      }
-
-      .icon {
-        color: var(--primary-color);
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-      }
-
-      /* Grid Layout */
-      .grid {
-        display: grid;
-        gap: 1.5rem;
-      }
-
-      @media (min-width: 768px) {
-        .grid-cols-2 {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-cols-3 {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-
-      /* Lists */
       ul.list-disc {
         padding-left: 1.5rem;
         list-style-type: disc;
@@ -319,9 +282,9 @@
       style="display: flex; justify-content: center">
       <nav
         aria-label="Header"
-        style="display: flex; justify-content: space-between">
-        <div style="margin-right: 100px">
-          <a
+        style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 0 1rem;">
+        <div style="margin-right: 10px">
+          <a style="margin-left: -10em;"
             href="../"
             class="md-header__button md-logo"
             aria-label="Participe+">
@@ -334,12 +297,13 @@
           <ul class="nav-tabs">
             <li><a href="#home" class="md-tabs__link">Home</a></li>
             <li><a href="#objetivo" class="md-tabs__link">Objetivo</a></li>
-            <li>
-              <a href="#tecnologias" class="md-tabs__link">Tecnologias</a>
-            </li>
+            <li><a href="#falamais" class="md-tabs__link">Problemas</a></li>
             <li><a href="#entregas" class="md-tabs__link">Entregas</a></li>
-            <li><a href="#decisoes" class="md-tabs__link">Decisões</a></li>
-            <li><a href="#xp" class="md-tabs__link">Práticas XP</a></li>
+            <li><a href="#mudancas" class="md-tabs__link">Mudanças</a></li>
+            <li><a href="#desafios" class="md-tabs__link">Desafios</a></li>
+            <li><a href="#xp" class="md-tabs__link">Práticas</a></li>
+            <li><a href="#cicd" class="md-tabs__link">CI/CD</a></li>
+            <li><a href="#metricas" class="md-tabs__link">Métricas</a></li>
             <li><a href="#licoes" class="md-tabs__link">Lições</a></li>
             <li><a href="contrib/" class="md-tabs__link">Contribuidores</a></li>
           </ul>
@@ -351,11 +315,13 @@
       <div class="md-main__inner md-grid">
         <div class="md-content" data-md-component="content">
           <article class="md-content__inner md-typeset">
+
             <section id="home" class="hero-section">
               <div class="hero-content">
                 <h1 style="color: var(--light-color)">Participe+</h1>
                 <h2 style="color: var(--light-color)">
-                  Participe, opine e transforme sua cidade! <br> Aqui você tem voz ativa!
+                  Participe, opine e transforme sua cidade! <br />
+                  Aqui você tem voz ativa!
                 </h2>
                 <a href="#objetivo" class="button" style="color: #1268c7">
                   Saiba mais <i class="fas fa-arrow-down"></i>
@@ -366,465 +332,194 @@
             <section id="objetivo">
               <h1>Contextos e Objetivos do projeto</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-bullseye"></i>
-                </div>
                 <p>
-                  Esta release apresenta a plataforma
-                  <strong>Participe+</strong>, uma adaptação mobile do site
-                  <strong>brasilparticipativo.gov.br</strong>, com o objetivo de
-                  estreitar os laços entre a sociedade civil e os órgãos
-                  governamentais.
+                  O projeto surgiu a partir da identificação de limitações no
+                  site Brasil Participativo, uma iniciativa importante que visa
+                  <strong>dar voz à população</strong> na criação de
+                  <strong>regulações, leis e políticas públicas.</strong>
                 </p>
+                <p>Alguns objetivos que adotamos ao escolhermos esse projeto:</p>
+                <ul class="list-disc">
+                  <li>
+                    Melhorar a <strong>visualização</strong> e a
+                    <strong>navegação das informações</strong> do Brasil
+                    Participativo, oferecendo uma experiência mais fluida e
+                    acessível no mobile.
+                  </li>
+                  <li>
+                    Aumentar o engajamento popular, utilizando estratégias de
+                    <strong>gamificação</strong> para tornar a participação mais
+                    <strong>atrativa e interativa</strong>.
+                  </li>
+                  <li>
+                    Organizar e agrupar informações similares, por meio de
+                    técnicas de <strong>clusterização</strong>, facilitando a
+                    compreensão do conteúdo e reduzindo redundâncias.
+                  </li>
+                </ul>
                 <p>
-                  Através de funcionalidades como conferências, planos e
-                  consultas públicas, o aplicativo facilita o acesso e a
-                  interação dos <strong>cidadãos, organizações e servidores públicos</strong> com as decisões políticas. 
-                  Utilizando tecnologias de <strong>machine learning</strong> e estratégias
-                  de <strong>clusterização</strong>, a plataforma promove uma
-                  participação mais ágil, acessível e eficaz no processo
-                  democrático.
+                  Esses objetivos buscam potencializar o alcance e a efetividade
+                  da plataforma Brasil Participativo, ampliando sua usabilidade
+                  e <strong>impacto social</strong>.
                 </p>
-              </div>
-            </section>
-
-            <section id="tecnologias">
-              <h2>Tecnologias Utilizadas</h2>
-              <div class="grid grid-cols-3">
-                <div class="card">
-                  <div class="icon">
-                    <i class="fab fa-react"></i>
-                  </div>
-                  <h3>React Native + Expo Router</h3>
-                  <p>
-                    Framework moderno para desenvolvimento mobile
-                    multiplataforma com excelente performance e experiência do
-                    usuário.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fab fa-python"></i>
-                  </div>
-                  <h3>Django REST Framework</h3>
-                  <p>
-                    Backend robusto e seguro para construção de APIs RESTful com
-                    autenticação e serialização avançadas.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-lock"></i>
-                  </div>
-                  <h3>JWT + AsyncStorage</h3>
-                  <p>
-                    Sistema de autenticação seguro com tokens JWT e
-                    armazenamento local assíncrono para melhor experiência do
-                    usuário.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-database"></i>
-                  </div>
-                  <h3>PostgreSQL</h3>
-                  <p>
-                    Banco de dados relacional robusto e confiável para
-                    armazenamento seguro dos dados da aplicação.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-book"></i>
-                  </div>
-                  <h3>MkDocs + Material Theme</h3>
-                  <p>
-                    Documentação elegante e responsiva com tema material design
-                    para melhor legibilidade e navegação.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fab fa-github"></i>
-                  </div>
-                  <h3>GitHub Pages</h3>
-                  <p>
-                    Hospedagem gratuita e confiável para a documentação do
-                    projeto com integração contínua.
-                  </p>
-                </div>
               </div>
             </section>
 
             <section id="falamais">
               <h1>Quais problemas o aplicativo visou resolver?</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-bullseye"></i>
-                </div>
                 <p>
-                  Um dos principais problemas encontrados no site original foi a
-                  <strong>falta de organização</strong>. O
-                  <strong>acesso aos dados</strong> era confuso e exigiu um
-                  grande esforço da equipe para estabelecer um
-                  <strong>padrão de coleta</strong>. Diante disso, com o
-                  objetivo de facilitar o acesso às informações, realizamos uma
-                  <strong>clusterização</strong> dos dados e os
-                  <strong>categorizamos</strong> em temáticas como
-                  <strong>saúde</strong>, <strong>educação</strong> e outras
-                  áreas de interesse, tornando o conteúdo mais compreensível.
+                  Apesar de sua proposta relevante, o site atualmente só funciona
+                  em computadores e apresenta diversos desafios de usabilidade:
+                  as informações são <strong>pouco explicadas</strong>,
+                  <strong>mal organizadas</strong> e muitas vezes,
+                  <strong>difíceis de navegar</strong>, especialmente para usuários
+                  não familiarizados com plataformas digitais mais complexas.
                 </p>
 
                 <p>
-                  Além disso, considerando o
-                  <strong>curto período de participação</strong> disponível para
-                  os usuários interagirem com as propostas, desenvolvemos nossa
-                  própria área de <strong>fóruns</strong> e
-                  <strong>enquetes</strong>, possibilitando a
-                  <strong>comunicação</strong> entre os usuários sobre os temas
-                  que considerarem mais relevantes.
+                  Nosso software resolve esse problema ao transformar a
+                  experiência do Brasil Participativo em uma plataforma mobile
+                  <strong>acessível, organizada e amigável</strong>. Além de
+                  tornar o acesso universal por meio de
+                  <strong>smartphones</strong>, o aplicativo clusteriza e
+                  estrutura melhor as informações, permitindo uma
+                  <strong>navegação clara, compreensível e centrada no usuário</strong
+                  >.
                 </p>
               </div>
             </section>
 
             <section id="entregas">
-              <h2>O que foi entregue nesta release</h2>
-              <div class="grid grid-cols-2 gap-6">
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-plug"></i>
-                  </div>
-                  <h3>Integração Completa</h3>
-                  <ul class="list-disc">
-                    <li>
-                      Conexão entre <strong>frontend</strong> e
-                      <strong>backend</strong>
-                    </li>
-                    <li>
-                      Sincronização em tempo real para enquetes e discussões
-                    </li>
-                    <li>
-                      Visualização de dados de
-                      <strong>participação cidadã</strong>
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-compass"></i>
-                  </div>
-                  <h3>Feed "Descubra!"</h3>
-                  <p>
-                    Implementamos um <strong>feed dinâmico</strong> que reúne
-                    conteúdos como conferências, planos, consultas, enquetes,
-                    comentários e propostas. Tudo apresentado de forma
-                    interativa e com <strong>acesso rápido</strong>.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-route"></i>
-                  </div>
-                  <h3>Roteamento Autenticado</h3>
-                  <p>
-                    Desenvolvemos um sistema de
-                    <strong>autenticação via JWT</strong> com proteção de rotas
-                    e <strong>navegação segura</strong> dentro do app.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                  </div>
-                  <h3>Sistema de Agenda</h3>
-                  <p>
-                    Modal interativo para <strong>oficinas públicas</strong>,
-                    com agendamento de participação e integração com propostas
-                    associadas.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-lightbulb"></i>
-                  </div>
-                  <h3>Sistema de Pontos (Score)</h3>
-                  <p>
-                    Com foco em <strong>gamificação</strong>, criamos um
-                    <strong>sistema de pontuação</strong> para estimular a
-                    participação. Os usuários acumulam pontos ao
-                    <strong>cumprirem missões específicas</strong> como votar em
-                    enquetes, comentar ou propor ideias.
-                  </p>
-                </div>
-
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-comments"></i>
-                  </div>
-                  <h3>Fóruns e Enquetes</h3>
-                  <p>
-                    Adicionamos áreas de <strong>fóruns temáticos</strong> e
-                    <strong>enquetes públicas</strong>, permitindo que os
-                    usuários debatam ideias, compartilhem opiniões e
-                    <strong>interajam em tempo real</strong> sobre assuntos de
-                    interesse coletivo.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section id="backend">
-              <h2>Ainda sobre ferramentas</h2>
+              <h1>O que foi entregue nesta release</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-server"></i>
-                </div>
+                <ul class="list-disc">
+                  <li>
+                    Backend completo e robusto, com API REST desenvolvida em Django
+                    DRF, totalmente dockerizada e integrada à base de dados PostgreSQL.
+                  </li>
+                  <li>
+                    Frontend mobile funcional com React Native, focado em retenção e
+                    usabilidade, garantindo uma experiência intuitiva e acessível para o usuário final.
+                  </li>
+                  <li>
+                    Integração total entre frontend, backend e base de dados, permitindo o funcionamento fluido do aplicativo em tempo real.
+                  </li>
+                  <li>
+                    Deploy completo na nuvem AWS, com geração de APK funcional para testes e distribuição.
+                  </li>
+                  <li>
+                    Agrupamento automático de dados semelhantes, com base em técnicas de clusterização e embeddings semânticos, otimizando a visualização das propostas no app.
+                  </li>
+                </ul>
                 <p>
-                  Este projeto utiliza <strong>Django</strong> com
-                  <strong>Django REST Framework</strong> para construir uma
-                  <strong>API RESTful robusta</strong>, capaz de fornecer dados
-                  em <code>JSON</code> para o app mobile. Utilizamos
-                  autenticação <strong>JWT</strong> segura, banco de dados
-                  <strong>PostgreSQL</strong>, e ferramentas de
-                  <strong>scraping</strong> para coletar e organizar informações
-                  públicas do portal
-                  <a
-                    href="https://brasilparticipativo.presidencia.gov.br"
-                    target="_blank"
-                    >Brasil Participativo</a
-                  >.
-                </p>
-                <ul class="list-disc">
-                  <li>
-                    <strong>Autenticação:</strong> JWT + recuperação de senha
-                  </li>
-                  <li>
-                    <strong>APIs públicas:</strong> conferências, planos,
-                    enquetes, comentários
-                  </li>
-                  <li>
-                    <strong>Gamificação:</strong> sistema de pontos por
-                    participação
-                  </li>
-                  <li>
-                    <strong>Organização modular:</strong> apps separados por
-                    domínio (ex: <code>comunidade</code>,
-                    <code>conferencias</code>)
-                  </li>
-                </ul>
-                <a
-                  class="button"
-                  href="https://github.com/unb-mds/ParticipeMais"
-                  target="_blank"
-                  style="margin-top: 1rem; display: inline-block">
-                  Ver código no GitHub <i class="fab fa-github"></i>
-                </a>
-              </div>
-
-              <div class="card">
-                <h3>📡 Exemplos de Endpoints</h3>
-                <ul class="list-disc">
-                  <li><code>POST /auth/login/</code> – autenticação via JWT</li>
-                  <li>
-                    <code>GET /conferencias/</code> – lista de conferências
-                    públicas
-                  </li>
-                  <li>
-                    <code>GET /planos/?tema=educacao</code> – filtra planos por
-                    tema
-                  </li>
-                  <li>
-                    <code>GET /comunidade/comentarios/</code> – comentários e
-                    discussões
-                  </li>
-                  <li>
-                    <code>POST /comunidade/enquetes/votar/</code> – voto
-                    autenticado
-                  </li>
-                </ul>
-              </div>
-
-              <div class="card">
-                <h3>Fluxo de Dados</h3>
-                <p>
-                  O sistema foi projetado para processar dados com
-                  confiabilidade e performance:
-                </p>
-                <ul class="list-disc">
-                  <li>
-                    <strong>Scraping:</strong> coleta dados do site oficial
-                    mensalmente
-                  </li>
-                  <li>
-                    <strong>Banco:</strong> PostgreSQL armazena informações de
-                    forma relacional
-                  </li>
-                  <li>
-                    <strong>API REST:</strong> Django entrega dados em JSON ao
-                    app
-                  </li>
-                  <li>
-                    <strong>Frontend:</strong> React Native renderiza
-                    dinamicamente os dados
-                  </li>
-                </ul>
-                <p style="margin-top: 1rem">
-                  <img
-                    src="img/Overview Participe+.png"
-                    alt="Fluxograma Backend"
-                    style="
-                      max-width: 100%;
-                      border-radius: 6px;
-                      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-                    " />
+                  Essas entregas representam um marco importante no projeto, pois consolidam a base técnica e funcional do produto, já em condições de ser testado com usuários reais.
                 </p>
               </div>
             </section>
 
-            <section id="decisoes">
-              <h2>Decisões Técnicas Importantes</h2>
+            <section id="mudancas">
+              <h1>O que mudou em relação ao release anterior</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-lightbulb"></i>
-                </div>
-                <h3>Superando Desafios de Performance</h3>
                 <p>
-                  Foi superado o desafio crítico de exibir
-                  <strong>blocos dinâmicos mistos</strong> com desempenho
-                  otimizado e estilo unificado utilizando:
+                  Desde a primeira release, houve uma transformação profunda em todas as frentes do projeto. Inicialmente, trabalhávamos com um webscraper simples e protótipos de UX/UI, focando apenas na extração e visualização inicial de dados. Nesta segunda release, mudamos completamente os frameworks e a arquitetura, passando a contar com um frontend e backend totalmente funcionais, integrados e prontos para uso real.
                 </p>
-                <ul class="list-disc">
-                  <li><code>useMemo</code> para memoização de componentes</li>
-                  <li>Virtualização de listas para renderização eficiente</li>
-                  <li>Componentes especializados com props bem definidas</li>
-                  <li>Estilização consistente com ThemeProvider</li>
-                </ul>
                 <p>
-                  Essa abordagem resultou em uma melhoria de 40% na performance
-                  de renderização e uma experiência do usuário mais fluida.
+                  Implementamos um aplicativo mobile completo com React Native, criamos uma API robusta com Django DRF, estruturamos o ambiente com Docker e Docker Compose, e realizamos deploy em nuvem com geração de APK. Além disso, os dados deixaram de ser tratados de forma isolada e bruta: agora estão organizados e agrupados com técnicas de machine learning, como embeddings semânticos e clusterização.
+                </p>
+                <p>
+                  Em resumo, saímos de uma ideia inicial para uma solução concreta, testável e escalável, pronta para atingir os usuários finais.
                 </p>
               </div>
+            </section>
 
+            <section id="desafios">
+              <h1>Desafios Técnicos Importantes Superados</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-lightbulb"></i>
-                </div>
-                <h3>Uso de APIs</h3>
+                <ul class="list-disc">
+                  <li>
+                    A construção de um webscraper de alta complexidade, capaz de extrair dados estruturados de forma confiável;
+                  </li>
+                  <li>
+                    Um frontend mobile com múltiplas telas, interações e responsividade elevada, exigindo atenção a performance e experiência do usuário;
+                  </li>
+                  <li>
+                    Um backend escalável e banco de dados capazes de lidar com grandes volumes de informações.
+                  </li>
+                </ul>
                 <p>
-                  Além disso, integramos o frontend com um
-                  <strong>backend Django REST Framework</strong>, criando uma
-                  <strong>API robusta</strong> que entrega e recebe dados em
-                  <code>JSON</code>. As requisições autenticadas garantem
-                  segurança e controle de acesso. No lado do app, realizamos o
-                  <strong>parse dos dados</strong> recebidos, tratando e
-                  categorizando as informações antes de renderizá-las
-                  dinamicamente em tela.
+                  No entanto, o maior desafio surgiu entre a 4ª e a 5ª sprint, quando percebemos que precisaríamos reconstruir toda a aplicação praticamente do zero, com uma nova arquitetura, novas tecnologias e um escopo mais robusto — tudo isso com menos de 8 sprints totais para entregar o MVP final.
+                </p>
+                <p>
+                  Mesmo com o time enfrentando pressões acadêmicas, como provas simultâneas, conseguimos manter o compromisso de entregar o que foi prometido. Essa superação exigiu organização extrema, revezamento de responsabilidades e muito aprendizado em tempo real.
                 </p>
               </div>
             </section>
 
             <section id="xp">
-              <h2>Práticas XP, Qualidade e Testes</h2>
-              <div class="grid grid-cols-3">
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-users"></i>
-                  </div>
-                  <h3>Extreme Programming</h3>
-                  <ul class="list-disc">
-                    <li>Programação em par constante</li>
-                    <li>Feedback rápido e iterativo</li>
-                    <li>Integração contínua (CI/CD)</li>
-                    <li>Desenvolvimento orientado a testes</li>
-                  </ul>
-                </div>
+              <h1>Práticas XP, Qualidade e Testes</h1>
+              <div class="card">
+                <ul class="list-disc">
+                  <li>
+                    Pair Programming foi amplamente utilizado, com os membros da equipe trabalhando em duplas para trocar ideias e revisar o código em tempo real.
+                  </li>
+                  <li>
+                    O código foi tratado de forma coletiva, com padrões de codificação definidos e propriedade compartilhada, o que favoreceu a colaboração e facilitou a manutenção do sistema.
+                  </li>
+                  <li>
+                    Na verificação de qualidade, usamos ferramentas como <strong>pylint</strong> (para Python) e <strong>eslint</strong> (para JavaScript), além da integração posterior do SonarQube, que analisou o repositório em busca de duplicações, problemas de segurança e cobertura de código.
+                  </li>
+                  <li>
+                    Reconhecemos que não conseguimos implementar todas as práticas ideais de qualidade e testes automatizados, principalmente por conta da alta carga de trabalho, prazos curtos e provas universitárias coincidentes. No entanto, dentro do possível, nos esforçamos ao máximo para aplicar práticas de qualidade, sempre buscando equilíbrio entre entrega funcional e manutenção da base de código.
+                  </li>
+                </ul>
+              </div>
+            </section>
 
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-tasks"></i>
-                  </div>
-                  <h3>Pipeline Automatizado</h3>
-                  <ul class="list-disc">
-                    <li>GitHub Actions para CI/CD</li>
-                    <li>Testes automatizados em cada PR</li>
-                    <li>Deploy contínuo em staging</li>
-                    <li>Verificação de qualidade de código</li>
-                  </ul>
-                </div>
+            <section id="cicd">
+              <h1>Pipeline de Integração e Entrega (CI/CD)</h1>
+              <div class="card">
+                <p>
+                  Durante o desenvolvimento, mantivemos o projeto em um repositório Git no GitHub, com uma organização por branches (main, dev e outras específicas por funcionalidade). Os membros da equipe faziam commits frequentes, e a integração de código acontecia via Pull Requests com revisão entre pares, o que garantiu um bom controle de qualidade colaborativa.
+                </p>
+                <p>
+                  Como parte do processo de verificação antes do merge, utilizamos ferramentas de análise estática de código, como <strong>pylint</strong> e <strong>eslint</strong>, além da análise do SonarQube, que identificava problemas de estilo, segurança e duplicação.
+                </p>
+                <p>
+                  Embora não tenhamos automatizado totalmente o processo de deploy (CD), seguimos um fluxo bem definido com critérios de validação antes de cada entrega, o que garantiu segurança e previsibilidade nas versões entregues.
+                </p>
+                <p>
+                  Também disponibilizamos um README completo, com instruções claras para rodar o projeto localmente, o que facilitou o trabalho em equipe mesmo com a falta de tempo para montar uma infraestrutura CI/CD mais robusta.
+                </p>
+              </div>
+            </section>
 
-                <div class="card">
-                  <div class="icon">
-                    <i class="fas fa-code-branch"></i>
-                  </div>
-                  <h3>Estatísticas do Projeto</h3>
-                  <ul class="list-disc">
-                    <li>+400 commits significativos</li>
-                    <li>65+ issues resolvidas</li>
-                    <li>20+ Pull Requests revisados</li>
-                    <li>95% de cobertura de testes</li>
-                  </ul>
-                </div>
+            <section id="metricas">
+              <h1>Métricas de Evolução (Produtividade)</h1>
+              <div class="card">
+                <ul class="list-disc">
+                  <li>≈ 300 commits realizados, demonstrando trabalho contínuo e progressivo na base de código.</li>
+                  <li>65 issues resolvidas, envolvendo tarefas técnicas, correções e melhorias organizadas de forma estruturada.</li>
+                  <li>Mais de 20 pull requests abertos e revisados entre os membros da equipe, garantindo integração consciente e segura do código.</li>
+                </ul>
+                <p>
+                  Esses números refletem um time comprometido com a entrega e com a qualidade, mesmo sob pressão de tempo e alta complexidade técnica.
+                </p>
               </div>
             </section>
 
             <section id="licoes">
-              <h2>Lições Aprendidas</h2>
+              <h1>Lições Técnicas e de Trabalho em Equipe</h1>
               <div class="card">
-                <div class="icon">
-                  <i class="fas fa-graduation-cap"></i>
-                </div>
-                <h3>Conhecimento Adquirido</h3>
-                <ul class="list-disc">
-                  <li>
-                    <strong>Integração eficaz</strong> entre frontend mobile e
-                    backend Django
-                  </li>
-                  <li>
-                    <strong>Componentização</strong> e organização modular do
-                    código
-                  </li>
-                  <li>
-                    <strong>Refinamento contínuo</strong> da lógica de
-                    autenticação
-                  </li>
-                  <li>
-                    <strong>Padronização visual</strong> com sistemas de design
-                  </li>
-                  <li>
-                    <strong>Gestão de estado</strong> em aplicações complexas
-                  </li>
-                </ul>
-
-                <blockquote>
-                  <p>
-                    "Mais do que código, construímos pontes entre o cidadão e a
-                    democracia. Cada linha escrita é um passo para uma sociedade
-                    mais participativa e inclusiva."
-                  </p>
-                  <footer>— Equipe Participe+</footer>
-                </blockquote>
-
-                <div style="text-align: center; margin-top: 2rem">
-                  <a
-                    href="contrib/"
-                    class="button"
-                    style="
-                      background-color: var(--primary-color);
-                      color: white;
-                    ">
-                    Conheça nossos contribuidores
-                    <i class="fas fa-arrow-right"></i>
-                  </a>
-                </div>
+                <p>
+                  Durante o desenvolvimento do projeto, tivemos um aprendizado profundo e diversificado em diversas áreas. Cada integrante teve a oportunidade de explorar stacks diferentes da sua especialidade — aprendendo mais sobre backend, frontend, web scraping, machine learning e também ferramentas como Docker e novos frameworks.
+                </p>
+                <p>
+                  No entanto, os maiores aprendizados foram humanos e organizacionais. Evoluímos muito na gestão do tempo, no comprometimento individual, na comunicação clara entre a equipe e na colaboração ativa para superarmos os desafios, especialmente sob prazos curtos e responsabilidades acadêmicas simultâneas.
+                </p>
+                <p>
+                  Além disso, o projeto nos aproximou como grupo e como amigos, criando um ambiente de parceria, confiança e crescimento coletivo que certamente levaremos para outros contextos da vida profissional.
+                </p>
               </div>
             </section>
           </article>
@@ -832,64 +527,23 @@
       </div>
     </main>
 
-    <footer class="footer">
-      <div class="container" style="font-size: 1.5em">
-        <img src="../img/logo.png" alt="Participe+" />
-        <p>&copy; 2025 Participe+. Todos os direitos reservados.</p>
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <img src="../img/logo.png" alt="Participe+ logo" />
+        <p>
+          © 2025 Participe+. Todos os direitos reservados.
+        </p>
         <div class="footer-links">
-          <a href="https://github.com/unb-mds/ParticipeMais" target="_blank">
+          <a href="https://github.com/participe-plus" target="_blank" rel="noopener noreferrer">
             <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="https://brasilparticipativo.gov.br" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-external-link-alt"></i> Brasil Participativo
           </a>
           <a href="contrib/"> <i class="fas fa-users"></i> Contribuidores </a>
           <a href="#"> <i class="fas fa-lock"></i> Política de Privacidade </a>
         </div>
       </div>
     </footer>
-
-    <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
-    <script>
-      // Simple animation for sections when scrolling
-      document.addEventListener("DOMContentLoaded", function () {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = "translateY(0)";
-              }
-            });
-          },
-          {
-            threshold: 0.1,
-          }
-        );
-
-        document.querySelectorAll("section").forEach((section) => {
-          section.style.opacity = 0;
-          section.style.transform = "translateY(20px)";
-          section.style.transition =
-            "opacity 0.6s ease-out, transform 0.6s ease-out";
-          observer.observe(section);
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-          anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            const targetId = this.getAttribute("href");
-            if (targetId === "#") return;
-
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-              window.scrollTo({
-                top: targetElement.offsetTop - 80,
-                behavior: "smooth",
-              });
-            }
-          });
-        });
-      });
-    </script>
   </body>
 </html>
