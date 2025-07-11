@@ -16,7 +16,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.yuri_andrade.participemaisv1",
+      "config": {
+        "cleartextTraffic": true}
     },
     "web": {
       "bundler": "metro",
@@ -39,6 +42,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "83dc5cd5-2d11-407b-8e75-bb51e7160425"
+      }
     }
   }
 }

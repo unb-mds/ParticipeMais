@@ -244,6 +244,7 @@ export default function DescubraSection() {
         },
       });
       
+      
       if (response.ok) {
         const json = await response.json();
         setConferencias(json.data.conferencias || []);

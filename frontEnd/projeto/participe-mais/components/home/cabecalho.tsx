@@ -11,6 +11,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 type Props = {
   user: string;
@@ -43,7 +45,8 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
   const proximoMinimo = niveis[nivelAtualIndex + 1]?.minimo || (score?.xp ?? 0) + 1;
   const progressoXP = Math.min(100, ((score?.xp ?? 0) / proximoMinimo) * 100);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const fetchScore = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
@@ -56,9 +59,8 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
 
         const data = await response.json();
 
-        // aqui usamos o mesmo formato da ScoreScreen
         if (data?.pontos !== undefined) {
-          setScore({ xp: data.pontos, nivel: 1 }); // nivel opcional
+          setScore({ xp: data.pontos, nivel: 1 });
           setNome(data.usuario);
         } else {
           console.warn('Resposta inesperada:', data);
@@ -71,7 +73,8 @@ export default function Cabecalho({ user, abaAtiva, setAbaAtiva }: Props) {
     };
 
     fetchScore();
-  }, []);
+  }, [])
+);
 
   const titulo =
     abaAtiva === 'comunidade'

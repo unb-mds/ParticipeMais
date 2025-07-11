@@ -160,8 +160,8 @@ useEffect(() => {
     const response = await fetch('http://98.84.77.124:8081/agenda/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(novoCompromisso),
     });

@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default function CategoriaDescricao({ categoria }: Props) {
-  const { corFundo, textoDescricao } = definirCorETexto(categoria);
+  const { corFundo } = definirCorETexto(categoria);
 
   return (
     <View style={[styles.container, { backgroundColor: corFundo }]}>
@@ -37,7 +37,7 @@ function definirCorETexto(categoria: string) {
       };
     case 'direito das mulheres':
       return {
-        corFundo: '#4CAF50',
+        corFundo: '#FF1493',
       };
     case 'direitos da pessoa idosa':
       return {
@@ -50,6 +50,10 @@ function definirCorETexto(categoria: string) {
     case 'tecnologia':
       return {
         corFundo: '#CE93D8',
+      };
+      case 'saúde':
+      return {
+        corFundo: '#2670E8',
       };
 
     default:

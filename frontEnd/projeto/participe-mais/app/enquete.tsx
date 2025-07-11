@@ -106,27 +106,28 @@ const handleCurtir = async (comentarioId: number) => {
       },
     });
 
-    const json = await res.json();
-
     if (res.ok) {
-      setComentarios((prev) =>
-        prev.map((c) =>
-          c.id === comentarioId
-            ? {
-                ...c,
-                curtido: json.curtido, // você pode adicionar isso no backend também
-                curtidas: json.quantidade_curtidas,
-              }
-            : c
-        )
+      setComentarios((prevComentarios) =>
+        prevComentarios.map((comentario) => {
+          if (comentario.id === comentarioId) {
+            return {
+              ...comentario,
+              curtido: !comentario.curtido,
+              quantidade_curtidas: comentario.quantidade_curtidas + (comentario.curtido ? -1 : 1),
+            };
+          }
+          return comentario;
+        })
       );
     } else {
-      console.warn('Erro ao curtir:', json);
+      const json = await res.json();
+      console.warn('Erro ao curtir comentário:', json);
     }
   } catch (error) {
     console.error('Erro ao curtir comentário:', error);
   }
 };
+
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -211,7 +212,7 @@ const handleCurtir = async (comentarioId: number) => {
       <TouchableOpacity onPress={() => handleCurtir(item.id)}>
         <Ionicons
           name={item.curtido ? 'heart' : 'heart-outline'}
-          size={16}
+          size={20}
           color={item.curtido ? '#E91E63' : '#000'}
         />
       </TouchableOpacity>

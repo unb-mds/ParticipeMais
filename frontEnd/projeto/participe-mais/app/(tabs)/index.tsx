@@ -55,55 +55,7 @@ export default function HomeScreen() {
 
   const filtros = ['Saúde', 'Infraestrutura', 'Meio Ambiente', 'Cultura'];
 
-  const blocos = [
-    { tipo: 'listaUsuarios', usuarios: 15, comentarios: 15 },
-    { tipo: 'evento', nome: 'Live XP', data: '2025-06-01' },
-    {
-      tipo: 'carrosselCategorias',
-      dados: [
-        { categoria: 'Meio Ambiente', totalComentarios: 10 },
-        { categoria: 'Educação', totalComentarios: 7 },
-        { categoria: 'Infraestrutura', totalComentarios: 9 },
-        { categoria: 'Educação', totalComentarios: 7 },
-        { categoria: 'Educação', totalComentarios: 7 },
-      ],
-    },
-    {
-      tipo: 'carroselComentarios',
-      dados: [
-        {
-          categoria: 'Meio Ambiente',
-          comentario: 'Na minha cidade começaram ha cortar várias árvores...',
-          autor: 'joaozin',
-        },
-        { categoria: 'Infraestrutura', comentario: 'Oi eu sou tantantantan', autor: 'joaozin' },
-        { categoria: 'Educação', comentario: 'Oi eu sou tantantantan', autor: 'joaozin' },
-      ],
-    },
-    {
-      tipo: 'carroselComentariosEnquentes',
-      dados: [
-        {
-          categoria: 'Infraestrutura',
-          enquete: 'Oi eu sou Arborização nas cidades: mais sombra e menos calor?',
-          curtidas: 5,
-          numeroComentario: 10,
-        },
-        {
-          categoria: 'Saúde',
-          enquete: 'Oi eu sou Arborização nas cidades: mais sombra e menos calor?',
-          curtidas: 5,
-          numeroComentario: 10,
-        },
-        {
-          categoria: 'Meio Ambiente',
-          enquete: 'Oi eu Arborização nas cidades: mais sombra e menos llllllllll lllllllllll l  lllllllll lll',
-          curtidas: 5,
-          numeroComentario: 10,
-        },
-      ],
-    },
-  ];
+  
 
   if (loading) {
     return (
@@ -133,7 +85,7 @@ export default function HomeScreen() {
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <View style={styles.fundoBranco}>
               <Text style={styles.title}>Conheça a comunidade!</Text>
-              <BlocoDinamico blocos={blocos} />
+              <BlocoDinamico />
             </View>
           </ScrollView>
         )}
