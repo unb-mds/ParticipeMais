@@ -23,20 +23,20 @@ jobs:
         pip install pylint
         pip install pylint-django
 
-    - name: Analysing the code with pylint (min score 7.0)
+    - name: Run Pylint
       run: |
-          export DJANGO_SETTINGS_MODULE=project.settings
-          export PYTHONPATH=.
-          echo "Running Pylint..."
-          find . -type f -name "*.py" ! -path "./WebScraper/*" > pyfiles.txt
-          pylint --disable=W $(cat pyfiles.txt) --score=y --exit-zero | tee pylint.log
-          SCORE=$(tail -n 2 pylint.log | grep 'Your code has been rated at' | awk '{print $7}' | cut -d/ -f1)
-          echo "Pylint score: $SCORE"
-          MIN_SCORE=7.0
-          RESULT=$(echo "$SCORE >= $MIN_SCORE" | bc -l)
-          if [ "$RESULT" -eq 1 ]; then
-            echo "✅ Pylint passed with score $SCORE"
-          else
-            echo "❌ Pylint failed: score $SCORE is less than minimum required $MIN_SCORE"
-            exit 1
-          fi
+        export DJANGO_SETTINGS_MODULE=backend.project.settings
+        export PYTHONPATH=$(pwd)
+        echo "Running Pylint..."
+        find backend -type f -name "*.py" ! -path "./WebScraper/*" > pyfiles.txt
+        pylint --load-plugins=pylint_django --exit-zero $(cat pyfiles.txt) | tee pylint.log
+        SCORE=$(tail -n 2 pylint.log | grep 'Your code has been rated at' | awk '{print $7}' | cut -d/ -f1)
+        echo "Pylint score: $SCORE"
+        MIN_SCORE=7.0
+        RESULT=$(echo "$SCORE >= $MIN_SCORE" | bc -l)
+        if [ "$RESULT" -eq 1 ]; then
+          echo "✅ Pylint passed with score $SCORE"
+        else
+          echo "❌ Pylint failed: score $SCORE is less than minimum required $MIN_SCORE"
+          exit 1
+        fi
