@@ -44,6 +44,20 @@ Imagine receber um resumo claro sobre as últimas propostas de educação no Bra
 
 E ainda poder interagir com outras pessoas interessadas, comentar e salvar esse conteúdo para consultar depois.
 
+### 📁 Manual de Inicialização
+
+Para facilitar a configuração e execução do projeto **Participe+**, dentro da pasta [Manual de Inicializacao](./Manual%20de%20Inicializacao) está disponível um guia completo com todas as instruções para rodar o sistema.
+
+Nesse manual você encontrará:
+
+- Como configurar e iniciar o **backend** (API Django REST);
+- Passos para rodar o **frontend** (React Native);
+- Instruções para integração entre backend e frontend;
+- Instalação de dependências, configuração de ambiente e comandos úteis.
+
+Recomendamos seguir o conteúdo desse manual para garantir que o projeto funcione corretamente em seu ambiente.
+
+
 ## 🔗 Links Úteis
 - [Overview do projeto (Figma)](https://www.figma.com/board/aFnNYsRjCvHpSKfnyjTRZz/Overview-Participe-?node-id=0-1&p=f&t=ClxpcwCEi2E2Fa9L-0)
 
