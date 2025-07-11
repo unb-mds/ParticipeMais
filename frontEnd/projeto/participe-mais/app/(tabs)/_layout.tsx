@@ -39,7 +39,7 @@ export default function TabLayout() {
 
           },  android: {
     bottom: 0,
-    height: 125,
+    height: 80,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor: '#ffffff',
