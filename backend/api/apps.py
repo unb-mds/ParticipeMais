@@ -9,4 +9,4 @@ class UsuariosConfig(AppConfig):
     Configuração da aplicação 'api'.
     """
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'backend.api'
+    name = 'api'
